@@ -36,6 +36,7 @@ function campaignStarCount(final,survived){
 }
 
 function hudTick(dt){
+  syncRunStateFromLegacy();
   hudT+=dt;
   if(!hudDirty || hudT<0.08) return;
   hudT=0; hudDirty=false;

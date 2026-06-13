@@ -2,7 +2,7 @@
   v14 GameState scaffold.
   Next Codex task: move runtime globals from src/game/parts into this controlled container.
 */
-export function createInitialGameState() {
+function createInitialGameState() {
   return {
     app: { version: 'v14-core-refactor', mode: 'menu', currentSeed: 0, currentMode: 'daily' },
     viewport: { width: 0, height: 0, dpr: 1 },
@@ -12,7 +12,7 @@ export function createInitialGameState() {
     ui: { activeTab: 'campaign', hudDirty: true }
   };
 }
-export function resetRunState(gameState) {
+function resetRunState(gameState) {
   gameState.run = { score: 0, banked: 0, livePot: 0, multiplier: 1, distance: 0, survived: false };
   gameState.world = { track: [], gates: [], coins: [], hazards: [], weaponCrates: [] };
   gameState.ui.hudDirty = true;

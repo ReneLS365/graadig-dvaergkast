@@ -16,6 +16,13 @@ if (!Array.isArray(order) || order.length < 5) {
 
 const missing = [];
 let source = '';
+const coreStatePath = 'src/game/core/game-state.js';
+if (!fs.existsSync(coreStatePath)) {
+  console.error('Missing core state file:', coreStatePath);
+  process.exit(1);
+}
+source += `\n\n/* ===== core/game-state.js ===== */\n`;
+source += fs.readFileSync(coreStatePath, 'utf8');
 for (const file of order) {
   const p = path.join('src/game/parts', file);
   if (!fs.existsSync(p)) {
