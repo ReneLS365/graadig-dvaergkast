@@ -1,0 +1,11 @@
+{
+  "name": "GRÅDIG: Dværgkast Survival+",
+  "short_name": "Dværgkast",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#070711",
+  "theme_color": "#090914",
+  "description": "Skill-baseret survival crash-racer med dværge, loot, våben, helte, research og kampagne.",
+  "orientation": "any",
+  "icons": []
+}

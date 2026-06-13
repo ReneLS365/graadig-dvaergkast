@@ -1,0 +1,3492 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#090914">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --bg:#070711;
+  --panel:#121225d9;
+  --panel2:#1a1a33e8;
+  --text:#f6f0ff;
+  --muted:#a6a0bd;
+  --gold:#ffd35a;
+  --cyan:#41e8ff;
+  --pink:#ff3df2;
+  --green:#63ff9a;
+  --red:#ff496c;
+  --orange:#ff9d3d;
+  --purple:#8d63ff;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{
+  margin:0; width:100%; height:100%; overflow:hidden;
+  position:fixed; inset:0;
+  overscroll-behavior:none;
+  background: radial-gradient(circle at top,#171735 0,#070711 55%,#020207 100%);
+  color:var(--text);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-user-select:none; user-select:none;
+}
+button,select,input{font:inherit;}
+#app{position:fixed; inset:0; display:flex; flex-direction:column;}
+#gameWrap{position:relative; flex:1; min-height:0; overflow:hidden;}
+canvas{
+  position:absolute; inset:0; width:100%; height:100%; display:block;
+  background:#070711;
+  touch-action:none;
+}
+#hud{
+  position:absolute; top:env(safe-area-inset-top,0); left:0; right:0;
+  padding:10px 10px 0 10px; pointer-events:none; z-index:5;
+}
+.topGrid{display:grid; grid-template-columns:1fr auto 1fr; gap:8px; align-items:start;}
+.card{
+  background:linear-gradient(180deg,#15152fe8,#0d0d1bd8);
+  border:1px solid #ffffff18;
+  box-shadow:0 12px 40px #0008, inset 0 0 24px #ffffff06;
+  border-radius:18px;
+  padding:10px 12px;
+  backdrop-filter: blur(10px);
+}
+.statRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+.stat{display:flex; flex-direction:column; gap:1px; min-width:54px;}
+.label{font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:800;}
+.value{font-size:18px; font-weight:900; line-height:1;}
+.value.big{font-size:28px; color:var(--gold); text-shadow:0 0 18px #ffd35a55; transition:transform .12s; transform-origin:right center;}
+.value.big.pump{transform:scale(1.22);}
+.centerTitle{text-align:center; min-width:150px;}
+.logo{font-size:16px; font-weight:1000; letter-spacing:.03em;}
+.sub{font-size:10px; color:var(--muted); margin-top:2px; font-weight:800;}
+#modeBadge{color:var(--cyan);}
+.hudBtns{display:flex; gap:6px; justify-content:center; margin-top:6px;}
+.hudBtns button{
+  pointer-events:auto;
+  width:40px; height:34px; border-radius:10px;
+  border:1px solid #ffffff22; background:#ffffff10; color:white;
+  font-size:15px; font-weight:900;
+  touch-action:manipulation;
+}
+.hudBtns button:active{transform:scale(.93);}
+#duelBar{
+  position:absolute; left:50%; transform:translateX(-50%);
+  top:calc(env(safe-area-inset-top,0px) + 96px);
+  width:min(420px,86%);
+  background:#0d0d1bd8; border:1px solid #ff3df255; border-radius:14px;
+  padding:7px 10px; display:none; pointer-events:none; z-index:5;
+  box-shadow:0 8px 28px #0009, 0 0 22px #ff3df222;
+}
+#duelBar b{font-size:11px; letter-spacing:.06em; color:var(--pink);}
+.duelTrack{height:9px; background:#0008; border-radius:999px; overflow:hidden; margin-top:5px; position:relative;}
+#duelFill{height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--pink)); border-radius:999px; transition:width .15s linear;}
+#msg{
+  position:absolute; left:50%; top:24%; transform:translateX(-50%);
+  background:#070711cc; border:1px solid #ffffff20; color:white;
+  padding:10px 14px; border-radius:999px; font-weight:900; font-size:15px;
+  box-shadow:0 10px 35px #000a,0 0 30px #41e8ff33;
+  opacity:0; transition:.18s opacity,.18s transform;
+  pointer-events:none; text-align:center; max-width:88%; z-index:6;
+}
+#msg.show{opacity:1; transform:translateX(-50%) scale(1.04);}
+#bottomControls{
+  position:absolute; left:0; right:0; bottom:env(safe-area-inset-bottom,0);
+  padding:0 10px 12px 10px; display:flex; gap:10px; align-items:end;
+  pointer-events:none; z-index:5;
+}
+#hint{flex:1; color:#fff; font-size:12px; line-height:1.25; opacity:.85;}
+.pill{
+  display:inline-block; background:#ffffff12; border:1px solid #ffffff18; border-radius:999px;
+  padding:5px 8px; margin:2px 2px 0 0; font-weight:800;
+}
+.pill.fair{background:#63ff9a22; border-color:#63ff9a66; color:var(--green);}
+#hammerBtn{
+  pointer-events:auto;
+  width:84px; height:84px; border-radius:26px;
+  border:1px solid #ffffff25;
+  background:radial-gradient(circle at 35% 25%,#fff6,#ff9d3d 10%,#a63a00 70%);
+  color:white; font-weight:1000; font-size:13px;
+  box-shadow:0 12px 35px #000a,0 0 24px #ff9d3d66;
+  touch-action:none;
+}
+#hammerBtn:active{transform:scale(.95);}
+#hammerBtn.cd{filter:grayscale(.7) brightness(.7);}
+#ultBtn{
+  pointer-events:auto;
+  width:84px; height:84px; border-radius:50%;
+  border:2px solid #ffffff30;
+  color:#fff; font-weight:1000; font-size:12px; line-height:1.15;
+  background:
+    radial-gradient(circle at 50% 50%, #11151f 0 52%, transparent 53%),
+    conic-gradient(var(--ultcol,#7CF6E3) calc(var(--ult,0)*360deg), #2a3142 0);
+  box-shadow:0 10px 28px #000a, 0 0 0 #0000;
+  touch-action:none; filter:grayscale(.35) brightness(.85);
+  transition:filter .2s, box-shadow .2s;
+}
+#ultBtn #ultLbl{font-size:10px; opacity:.9;}
+#ultBtn.ready{
+  filter:none; cursor:pointer;
+  box-shadow:0 10px 28px #000a, 0 0 26px var(--ultcol,#7CF6E3);
+  animation:ultpulse 1.1s ease-in-out infinite;
+}
+#ultBtn:active{transform:scale(.95);}
+@keyframes ultpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+#menu{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  padding:18px; background:radial-gradient(circle at 50% 30%,#242454dd 0,#05050cee 70%);
+  z-index:20;
+}
+.menuBox{
+  width:min(980px,100%); max-height:96vh; max-height:96dvh; overflow:auto;
+  border:1px solid #ffffff20; border-radius:28px;
+  background:linear-gradient(180deg,#171734f5,#0c0c17f3);
+  box-shadow:0 30px 90px #000c, inset 0 0 80px #ffffff08;
+  padding:18px;
+  -webkit-overflow-scrolling:touch;
+}
+.header{
+  display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.titleBlock h1{font-size:clamp(34px,8vw,68px); line-height:.9; margin:0; letter-spacing:-.06em;}
+.titleBlock h1 span{color:var(--gold); text-shadow:0 0 26px #ffd35a55;}
+.titleBlock p{margin:8px 0 0; color:var(--muted); font-weight:700;}
+.playerBox{display:grid; grid-template-columns:repeat(auto-fit,minmax(64px,1fr)); gap:8px; min-width:280px;}
+.mini{background:#ffffff0b; border:1px solid #ffffff17; border-radius:16px; padding:9px;}
+.mini b{display:block; font-size:20px;}
+.grid{display:grid; grid-template-columns:1.08fr .92fr; gap:12px;}
+@media(max-width:780px){
+  .grid{grid-template-columns:1fr;}
+  .playerBox{grid-template-columns:repeat(2,1fr); width:100%;}
+}
+.panel{border:1px solid #ffffff18; background:#ffffff08; border-radius:22px; padding:12px;}
+.panel h2{margin:0 0 10px; font-size:20px;}
+.modeGrid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px;}
+@media(max-width:480px){.modeGrid{grid-template-columns:1fr;}}
+.bigBtn{
+  border:1px solid #ffffff25; color:white; text-align:left; cursor:pointer;
+  padding:12px; min-height:76px; border-radius:18px;
+  background:linear-gradient(135deg,#24244c,#111124);
+  box-shadow:0 10px 26px #0006;
+  touch-action:manipulation;
+}
+.bigBtn:active{transform:scale(.98);}
+.bigBtn strong{display:block; font-size:18px;}
+.bigBtn span{display:block; color:var(--muted); font-size:12px; margin-top:4px;}
+.bigBtn.primary{background:linear-gradient(135deg,#5b2dff,#ff3df2);}
+.bigBtn.primary span{color:#f0d8ff;}
+.bigBtn.gold{background:linear-gradient(135deg,#815800,#ffb21e); color:#120900;}
+.bigBtn.gold span{color:#2d1c00;}
+.loadouts{display:grid; gap:8px;}
+.loadRow{
+  display:grid; grid-template-columns:92px 1fr auto; gap:8px; align-items:center;
+  background:#ffffff09; border:1px solid #ffffff14; border-radius:16px; padding:8px;
+}
+.loadRow select{width:100%; border:1px solid #ffffff20; color:white; background:#090914; border-radius:10px; padding:8px;}
+.badge{
+  border-radius:999px; background:#ffffff10; border:1px solid #ffffff18; padding:5px 8px;
+  font-size:12px; font-weight:900; color:var(--gold);
+}
+.tabs{display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; position:sticky; top:0; z-index:30; padding:7px 0; background:linear-gradient(180deg,#171734f8,#171734e0 72%,#17173400); backdrop-filter:blur(10px);}
+.tab{
+  border:1px solid #ffffff20; background:#ffffff0b; color:white;
+  padding:8px 10px; border-radius:999px; font-weight:900; cursor:pointer;
+  touch-action:manipulation;
+}
+.tab.active{background:var(--cyan); color:#021014;}
+.list{display:grid; gap:8px;}
+.item{background:#ffffff08; border:1px solid #ffffff15; border-radius:16px; padding:10px;}
+.itemTop{display:flex; justify-content:space-between; gap:8px; align-items:center;}
+.item h3{margin:0; font-size:15px;}
+.item p{margin:5px 0 0; color:var(--muted); font-size:12px; line-height:1.35;}
+.buyBtn{
+  border:1px solid #ffffff20; background:#ffd35a; color:#140d00; border-radius:12px; padding:8px 10px;
+  font-weight:1000; touch-action:manipulation;
+}
+.buyBtn:disabled{opacity:.38; filter:grayscale(1);}
+.progress{height:7px; background:#0006; border-radius:999px; overflow:hidden; margin-top:7px;}
+.progress div{height:100%; width:0%; background:linear-gradient(90deg,var(--cyan),var(--pink)); border-radius:999px;}
+#gameOver{
+  position:absolute; inset:0; z-index:30; display:none; align-items:center; justify-content:center; padding:18px;
+  background:radial-gradient(circle at 50% 40%,#101030dd,#000000ef);
+}
+.overBox{
+  width:min(520px,100%); border:1px solid #ffffff25; border-radius:28px;
+  background:linear-gradient(180deg,#171734f5,#0c0c17fa); padding:18px; box-shadow:0 25px 90px #000d;
+}
+.overBox h2{font-size:44px; margin:0; line-height:.95;}
+.overBox.small{width:min(360px,100%);}
+#oGrade{
+  display:inline-block; margin-top:8px; padding:6px 12px; border-radius:999px;
+  background:#ffffff12; border:1px solid #ffffff25; font-weight:1000; font-size:14px; color:var(--gold);
+}
+.overStats{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:14px 0;}
+.overBtns{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; pointer-events:none;}
+#gameOver.arm .overBtns{pointer-events:auto;}
+.overBtns button{
+  border:1px solid #ffffff25; background:#ffffff12; color:white; padding:13px 8px; border-radius:16px; font-weight:1000;
+  touch-action:manipulation;
+}
+.overBtns button:active{transform:scale(.97);}
+.overBtns button.primary{background:linear-gradient(135deg,#5b2dff,#ff3df2);}
+.overBtns button.gold{background:linear-gradient(135deg,#815800,#ffb21e); color:#160c00;}
+.overBtns button:disabled{opacity:.4; filter:grayscale(1);}
+#pauseOv{
+  position:absolute; inset:0; z-index:28; display:none; align-items:center; justify-content:center; padding:18px;
+  background:#05050cd8; backdrop-filter:blur(4px);
+}
+#nameDlg{
+  position:absolute; inset:0; z-index:60; display:none; align-items:center; justify-content:center; padding:18px;
+  background:#05050cd0;
+}
+#nameDlg input{
+  width:100%; margin:12px 0; padding:12px; border-radius:14px;
+  border:1px solid #ffffff30; background:#090914; color:white; font-weight:900; font-size:18px; text-align:center;
+}
+#intro{
+  position:absolute; inset:0; z-index:8; display:none; align-items:center; justify-content:center;
+  pointer-events:none; padding-bottom:18vh;
+}
+#intro div{
+  font-size:clamp(22px,6vw,38px); font-weight:1000; letter-spacing:.02em; text-align:center;
+  color:#fff; text-shadow:0 0 24px #41e8ffaa, 0 4px 18px #000;
+  animation:introPulse 1.1s ease-in-out infinite;
+}
+@keyframes introPulse{0%,100%{transform:scale(1); opacity:.92;}50%{transform:scale(1.07); opacity:1;}}
+.toast{position:absolute; right:10px; top:calc(env(safe-area-inset-top,0px) + 116px); display:grid; gap:6px; pointer-events:none; z-index:45;}
+.toast div{
+  background:#111124ee; border:1px solid #ffffff20; border-radius:14px; padding:9px 11px;
+  box-shadow:0 10px 30px #000a; font-weight:900; max-width:260px; font-size:13px;
+}
+kbd{font-family:inherit; background:#ffffff12; border:1px solid #ffffff20; padding:2px 6px; border-radius:6px;}
+@media (prefers-reduced-motion: reduce){
+  #intro div{animation:none;}
+}
+
+.campaignGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.skillGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+@media(max-width:560px){.campaignGrid,.skillGrid{grid-template-columns:1fr;}}
+.campaignCard,.skillCard{
+  background:linear-gradient(180deg,#ffffff0c,#ffffff06);
+  border:1px solid #ffffff16;
+  border-radius:16px;
+  padding:10px;
+}
+.campaignCard.locked,.skillCard.locked{opacity:.45;filter:grayscale(.55);}
+.campaignCard h3,.skillCard h3{margin:0;font-size:15px;}
+.campaignCard p,.skillCard p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.35;}
+.stars{letter-spacing:.08em;color:var(--gold);font-weight:1000;}
+.startBtn{
+  margin-top:9px;width:100%;
+  border:1px solid #ffffff25;border-radius:13px;padding:9px 10px;
+  background:linear-gradient(135deg,#5b2dff,#ff3df2);
+  color:white;font-weight:1000;touch-action:manipulation;
+}
+.startBtn:disabled{opacity:.35;filter:grayscale(1);}
+.skillBtn{
+  margin-top:9px;width:100%;
+  border:1px solid #ffffff25;border-radius:13px;padding:9px 10px;
+  background:linear-gradient(135deg,#ffd35a,#ff9d3d);
+  color:#150b00;font-weight:1000;touch-action:manipulation;
+}
+.skillBtn:disabled{opacity:.38;filter:grayscale(1);}
+.objectiveLine{
+  margin-top:8px;padding:8px 10px;border-radius:13px;
+  background:#0000002d;border:1px solid #ffffff14;
+  color:#fff;font-size:12px;font-weight:800;
+}
+
+
+.inventoryGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+@media(max-width:560px){.inventoryGrid{grid-template-columns:1fr;}}
+.weaponCard{
+  background:linear-gradient(180deg,#ffffff0d,#ffffff06);
+  border:1px solid #ffffff17;
+  border-radius:16px;
+  padding:10px;
+}
+.weaponCard.equipped{border-color:#ffd35a88;box-shadow:0 0 18px #ffd35a22 inset;}
+.weaponCard.locked{opacity:.62;filter:grayscale(.35);}
+.weaponCard h3{margin:0;font-size:15px;}
+.weaponCard p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.35;}
+.weaponStats{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.weaponStats span{font-size:11px;font-weight:900;background:#00000030;border:1px solid #ffffff12;border-radius:999px;padding:4px 7px;}
+.equipBtn,.upgradeWeaponBtn{
+  margin-top:8px;width:100%;border:1px solid #ffffff25;border-radius:13px;padding:9px 10px;
+  font-weight:1000;touch-action:manipulation;
+}
+.equipBtn{background:linear-gradient(135deg,#5b2dff,#41e8ff);color:white;}
+.upgradeWeaponBtn{background:linear-gradient(135deg,#ffd35a,#ff9d3d);color:#150b00;}
+.equipBtn:disabled,.upgradeWeaponBtn:disabled{opacity:.38;filter:grayscale(1);}
+.survivalTag{color:#63ff9a;font-weight:1000;}
+
+/* ===== HELTE ===== */
+.charGrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px;}
+.charCard{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--cc,#41e8ff) 10%, #ffffff08), #ffffff05);
+  border:1px solid color-mix(in srgb, var(--cc,#41e8ff) 28%, #ffffff15);
+  border-radius:18px; padding:12px; display:flex; flex-direction:column; gap:7px;
+}
+.charCard.activeCard{box-shadow:0 0 0 2px var(--cc,#41e8ff) inset, 0 0 26px color-mix(in srgb,var(--cc,#41e8ff) 30%, transparent);}
+.charCard.lockedCard{opacity:.62; filter:grayscale(.4);}
+.charHead{display:flex; justify-content:space-between; align-items:flex-start; gap:8px;}
+.charHead h3{margin:0; font-size:16px;}
+.charRole{font-size:11px; font-weight:900; letter-spacing:.04em; margin-top:2px;}
+.lvlBadge{font-size:11px; font-weight:1000; border:1px solid #fff3; border-radius:999px; padding:3px 8px; white-space:nowrap;}
+.xpBar{height:7px; background:#0007; border-radius:999px; overflow:hidden;}
+.xpBar div{height:100%; border-radius:999px;}
+.xpTxt{font-size:10px; color:var(--muted); font-weight:800; letter-spacing:.04em;}
+.ultBox{border:1px solid #fff3; border-radius:12px; padding:8px; display:flex; flex-direction:column; gap:3px; background:#0003;}
+.ultBox b{font-size:13px;}
+.ultBox span{font-size:11px; color:var(--muted); line-height:1.3;}
+.passiveLine{font-size:11px; color:#cfe9ff; font-weight:800; line-height:1.35;}
+.nextPerk{font-size:11px; color:var(--gold); font-weight:900;}
+.perkList{display:flex; flex-direction:column; gap:3px; margin-top:2px;}
+.perk{font-size:11px; line-height:1.3; opacity:.55;}
+.perk.got{opacity:1;}
+.perk b{font-weight:900;}
+.perkLvl{display:inline-block; min-width:32px; font-weight:1000; color:var(--cc,#41e8ff);}
+.perkNote{color:var(--muted);}
+.charBtn{
+  margin-top:auto; width:100%; border:1px solid #ffffff25; border-radius:13px; padding:10px;
+  font-weight:1000; touch-action:manipulation; color:#fff;
+  background:color-mix(in srgb, var(--cc,#41e8ff) 22%, #1a1f2e);
+}
+.charBtn.active{background:linear-gradient(135deg, var(--cc,#41e8ff), #ffffff22); color:#06121a;}
+.charBtn.buy{background:linear-gradient(135deg,#ffd35a,#ff9d3d); color:#150b00;}
+.charBtn.locked{background:#1a1f2e; color:#7CF6E3;}
+.charBtn:disabled{cursor:default;}
+.charBtn.buy:disabled{opacity:.4; filter:grayscale(1);}
+
+/* ===== LABORATORIE ===== */
+.benchGrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:8px;}
+.benchCard{background:#ffffff08; border:1px solid #ffffff15; border-radius:16px; padding:10px; display:flex; flex-direction:column; gap:7px;}
+.benchCard.empty{opacity:.7; border-style:dashed;}
+.benchCard.running{border-color:#41e8ff55;}
+.benchCard.ready{border-color:#63ff9a88; box-shadow:0 0 18px #63ff9a22 inset;}
+.benchTop{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+.benchTop b{font-size:13px;}
+.benchCard p{margin:0; color:var(--muted); font-size:11px;}
+.labBtn{width:100%; border:1px solid #ffffff20; border-radius:12px; padding:9px; font-weight:1000; touch-action:manipulation; background:#ffffff12; color:#cfe9ff;}
+.labBtn.claim{background:linear-gradient(135deg,#63ff9a,#41e8ff); color:#04130a;}
+.labBtn:disabled{opacity:.5;}
+.catTag{font-size:9px; font-weight:1000; letter-spacing:.1em; text-transform:uppercase; color:#7CF6E3; border:1px solid #7CF6E355; border-radius:999px; padding:2px 6px; vertical-align:middle;}
+.researchMeta{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; font-size:11px; font-weight:800; color:var(--muted);}
+.researchMeta .done{color:#63ff9a;}
+.researchMeta .running{color:#41e8ff;}
+.researchMeta .lock{color:#ff9d6a;}
+.item.researchDone{opacity:.6;}
+
+/* ===== v11 repo polish ===== */
+.devNote{
+  margin-top:10px;
+  padding:10px;
+  border-radius:14px;
+  background:#41e8ff12;
+  border:1px solid #41e8ff35;
+  color:#d7fbff;
+  font-size:12px;
+  line-height:1.4;
+  font-weight:800;
+}
+.repoBadge{
+  display:inline-block;
+  margin-left:6px;
+  padding:2px 7px;
+  border-radius:999px;
+  border:1px solid #63ff9a66;
+  color:#63ff9a;
+  background:#63ff9a18;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  vertical-align:middle;
+}
+kbd.cmd{
+  display:inline-block;
+  margin:2px 0;
+  color:#fff;
+  background:#070711;
+  border:1px solid #ffffff25;
+  border-radius:8px;
+  padding:3px 7px;
+  font-size:11px;
+}
+
+</style>
+<title>GRÅDIG: Dværgkast v12 Modular</title>
+</head>
+<body>
+<div id="app">
+  <div id="gameWrap">
+    <canvas id="game"></canvas>
+
+    <div id="hud">
+      <div class="topGrid">
+        <div class="card">
+          <div class="statRow">
+            <div class="stat"><span class="label">Live</span><span id="liveVal" class="value">0</span></div>
+            <div class="stat"><span class="label">Bank</span><span id="bankVal" class="value">0</span></div>
+            <div class="stat"><span class="label">Guld</span><span id="goldVal" class="value">0</span></div>
+          </div>
+        </div>
+        <div class="card centerTitle">
+          <div class="logo">DVÆRGKAST</div>
+          <div class="sub"><span id="modeBadge">Daily</span> · <span id="subInfo">seed 0</span></div>
+          <div class="hudBtns">
+            <button id="pauseBtn" aria-label="Pause">⏸</button>
+            <button id="soundBtn" aria-label="Lyd">🔊</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="statRow" style="justify-content:flex-end">
+            <div class="stat"><span class="label">Multi</span><span id="multVal" class="value big">x1.00</span></div>
+            <div class="stat"><span class="label">Skip</span><span id="skipVal" class="value">0</span></div>
+            <div class="stat"><span class="label">HP</span><span id="hpVal" class="value">1</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="duelBar">
+      <b id="duelName">DUEL</b>
+      <div class="duelTrack"><div id="duelFill"></div></div>
+    </div>
+
+    <div id="msg"></div>
+    <div class="toast" id="toast"></div>
+    <div id="intro"><div id="introText">HOLD SKÆRMEN = STIG</div></div>
+
+    <div id="bottomControls">
+      <div id="hint">
+        <span class="pill">Hold = stig</span>
+        <span class="pill">Slip = fald</span>
+        <span class="pill">Kys væggen = bonus</span><span class="pill">Relic = midlertidig buff</span>
+        <span class="pill" id="fairPill" style="display:none">FAIR SEED · alle har samme build</span>
+      </div>
+      <button id="hammerBtn">EVNE<br><span id="hammerCd">klar</span></button>
+      <button id="ultBtn">ULT<br><span id="ultLbl">lader</span></button>
+    </div>
+
+    <div id="menu">
+      <div class="menuBox">
+        <div class="header">
+          <div class="titleBlock">
+            <h1>GRÅDIG:<br><span>Dværgkast Survival+ v11</span></h1>
+            <p>Overlevelse, inventory, våben, loot crates, skills og kampagne. <b>Repo-build:</b> spillet er nu delt op i rigtig projektstruktur. Progressionen er stadig strammere, survival er hårdere, og der er tilføjet bedre dev-flow, balancing-noter og single-file build.</p>
+          </div>
+          <div class="playerBox">
+            <div class="mini"><span class="label">Level</span><b id="mLevel">1</b></div>
+            <div class="mini"><span class="label">XP</span><b id="mXp">0/250</b></div>
+            <div class="mini"><span class="label">Guld</span><b id="mGold">0</b></div>
+            <div class="mini"><span class="label">Data</span><b id="mData">0</b></div>
+            <div class="mini"><span class="label">Bedst</span><b id="mBest">0</b></div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="panel">
+            <h2>Spil</h2>
+            <div class="modeGrid">
+              <button class="bigBtn primary" data-mode="survival"><strong>Overlevelse</strong><span>Waves, loot crates, våben og længere runs. Her skal spillet bide igen.</span></button>
+              <button class="bigBtn" data-mode="campaign"><strong>Kampagne</strong><span>Baner, mål, boss-miner og progress. Start dér, ikke i tilfældigt kaos.</span></button>
+              <button class="bigBtn" data-mode="daily"><strong>Dagens Mine</strong><span id="dailyDesc">Samme seed for alle. 3 forsøg. Fair build.</span></button>
+              <button class="bigBtn" data-mode="random"><strong>Random Kast</strong><span>Ny bane, dit build, nye dårlige beslutninger.</span></button>
+              <button class="bigBtn" data-mode="practice"><strong>Træning</strong><span>Ingen stress. Lær styring og porte.</span></button>
+              <button class="bigBtn gold" data-mode="chaos"><strong>Kaos-run</strong><span>Flere mønter, flere farer, færre undskyldninger.</span></button>
+            </div>
+
+            <h2 style="margin-top:14px">Build <span class="label" style="font-size:10px">(gælder i Random / Kaos / Træning)</span></h2>
+            <div class="loadouts">
+              <div class="loadRow"><b>Pilot</b><select id="pilotSel"></select><span class="badge" id="pilotLvl">Lv1</span></div>
+              <div class="loadRow"><b>Core</b><select id="coreSel"></select><span class="badge" id="coreLvl">Lv1</span></div>
+              <div class="loadRow"><b>Bankchip</b><select id="chipSel"></select><span class="badge" id="chipLvl">Lv1</span></div>
+              <div class="loadRow"><b>Evne</b><select id="abilitySel"></select><span class="badge" id="abilityLvl">Lv1</span></div>
+            </div>
+
+            <div style="margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35">
+              Dagens Mine og dueller spilles med samme standard-build for alle — dér vinder tommelfingeren, ikke pengepungen. Dit gear gør dig stærkere alle andre steder.
+            </div>
+            <div class="devNote">
+              v12 modular repo-build <span class="repoBadge">STRUCTURED</span><br>
+              Dev: <kbd class="cmd">npm run dev</kbd> eller <kbd class="cmd">python -m http.server 8080</kbd><br>
+              Single HTML findes i <kbd class="cmd">dist/graadig-dvaergkast-v11.html</kbd>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="tabs">
+              <button class="tab active" data-tab="campaign">Kampagne</button>
+              <button class="tab" data-tab="characters">Helte</button>
+              <button class="tab" data-tab="inventory">Inventory</button>
+              <button class="tab" data-tab="upgrades">Udstyr</button>
+              <button class="tab" data-tab="research">Laboratorie</button>
+              <button class="tab" data-tab="skills">Skills</button>
+              <button class="tab" data-tab="missions">Missioner</button>
+              <button class="tab" data-tab="achievements">Achievements</button>
+              <button class="tab" data-tab="leaderboard">Leaderboard</button>
+            </div>
+            <div id="tabContent"></div>
+            <div style="margin-top:14px;text-align:center;">
+              <button id="resetBtn" style="background:#ffffff0a;border:1px solid #ff496c44;color:#ff8aa0;border-radius:12px;padding:8px 14px;font-weight:900;font-size:12px;">Nulstil al fremgang</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pauseOv">
+      <div class="overBox small">
+        <h2>Pause</h2>
+        <p style="color:var(--muted);font-weight:800">Dværgen hænger i luften og venter.</p>
+        <div class="overBtns" style="pointer-events:auto">
+          <button class="primary" id="resumeBtn">Fortsæt</button>
+          <button id="quitBtn">Afslut run</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="gameOver">
+      <div class="overBox">
+        <h2 id="overTitle">Crash.</h2>
+        <p id="overText" style="color:var(--muted);font-weight:800">Dværgen blev til byggestøv.</p>
+        <span id="oGrade">Lærling</span>
+        <div class="overStats">
+          <div class="mini"><span class="label">Score</span><b id="oScore">0</b></div>
+          <div class="mini"><span class="label">Banket</span><b id="oBank">0</b></div>
+          <div class="mini"><span class="label">Peak</span><b id="oPeak">x1.00</b></div>
+          <div class="mini"><span class="label">Distance</span><b id="oDist">0 m</b></div>
+          <div class="mini"><span class="label">Helt-EXP</span><b id="oHeroXp">+0</b></div>
+          <div class="mini"><span class="label">Data</span><b id="oData">+0</b></div>
+        </div>
+        <div class="overBtns">
+          <button class="primary" id="retryBtn">Prøv igen</button>
+          <button class="gold" id="shareBtn">Udfordr en ven</button>
+          <button id="newBtn">Ny random</button>
+          <button id="menuBtn">Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="nameDlg">
+      <div class="overBox small">
+        <h2 style="font-size:30px">Dit navn</h2>
+        <p style="color:var(--muted);font-weight:800">Vises når du udfordrer venner.</p>
+        <input id="nameInput" maxlength="14" placeholder="Dværgnavn" autocomplete="off">
+        <div class="overBtns" style="pointer-events:auto">
+          <button class="primary" id="nameOk">Gem</button>
+          <button id="nameCancel">Annullér</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>
+/*
+  GRÅDIG: Dværgkast v12 Modular Bundle
+  Generated from src/game/parts. Do not edit this file directly.
+*/
+(() => {
+
+
+/* ===== 01-bootstrap.js ===== */
+'use strict';
+
+/*
+  GRÅDIG: Dværgkast v12 modular source.
+
+  Disse filer er klassiske source-parts, ikke ES-moduler endnu.
+  tools/build-game-bundle.mjs pakker dem i én IIFE til dist/app.bundle.js.
+
+  Hvorfor sådan?
+  Fordi spillet er en fungerende prototype med mange delte runtime-variabler.
+  Første sikre split er kildefiler + bundle. Næste split kan blive rigtige ES-moduler,
+  når gameplayet holder op med at ændre sig hver halve kop kaffe.
+*/
+
+
+
+/* ===== 02-lyd-webaudio-ingen-filer.js ===== */
+/* ================= LYD (WebAudio, ingen filer) ================= */
+let AC=null, masterGain=null, engOsc=null, engOsc2=null, engGain=null, noiseBuf=null;
+function audioEnsure(){
+  if(AC) return true;
+  try{
+    AC = new (window.AudioContext||window.webkitAudioContext)();
+    masterGain = AC.createGain();
+    masterGain.gain.value = save.sound ? 0.55 : 0;
+    masterGain.connect(AC.destination);
+    const len = AC.sampleRate*0.5;
+    noiseBuf = AC.createBuffer(1,len,AC.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+  }catch(e){ AC=null; }
+  return !!AC;
+}
+function audioResume(){ if(AC && AC.state==='suspended') AC.resume(); }
+function tone(freq, dur, type, vol, slideTo, delay){
+  if(!AC || !save.sound) return;
+  const t0=AC.currentTime+(delay||0);
+  const o=AC.createOscillator(), g=AC.createGain();
+  o.type=type||'square'; o.frequency.setValueAtTime(freq,t0);
+  if(slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(20,slideTo),t0+dur);
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(vol||0.18,t0+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  o.connect(g); g.connect(masterGain);
+  o.start(t0); o.stop(t0+dur+0.05);
+}
+function noiseBurst(dur, vol, freq, delay){
+  if(!AC || !save.sound || !noiseBuf) return;
+  const t0=AC.currentTime+(delay||0);
+  const src=AC.createBufferSource(); src.buffer=noiseBuf; src.loop=true;
+  const f=AC.createBiquadFilter(); f.type='lowpass';
+  f.frequency.setValueAtTime(freq||1200,t0);
+  f.frequency.exponentialRampToValueAtTime(120,t0+dur);
+  const g=AC.createGain();
+  g.gain.setValueAtTime(vol||0.3,t0);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+  src.connect(f); f.connect(g); g.connect(masterGain);
+  src.start(t0); src.stop(t0+dur+0.05);
+}
+function engineStart(){
+  if(!AC || engOsc) return;
+  engOsc=AC.createOscillator(); engOsc.type='triangle';
+  engOsc2=AC.createOscillator(); engOsc2.type='sawtooth';
+  engGain=AC.createGain(); engGain.gain.value=0;
+  const f=AC.createBiquadFilter(); f.type='lowpass'; f.frequency.value=420;
+  engOsc.connect(engGain); engOsc2.connect(engGain);
+  engGain.connect(f); f.connect(masterGain);
+  engOsc.start(); engOsc2.start();
+}
+function engineUpdate(){
+  if(!AC || !engGain) return;
+  const playing = state==='play';
+  const target = (playing && save.sound) ? 0.05 : 0;
+  engGain.gain.setTargetAtTime(target, AC.currentTime, 0.08);
+  if(playing){
+    const f = 52 + Math.min(20,mult)*6;
+    engOsc.frequency.setTargetAtTime(f, AC.currentTime, 0.1);
+    engOsc2.frequency.setTargetAtTime(f*0.503, AC.currentTime, 0.1);
+  }
+}
+let beatAcc=0;
+function heartbeatUpdate(dt){
+  if(state!=='play' || mult<6 || !AC || !save.sound) return;
+  const bpm = 60 + mult*7;
+  beatAcc += dt;
+  if(beatAcc >= 60/bpm){
+    beatAcc=0;
+    const v=Math.min(0.4, 0.12+(mult-6)*0.02);
+    tone(58,0.13,'sine',v,34);
+  }
+}
+const sfx={
+  coin(n){ tone(740*Math.pow(1.059,Math.min(12,n||0)),0.07,'square',0.10); },
+  bank(big){ tone(620,0.10,'square',0.22); tone(930,0.16,'square',0.22,0,0.07); if(big) noiseBurst(0.3,0.12,5200,0.1); buzz(30); },
+  split(){ tone(540,0.09,'square',0.18); tone(720,0.12,'square',0.16,0,0.06); buzz(20); },
+  skip(){ tone(300,0.2,'sawtooth',0.14,900); buzz(12); },
+  perfect(){ tone(660,0.12,'square',0.2); tone(830,0.12,'square',0.2,0,0.05); tone(990,0.2,'square',0.2,0,0.1); buzz([20,20,30]); },
+  tick(){ tone(1250,0.035,'square',0.07); },
+  near(){ tone(1500,0.05,'square',0.12); buzz(10); },
+  smash(){ noiseBurst(0.16,0.25,2400); tone(140,0.12,'square',0.2,60); buzz(25); },
+  hit(){ noiseBurst(0.25,0.3,1800); tone(120,0.2,'sawtooth',0.25,50); buzz([40,30,40]); },
+  crash(){ noiseBurst(0.6,0.4,2600); tone(90,0.5,'sawtooth',0.3,28); tone(55,0.6,'sine',0.3,25,0.05); buzz([60,40,90]); },
+  record(){ [523,659,784,1047].forEach((f,i)=>tone(f,0.14,'square',0.2,0,i*0.09)); buzz([40,30,60]); },
+  level(){ [440,554,659,880].forEach((f,i)=>tone(f,0.12,'square',0.16,0,i*0.07)); },
+  finish(){ [523,659,784,1047,1319].forEach((f,i)=>tone(f,0.16,'square',0.2,0,i*0.1)); noiseBurst(0.5,0.1,6000,0.3); buzz([50,40,50,40,80]); },
+  ui(){ tone(880,0.04,'square',0.06); }
+};
+function buzz(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
+
+
+/* ===== 03-data-save.js ===== */
+/* ================= DATA & SAVE ================= */
+const GAME_VERSION = 'v11-repo';
+const SAVE_KEY = 'graadig_dvaerg_v3'; // beholdt for bagudkompatibilitet, fordi at miste saves er sådan noget software gør når det hader mennesker.
+const DATA = {
+  pilots:{
+    bram:{name:'Bram Jernskæg',desc:'+bank, stabil. Kedelig men effektiv.', cost:0, stats:{bank:0.14, control:0.04, greed:-0.04}},
+    ragnar:{name:'Ragnar Rågrådig',desc:'+multiplier ved skip. Crasher ofte ind i væggen.', cost:450, stats:{greed:0.18, bank:-0.10, control:-0.05}},
+    frida:{name:'Frida Finmotorik',desc:'+kontrol og perfect gates.', cost:650, stats:{control:0.12, perfect:0.18, greed:-0.03}},
+    ulf:{name:'Ulf Stenhoved',desc:'+HP og hammer. Ikke elegant. Det er en dværg.', cost:850, stats:{hp:1, hammer:0.18, greed:-0.04}},
+    sigrid:{name:'Sigrid Sortkrudt',desc:'+smash og eksplosiv frontkontrol. Dårlig bankdisciplin.', cost:1200, stats:{hammer:0.35, speed:0.04, bank:-0.06}},
+    grim:{name:'Grim Guldnæse',desc:'+støvsuger, guld og kontrol. En kapitalist med hjelm.', cost:1400, stats:{magnet:0.32, coin:0.22, control:0.05}},
+    thorin:{name:'Thorin Overmod',desc:'+greed og comeback. Belønner høj puls og dårlige idéer.', cost:1800, stats:{greed:0.28, salvage:0.08, control:-0.07}}, 
+    volund:{name:'Vølund Runesmed',desc:'🔒 Forskningslås. Smeden der gør alle våben dødelige. Vækkes i Laboratoriet.', cost:0, research:'volund', stats:{}},
+  },
+  cores:{
+    oak:{name:'Egetræs-katapult',desc:'Balanceret start-core.', cost:0, stats:{lift:0.00, control:0.04, speed:0}},
+    rocket:{name:'Raketrøv Mk.I',desc:'Mere fart og score, mindre kontrol.', cost:500, stats:{lift:0.10, speed:0.10, greed:0.08, control:-0.08}},
+    gyro:{name:'Gyro-støvler',desc:'Mere præcis styring.', cost:650, stats:{control:0.16, lift:0.02, greed:-0.03}},
+    anvil:{name:'Ambolt-bælte',desc:'Tung, stabil, høj bank.', cost:700, stats:{bank:0.16, control:0.08, speed:-0.08}},
+    coil:{name:'Stormspole',desc:'Hurtig acceleration og vild multiplier. Kræver hænder, ikke håb.', cost:1050, stats:{speed:0.13, greed:0.10, control:-0.07}},
+    drillcore:{name:'Bor-kerne',desc:'Smash bliver stærkere og farer foran dig bliver mindre træls.', cost:1250, stats:{hammer:0.32, control:0.03}},
+    phoenix:{name:'Føniks-sele',desc:'Lidt salvage fra live pot ved crash. Fejlen gør stadig ondt.', cost:1600, stats:{salvage:0.18, bank:-0.04}}, 
+  },
+  chips:{
+    tin:{name:'Tin-chip',desc:'Ingen dikkedarer.', cost:0, stats:{}},
+    deep:{name:'Dybbank',desc:'Banker mere, men multiplier vokser langsommere.', cost:500, stats:{bank:0.24, greed:-0.08}},
+    splitter:{name:'Splitgrådig',desc:'Splitbank er stærkere.', cost:600, stats:{split:0.25, bank:-0.04}},
+    perfect:{name:'Perfekt-chip',desc:'Stor bonus på perfekte gates.', cost:750, stats:{perfect:0.35, control:-0.03}},
+    interest:{name:'Rentes-rune',desc:'Banket score giver langsom bonus til live pot.', cost:1150, stats:{interest:0.22, bank:0.05}},
+    vampire:{name:'Vampyr-bank',desc:'Får lidt live pot tilbage efter bank. Grådig økonomi, naturligvis.', cost:1350, stats:{refund:0.18, greed:0.04}},
+    risk:{name:'Risikokontrakt',desc:'Højere top-score, dårligere sikkerhed.', cost:1550, stats:{greed:0.22, bank:-0.12, salvage:-0.04}}, 
+  },
+  abilities:{
+    hammer:{name:'Hammer-smash',desc:'Smadr sten og bats foran dig.', cost:0, stats:{hammer:0}},
+    shield:{name:'Skjoldbrøl',desc:'Ekstra fejlmargin.', cost:600, stats:{hp:1, cd:0.2}},
+    magnet:{name:'Turbo-støvsuger',desc:'Gør front-sugeren længere og kraftigere.', cost:550, stats:{magnet:0.9}},
+    dash:{name:'Bersærk-dash',desc:'Kort boost gennem farer. Sværere at styre.', cost:750, stats:{dash:1, control:-0.04}},
+    drill:{name:'Tunnelbor',desc:'Rydder et længere felt foran dig og giver smash-score.', cost:1200, stats:{hammer:0.45, cd:-0.05}},
+    chrono:{name:'Tidssprække',desc:'Sænker farten kortvarigt. Til folk med overlevelsesinstinkt.', cost:1450, stats:{control:0.04, cd:0.12}},
+    overcharge:{name:'Overladning',desc:'Pumper multiplier nu. Gør næste sekunder mere farlige.', cost:1700, stats:{greed:0.08, speed:0.03}}, 
+  }
+};
+const FAIR_STATS = {lift:.02,control:.08,greed:0,bank:.10,perfect:.15,split:.10,hp:0,hammer:.10,magnet:.15,speed:0,cd:0,dash:0,salvage:0,coin:0,xp:0,interest:0,refund:0,weapon:0,ultcharge:0,data:0};
+const MAX_GEAR_LEVEL=10;
+
+const CAMPAIGN_LEVELS = [
+  {id:1,name:'Skaktens mund',seed:hashStr('camp-01'),speed:.78,hazards:.42,coins:.85,length:52,width:1.12,goal:{finish:true},reward:260,unlock:'Kampagnen åbner'},
+  {id:2,name:'Guldfeberen',seed:hashStr('camp-02'),speed:.84,hazards:.55,coins:1.35,length:58,width:1.08,goal:{coins:45},reward:320,unlock:'Mere guld, mindre værdighed'},
+  {id:3,name:'Bank eller bræk',seed:hashStr('camp-03'),speed:.90,hazards:.70,coins:1.05,length:64,width:1.03,goal:{bank:6500},reward:390,unlock:'Bankdisciplin'},
+  {id:4,name:'Flagermus-gangen',seed:hashStr('camp-04'),speed:.94,hazards:1.05,coins:.95,length:70,width:1.00,goal:{smash:5},reward:460,unlock:'Hammer-arbejde'},
+  {id:5,name:'Split-ruten',seed:hashStr('camp-05'),speed:1.00,hazards:1.05,coins:1.10,length:76,width:.97,goal:{score:12000},reward:540,unlock:'Midgame starter'},
+  {id:6,name:'Perfekt eller død',seed:hashStr('camp-06'),speed:1.03,hazards:1.15,coins:1.00,length:82,width:.94,goal:{perfect:2},reward:620,unlock:'Præcision'},
+  {id:7,name:'Rentehelvede',seed:hashStr('camp-07'),speed:1.07,hazards:1.25,coins:1.15,length:88,width:.91,goal:{bank:16000,skips:3},reward:720,unlock:'Greed bliver nødvendigt'},
+  {id:8,name:'Sortkrudt-minen',seed:hashStr('camp-08'),speed:1.10,hazards:1.45,coins:1.15,length:94,width:.89,goal:{smash:9,score:16000},reward:820,unlock:'Kaos med formål'},
+  {id:9,name:'Tynd luft',seed:hashStr('camp-09'),speed:1.14,hazards:1.50,coins:1.05,length:100,width:.86,goal:{finish:true,score:22000},reward:950,unlock:'Nu hjælper held ikke længere'},
+  {id:10,name:'Grådighedsbroen',seed:hashStr('camp-10'),speed:1.18,hazards:1.65,coins:1.25,length:108,width:.84,goal:{skips:6,score:26000},reward:1100,unlock:'Panikøkonomi'},
+  {id:11,name:'Mesterprøven',seed:hashStr('camp-11'),speed:1.22,hazards:1.85,coins:1.10,length:116,width:.81,goal:{finish:true,bank:30000},reward:1300,unlock:'Kun voksne hænder'},
+  {id:12,name:'Dværgekongens skakt',seed:hashStr('camp-12'),speed:1.28,hazards:2.05,coins:1.35,length:126,width:.78,goal:{finish:true,score:45000,perfect:3},reward:1600,unlock:'Boss-mine klaret'}
+];
+
+const SKILLS = {
+  vacuum:{name:'Industristøvsuger',max:12,base:240,desc:'Længere og stærkere front-sug.',stats:{magnet:.085}},
+  control:{name:'Finmotorik',max:12,base:300,desc:'Mere præcis styring. Kedeligt navn, god effekt.',stats:{control:.045}},
+  bank:{name:'Akkord-bank',max:12,base:300,desc:'Mere værdi når du banker.',stats:{bank:.052}},
+  greed:{name:'Dårlige beslutninger',max:12,base:320,desc:'Højere multiplier-vækst. Overmod som investering.',stats:{greed:.045}},
+  smash:{name:'Skadedyrsbonus',max:10,base:340,desc:'Stærkere hammer og kortere cooldown.',stats:{hammer:.075,cd:.02}},
+  salvage:{name:'Crash-forsikring',max:8,base:380,desc:'Redder lidt af live pot ved crash.',stats:{salvage:.03}},
+  minerluck:{name:'Guldnæse',max:10,base:320,desc:'Mere guld fra pickups.',stats:{coin:.045}},
+  armory:{name:'Våbensmedning',max:10,base:360,desc:'Alle våben rammer hårdere. Sten klager til fagforeningen.',stats:{weapon:.06}},
+  overclock:{name:'Adrenalinkredsløb',max:8,base:400,desc:'Ultimativ-måleren lader hurtigere. Mere kaos, oftere.',stats:{ultcharge:.07}},
+  datamine:{name:'Datasnylter',max:6,base:380,desc:'Mere forskningsdata fra runs og krystaller.',stats:{data:.10}},
+  stamina:{name:'Stenhud',max:6,base:520,desc:'Ekstra HP på høje levels.',stats:{hp:.30}},
+  mastery:{name:'XP-maskine',max:8,base:440,desc:'Mere XP fra runs til konto OG helt.',stats:{xp:.07}}
+};
+
+
+
+const WEAPONS = {
+  axe:{name:'Kasteøkse',rarity:'Common',max:12,desc:'Auto-kaster økser mod nærmeste fare foran dværgen.',base:{damage:1.0,range:155,cooldown:1.05,pierce:1}},
+  crossbow:{name:'Rune-armbrøst',rarity:'Rare',max:12,desc:'Længere range og bedre præcision. Kedeligt, men effektivt.',base:{damage:0.85,range:245,cooldown:0.92,pierce:1}},
+  chain:{name:'Kædehammer',rarity:'Epic',max:14,desc:'Kort range, hårdt slag og kan ramme flere farer tæt på.',base:{damage:1.35,range:130,cooldown:1.25,pierce:2}},
+  blunder:{name:'Krudtblæser',rarity:'Epic',max:14,desc:'Bred cone foran dværgen. Perfekt mod flagermusflokke.',base:{damage:0.72,range:185,cooldown:1.65,pierce:4}},
+  drillgun:{name:'Bor-kanon',rarity:'Legendary',max:16,desc:'Langsom, tung og brutal. Sten får personaleproblemer.',base:{damage:2.25,range:210,cooldown:1.9,pierce:1}},
+  runeblade:{name:'Runesværd',rarity:'Mythic',max:18,desc:'Kort cooldown og giver lidt live pot ved kills.',base:{damage:1.05,range:175,cooldown:0.72,pierce:1,leech:0.12}},
+  tesla:{name:'Tesla-spole',rarity:'Mythic',max:18,locked:true,desc:'Forsknings-prototype. Lyn springer mellem mange farer og giver lidt live pot. Kun fra Laboratoriet.',base:{damage:0.95,range:230,cooldown:0.86,pierce:5,leech:0.08}}
+};
+const WEAPON_ORDER=['axe','crossbow','chain','blunder','drillgun','runeblade','tesla'];
+const WEAPON_DROP_POOL=['crossbow','chain','blunder','drillgun','runeblade'];
+
+
+/* ===== 04-helte-characters-xp-level-perks-ultimate.js ===== */
+/* ================= HELTE (characters: xp, level, perks, ultimate) ================= */
+const CHAR_MAX = 30;
+const CHARACTERS = {
+  bram:{ role:'Bankér', color:'#63ff9a',
+    ultName:'Guldregn', ultShort:'GULDREGN',
+    ultDesc:'Banker straks 55% af live pot til dobbelt værdi og udløser 4s guldregn + bank-boost.',
+    base:{bank:.10, control:.03},
+    growth:{bank:.005, control:.0015},
+    perks:[
+      {lvl:5,  name:'Renteøre',        stats:{interest:.06},          note:'Banket score drypper tilbage i live pot.'},
+      {lvl:10, name:'Solid hånd',      stats:{control:.04, hp:1},     note:'+1 HP og mere kontrol.'},
+      {lvl:15, name:'Dobbeltbogføring',stats:{bank:.08},              note:'Mere bank-værdi.'},
+      {lvl:20, name:'Guldreserve',     stats:{coin:.10, salvage:.03}, note:'Mere guld + lidt crash-redning.'},
+      {lvl:25, name:'Storkapital',     stats:{bank:.10, interest:.05},note:'Bank + renter.'},
+      {lvl:30, name:'Minekonge',       stats:{bank:.12, control:.04, hp:1}, note:'Komplet bankmaskine.'}
+    ]},
+  ragnar:{ role:'Risikorytter', color:'#ff3df2',
+    ultName:'Blodrus', ultShort:'BLODRUS',
+    ultDesc:'×1.8 multiplier nu + 3.5s usårlig fartrus. Belønner mod, straffer fejhed.',
+    base:{greed:.14, bank:-.06, control:-.03},
+    growth:{greed:.006, control:.0012},
+    perks:[
+      {lvl:5,  name:'Adrenalin',     stats:{ultcharge:.10},        note:'Ultimativ lader hurtigere.'},
+      {lvl:10, name:'Tunnelsyn',     stats:{greed:.07, control:.02},note:'Mere greed, en smule styr.'},
+      {lvl:15, name:'Vægkysser',     stats:{greed:.06, salvage:.03},note:'Greed + crash-redning.'},
+      {lvl:20, name:'Overmod',       stats:{greed:.09},            note:'Endnu hurtigere multiplier.'},
+      {lvl:25, name:'Dødsforagt',    stats:{hp:1, greed:.06},      note:'+1 HP til de vilde linjer.'},
+      {lvl:30, name:'Berserker-konge',stats:{greed:.12, speed:.03},note:'Maks fart, maks grådighed.'}
+    ]},
+  frida:{ role:'Præcision', color:'#41e8ff',
+    ultName:'Nålestik', ultShort:'NÅLESTIK',
+    ultDesc:'4s slowmotion + de næste 3 porte rammes automatisk perfekt.',
+    base:{control:.10, perfect:.14, greed:-.02},
+    growth:{control:.004, perfect:.006},
+    perks:[
+      {lvl:5,  name:'Rolig puls',  stats:{control:.05},           note:'Mere kontrol.'},
+      {lvl:10, name:'Skarp linje', stats:{perfect:.10},           note:'Større perfekt-bonus.'},
+      {lvl:15, name:'Mikrojustér', stats:{control:.05, cd:.03},   note:'Kontrol + kortere evne-cd.'},
+      {lvl:20, name:'Diamanthånd', stats:{perfect:.12, bank:.05}, note:'Perfekt + bank.'},
+      {lvl:25, name:'Nulfejl',     stats:{control:.06, hp:1},     note:'+1 HP, mere styr.'},
+      {lvl:30, name:'Mesterskytte',stats:{perfect:.14, control:.05},note:'Næsten umulig at ryste.'}
+    ]},
+  ulf:{ role:'Tank', color:'#ff9d3d',
+    ultName:'Jordskælv', ultShort:'JORDSKÆLV',
+    ultDesc:'Smadrer alle farer på skærmen, +2 HP og stor smash-score.',
+    base:{hp:1, hammer:.14, greed:-.03},
+    growth:{hammer:.005, control:.0015},
+    perks:[
+      {lvl:5,  name:'Tykt kranie', stats:{hp:1},                  note:'+1 HP.'},
+      {lvl:10, name:'Tung hammer', stats:{hammer:.10, cd:.03},    note:'Stærkere smash, kortere cd.'},
+      {lvl:15, name:'Stenhud',     stats:{salvage:.04, control:.02},note:'Crash-redning.'},
+      {lvl:20, name:'Murbryder',   stats:{hammer:.12, weapon:.06},note:'Smash + våbenskade.'},
+      {lvl:25, name:'Bjergtrold',  stats:{hp:1, hammer:.08},      note:'+1 HP.'},
+      {lvl:30, name:'Klippeblok',  stats:{hp:1, hammer:.12, salvage:.04}, note:'Næsten udødelig arbejdshest.'}
+    ]},
+  sigrid:{ role:'Sprængstof', color:'#ff496c',
+    ultName:'Krudttønde', ultShort:'KRUDTTØNDE',
+    ultDesc:'Enorm eksplosion langt foran dig: massiv smash-score og skrot.',
+    base:{hammer:.26, speed:.03, bank:-.05},
+    growth:{hammer:.007, speed:.0008},
+    perks:[
+      {lvl:5,  name:'Kort lunte',  stats:{cd:.04},               note:'Kortere evne-cooldown.'},
+      {lvl:10, name:'Brisant',     stats:{hammer:.12},           note:'Stærkere smash.'},
+      {lvl:15, name:'Splintbombe', stats:{hammer:.08, weapon:.06},note:'Smash + våbenskade.'},
+      {lvl:20, name:'Detonator',   stats:{hammer:.12, speed:.02},note:'Mere smash og fart.'},
+      {lvl:25, name:'Sortkrudt',   stats:{hammer:.10, coin:.06}, note:'Smash + guld fra vrag.'},
+      {lvl:30, name:'Sprængmester',stats:{hammer:.14, cd:.05},   note:'Konstant ødelæggelse.'}
+    ]},
+  grim:{ role:'Guldgrav', color:'#ffd35a',
+    ultName:'Støvsuger-storm', ultShort:'STØV-STORM',
+    ultDesc:'Suger alle mønter og kasser på skærmen ind til dig + guldregn.',
+    base:{magnet:.26, coin:.18, control:.04},
+    growth:{magnet:.006, coin:.005},
+    perks:[
+      {lvl:5,  name:'Lang slange', stats:{magnet:.10},           note:'Længere sug.'},
+      {lvl:10, name:'Guldnæse',    stats:{coin:.10},             note:'Mere guld.'},
+      {lvl:15, name:'Bredt felt',  stats:{magnet:.08, control:.02},note:'Bredere sug.'},
+      {lvl:20, name:'Kapitalist',  stats:{coin:.10, bank:.05},   note:'Guld + bank.'},
+      {lvl:25, name:'Datasnu',     stats:{data:.12, coin:.06},   note:'Mere forskningsdata.'},
+      {lvl:30, name:'Mammut-sug',  stats:{magnet:.12, coin:.10}, note:'Alting suges ind.'}
+    ]},
+  thorin:{ role:'Comeback', color:'#8d63ff',
+    ultName:'Sidste Ord', ultShort:'SIDSTE ORD',
+    ultDesc:'Fuld HP-genopladning, overladning af multiplier og alle farer ryddet. Panikknap.',
+    base:{greed:.22, salvage:.07, control:-.06},
+    growth:{greed:.006, salvage:.003},
+    perks:[
+      {lvl:5,  name:'Sejt sind',   stats:{salvage:.04},          note:'Mere crash-redning.'},
+      {lvl:10, name:'Andet vejr',  stats:{greed:.07, hp:1},      note:'+1 HP, mere greed.'},
+      {lvl:15, name:'Genrejsning', stats:{salvage:.05, ultcharge:.08},note:'Redning + hurtig ult.'},
+      {lvl:20, name:'Trodsig',     stats:{greed:.09},            note:'Hurtigere multiplier.'},
+      {lvl:25, name:'Sidste mand', stats:{hp:1, salvage:.04},    note:'+1 HP.'},
+      {lvl:30, name:'Udødelig idiot',stats:{greed:.10, salvage:.05, hp:1}, note:'Lever af dårlige idéer.'}
+    ]},
+  volund:{ role:'Runesmed', color:'#7CF6E3', research:true,
+    ultName:'Rune-overladning', ultShort:'OVERLADN.',
+    ultDesc:'6s tredobbelt våbenild + ekstra gennemtrængning og et multiplier-løft.',
+    base:{weapon:.16, hammer:.10, control:.03, bank:.04},
+    growth:{weapon:.006, hammer:.004},
+    perks:[
+      {lvl:5,  name:'Hærdet stål', stats:{weapon:.08},           note:'Mere våbenskade.'},
+      {lvl:10, name:'Præcis æg',   stats:{weapon:.06, control:.03},note:'Skade + kontrol.'},
+      {lvl:15, name:'Runeindgravering',stats:{weapon:.08, hammer:.05},note:'Skade + smash.'},
+      {lvl:20, name:'Mestersmed',  stats:{weapon:.10, bank:.05}, note:'Skade + bank.'},
+      {lvl:25, name:'Stjernemetal',stats:{weapon:.08, hp:1},     note:'+1 HP.'},
+      {lvl:30, name:'Gudesmed',    stats:{weapon:.12, hammer:.06, control:.03}, note:'Våbnene bliver mytiske.'}
+    ]}
+};
+const CHAR_ORDER=['bram','ragnar','frida','ulf','sigrid','grim','thorin','volund'];
+
+
+/* ===== 05-laboratorie-tidsbaseret-forskning.js ===== */
+/* ================= LABORATORIE (tidsbaseret forskning) ================= */
+const MIN=60000, HOUR=3600000;
+const RESEARCH = {
+  alloy:    {name:'Legeringsanalyse', cat:'Våben', reqLevel:4,  reqDone:[],                cost:{gold:500, data:20},  dur:3*MIN,    reward:{stats:{weapon:.10}},      desc:'+10% våbenskade permanent.'},
+  optics:   {name:'Sigtekorrektion',  cat:'Styring',reqLevel:5,  reqDone:[],               cost:{gold:650, data:25},  dur:6*MIN,    reward:{stats:{control:.06}},     desc:'+6% kontrol permanent.'},
+  greedlab: {name:'Grådighedsteori',  cat:'Økonomi',reqLevel:6,  reqDone:[],               cost:{gold:800, data:32},  dur:10*MIN,   reward:{stats:{greed:.06}},       desc:'+6% multiplier-vækst permanent.'},
+  banklab:  {name:'Bankprotokol v2',  cat:'Økonomi',reqLevel:7,  reqDone:['greedlab'],     cost:{gold:1000,data:40},  dur:15*MIN,   reward:{stats:{bank:.08}},        desc:'+8% bank-værdi permanent.'},
+  magnetlab:{name:'Felt-støvsuger',   cat:'Loot',  reqLevel:8,   reqDone:[],               cost:{gold:1200,data:48},  dur:20*MIN,   reward:{stats:{magnet:.12, coin:.06}}, desc:'+sug og +guld permanent.'},
+  smelt:    {name:'Guldsmeltning',    cat:'Drift', reqLevel:5,   reqDone:[],               cost:{gold:0,   data:30},  dur:10*MIN,   reward:{gold:1200}, repeatable:true, desc:'Omdan 30 data til 1.200 guld. Kan gentages.'},
+  slot2:    {name:'Ekstra forskningsbænk', cat:'Drift', reqLevel:9, reqDone:[],            cost:{gold:1800,data:70},  dur:45*MIN,   reward:{slot:1},                  desc:'+1 forskningsbænk (kør flere projekter samtidigt).'},
+  drone:    {name:'Auto-samler drone',cat:'Drift', reqLevel:11,  reqDone:['magnetlab'],    cost:{gold:2400,data:110}, dur:90*MIN,   reward:{passiveGold:280},         desc:'+280 guld efter hvert run, permanent.'},
+  wcap:     {name:'Mestersmedning',   cat:'Våben', reqLevel:10,  reqDone:['alloy'],        cost:{gold:2200,data:90},  dur:HOUR,     reward:{weaponCap:3, stats:{weapon:.06}}, desc:'+3 på alle våbens maks-level og +6% skade.'},
+  ultlab:   {name:'Adrenalin-syntese',cat:'Kamp',  reqLevel:13,  reqDone:[],               cost:{gold:2600,data:130}, dur:90*MIN,   reward:{stats:{ultcharge:.18}},   desc:'+18% ultimativ-opladning permanent.'},
+  volund:   {name:'Vækning af Vølund',cat:'Helt',  reqLevel:12,  reqDone:['wcap'],         cost:{gold:3000,data:160}, dur:2*HOUR,   reward:{unlockChar:'volund'},     desc:'Lås Vølund Runesmed op som spilbar helt.'},
+  stamlab:  {name:'Pansret hud',      cat:'Kamp',  reqLevel:15,  reqDone:['banklab'],      cost:{gold:3200,data:170}, dur:2*HOUR,   reward:{stats:{hp:2}},            desc:'+2 maks HP permanent.'},
+  tesla:    {name:'Tesla-prototype',  cat:'Våben', reqLevel:14,  reqDone:['volund'],       cost:{gold:3600,data:200}, dur:3*HOUR,   reward:{unlockWeapon:'tesla'},    desc:'Lås Tesla-spolen op (lyn der hopper mellem mange farer).'},
+  slot3:    {name:'Tredje forskningsbænk', cat:'Drift', reqLevel:16, reqDone:['slot2'],    cost:{gold:4500,data:280}, dur:4*HOUR,   reward:{slot:1},                  desc:'+1 forskningsbænk.'},
+  apex:     {name:'Apex-protokol',    cat:'Capstone',reqLevel:18, reqDone:['volund','ultlab','stamlab'], cost:{gold:6500,data:420}, dur:8*HOUR, reward:{stats:{greed:.06,bank:.06,control:.04,weapon:.08}}, desc:'Mineindustriens hellige gral: alt løftes lidt. Endgame-belønning.'}
+};
+const RESEARCH_ORDER=['alloy','optics','greedlab','banklab','magnetlab','smelt','slot2','drone','wcap','ultlab','volund','stamlab','tesla','slot3','apex'];
+
+const DEFAULT_SAVE = {
+  gold:0,xp:0,level:1,best:0,bestDist:0,runs:0,wins:0,duelWins:0,
+  name:'', sound:true, seenIntro:false,
+  seenGates:{},
+  owned:{pilots:['bram'],cores:['oak'],chips:['tin'],abilities:['hammer']},
+  levels:{pilots:{bram:1},cores:{oak:1},chips:{tin:1},abilities:{hammer:1}},
+  selected:{pilot:'bram',core:'oak',chip:'tin',ability:'hammer'},
+  achievements:{},
+  skills:{},
+  inventory:{scrap:0, selectedWeapon:'axe', weapons:{axe:{owned:true,level:1,xp:0}}},
+  campaign:{unlocked:1,current:1,stars:{}},
+  characters:{ roster:{ bram:{level:1, xp:0} } },
+  research:{ points:0, slots:1, queue:{}, done:{}, bonuses:{}, weaponCapBonus:0, passiveGold:0 },
+  mission:{date:'', daily:{}},
+  dailyRun:{date:'', tries:0, best:0},
+  leaderboard:[],
+  ghosts2:{}
+};
+let save = loadSave();
+function loadSave(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(raw){
+      const obj=JSON.parse(raw);
+      return merge(DEFAULT_SAVE,obj);
+    }
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_SAVE));
+}
+function merge(a,b){
+  if(Array.isArray(a)) return Array.isArray(b)?b:a;
+  if(typeof a==='object' && a){
+    const safeB = (typeof b==='object' && b && !Array.isArray(b)) ? b : {};
+    const o={...a};
+    for(const k in safeB){
+      o[k]=k in a?merge(a[k],safeB[k]):safeB[k];
+    }
+    return o;
+  }
+  return b===undefined?a:b;
+}
+function persist(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(save)); }catch(e){} }
+
+function getItem(type,key){return DATA[type][key];}
+function owned(type,key){return save.owned[type].includes(key);}
+function itemLevel(type,key){return save.levels[type][key]||1;}
+function upgradeCost(type,key){
+  const l=itemLevel(type,key);
+  return Math.floor(155 * Math.pow(l,1.62) * (getItem(type,key).cost?1.15:1));
+}
+function gearMaxed(type,key){ return itemLevel(type,key) >= MAX_GEAR_LEVEL; }
+function itemStats(type,key){
+  const item=getItem(type,key);
+  const lvl=itemLevel(type,key);
+  const scale=1+(lvl-1)*0.11;
+  const out={};
+  for(const [k,v] of Object.entries(item.stats||{})) out[k]=v*scale;
+  return out;
+}
+function buildStats(){
+  const sel=save.selected;
+  const stats={lift:0,control:0,greed:0,bank:0,perfect:0,split:0,hp:0,hammer:0,magnet:0,speed:0,cd:0,dash:0,salvage:0,coin:0,xp:0,interest:0,refund:0,weapon:0,ultcharge:0,data:0};
+  // Helt (character) passives — pilot-slottet er nu en helt med eget level
+  const cs=characterStats(sel.pilot);
+  for(const k in cs) stats[k]=(stats[k]||0)+cs[k];
+  // Øvrigt gear
+  [
+    ['cores',sel.core],
+    ['chips',sel.chip],
+    ['abilities',sel.ability],
+  ].forEach(([type,key])=>{
+    const s=itemStats(type,key);
+    for(const k in s) stats[k]=(stats[k]||0)+s[k];
+  });
+  const sk=skillStats();
+  for(const k in sk) stats[k]=(stats[k]||0)+sk[k];
+  const rb=researchBonusStats();
+  for(const k in rb) stats[k]=(stats[k]||0)+rb[k];
+  return stats;
+}
+function skillLevel(key){ return (save.skills && save.skills[key]) || 0; }
+function skillCost(key){
+  const sk=SKILLS[key], lvl=skillLevel(key);
+  return Math.floor(sk.base * Math.pow(lvl+1,1.72));
+}
+function skillStats(){
+  const out={};
+  for(const [key,sk] of Object.entries(SKILLS)){
+    const lvl=skillLevel(key);
+    if(!lvl) continue;
+    for(const [stat,val] of Object.entries(sk.stats)){
+      out[stat]=(out[stat]||0)+val*lvl;
+    }
+  }
+  return out;
+}
+function buySkill(key){
+  const sk=SKILLS[key]; if(!sk) return;
+  const lvl=skillLevel(key);
+  if(lvl>=sk.max){ toast('Max level. Dværgen kan ikke blive mere absurd.'); return; }
+  const cost=skillCost(key);
+  if(save.gold<cost){ toast('For lidt guld. En klassiker.'); return; }
+  save.gold-=cost;
+  save.skills[key]=lvl+1;
+  toast(sk.name+' Lv'+save.skills[key]);
+  sfx.level();
+  persist(); refreshMenu();
+}
+
+
+/* ===== 06-helte-logik-xp-level-perks-specialer.js ===== */
+/* ================= HELTE-LOGIK (xp / level / perks / specialer) ================= */
+function ensureCharacters(){
+  if(!save.characters) save.characters={roster:{}};
+  if(!save.characters.roster) save.characters.roster={};
+  // sørg for at alle ejede piloter har en helt-progression
+  for(const key of (save.owned && save.owned.pilots ? save.owned.pilots : ['bram'])){
+    if(CHARACTERS[key] && !save.characters.roster[key]) save.characters.roster[key]={level:1, xp:0};
+  }
+  if(!save.characters.roster.bram) save.characters.roster.bram={level:1, xp:0};
+}
+function charLevel(key){ ensureCharacters(); return (save.characters.roster[key] && save.characters.roster[key].level) || 1; }
+function charXp(key){ ensureCharacters(); return (save.characters.roster[key] && save.characters.roster[key].xp) || 0; }
+function charXpNeed(level){ return Math.floor(42 * Math.pow(level,1.45)); }
+function activeChar(){
+  const k=save.selected && save.selected.pilot;
+  return (CHARACTERS[k] && owned('pilots',k)) ? k : 'bram';
+}
+function unlockedPerks(key){
+  const c=CHARACTERS[key]; if(!c) return [];
+  const lvl=charLevel(key);
+  return c.perks.filter(p=>lvl>=p.lvl);
+}
+function characterStats(key){
+  const c=CHARACTERS[key]; if(!c) return {};
+  const lvl=charLevel(key);
+  const out={};
+  for(const [k,v] of Object.entries(c.base||{})) out[k]=(out[k]||0)+v;
+  for(const [k,v] of Object.entries(c.growth||{})) out[k]=(out[k]||0)+v*(lvl-1);
+  for(const p of unlockedPerks(key)){
+    for(const [k,v] of Object.entries(p.stats||{})) out[k]=(out[k]||0)+v;
+  }
+  return out;
+}
+function gainCharXP(key, amount){
+  if(!CHARACTERS[key] || amount<=0) return;
+  ensureCharacters();
+  const r=save.characters.roster[key];
+  r.xp += Math.floor(amount);
+  let leveled=false, perkUnlocked=null;
+  while(r.level<CHAR_MAX && r.xp>=charXpNeed(r.level)){
+    r.xp-=charXpNeed(r.level);
+    r.level++;
+    leveled=true;
+    save.gold += 40 + r.level*8;
+    const newPerk=CHARACTERS[key].perks.find(p=>p.lvl===r.level);
+    if(newPerk) perkUnlocked=newPerk;
+  }
+  if(r.level>=CHAR_MAX) r.xp=0;
+  if(leveled){
+    const nm=DATA.pilots[key]?DATA.pilots[key].name.split(' ')[0]:key;
+    if(perkUnlocked) toast('⬆ '+nm+' Lv'+r.level+' — låste op: '+perkUnlocked.name);
+    else toast('⬆ '+nm+' nåede Lv'+r.level+' (+bonusguld)');
+    sfx.level();
+  }
+}
+function gainCharacter(key){
+  if(!CHARACTERS[key]) return;
+  if(!save.owned.pilots.includes(key)) save.owned.pilots.push(key);
+  if(!save.levels.pilots[key]) save.levels.pilots[key]=1;
+  ensureCharacters();
+  if(!save.characters.roster[key]) save.characters.roster[key]={level:1, xp:0};
+  persist();
+}
+
+
+/* ===== 07-laboratorie-logik-tidsbaseret.js ===== */
+/* ================= LABORATORIE-LOGIK (tidsbaseret) ================= */
+function ensureResearch(){
+  if(!save.research) save.research={points:0, slots:1, queue:{}, done:{}, bonuses:{}, weaponCapBonus:0, passiveGold:0};
+  const R=save.research;
+  if(typeof R.points!=='number') R.points=0;
+  if(typeof R.slots!=='number') R.slots=1;
+  if(!R.queue) R.queue={};
+  if(!R.done) R.done={};
+  if(!R.bonuses) R.bonuses={};
+  if(typeof R.weaponCapBonus!=='number') R.weaponCapBonus=0;
+  if(typeof R.passiveGold!=='number') R.passiveGold=0;
+}
+function researchDone(id){ ensureResearch(); return !!save.research.done[id]; }
+function researchBonusStats(){ ensureResearch(); return save.research.bonuses || {}; }
+function gainData(n, x, y){
+  ensureResearch();
+  n=Math.floor(n); if(n<=0) return;
+  save.research.points += n;
+  if(typeof runData==='number') runData += n;
+  if(x!==undefined) floatText(x,y,'+'+n+' data','#7CF6E3');
+}
+function labUnlockedAt(){ return 4; }
+function labUnlocked(){ return save.level>=labUnlockedAt(); }
+function researchQueueEntry(slot){ ensureResearch(); return save.research.queue[slot]||null; }
+function researchActiveCount(){ ensureResearch(); return Object.keys(save.research.queue).length; }
+function freeResearchSlot(){
+  ensureResearch();
+  for(let i=0;i<save.research.slots;i++){ if(!save.research.queue[i]) return i; }
+  return -1;
+}
+function isResearching(id){
+  ensureResearch();
+  return Object.values(save.research.queue).some(q=>q && q.id===id);
+}
+function researchProgress(slot){
+  const q=researchQueueEntry(slot); if(!q) return 0;
+  return clamp((Date.now()-q.start)/q.dur,0,1);
+}
+function researchReady(slot){
+  const q=researchQueueEntry(slot); if(!q) return false;
+  return Date.now()-q.start >= q.dur;
+}
+function researchAvailable(id){
+  const p=RESEARCH[id]; if(!p) return false;
+  if(!p.repeatable && researchDone(id)) return false;
+  if(isResearching(id)) return false;
+  if(save.level<p.reqLevel) return false;
+  for(const dep of (p.reqDone||[])){ if(!researchDone(dep)) return false; }
+  return true;
+}
+function startResearch(id){
+  const p=RESEARCH[id]; if(!p){ return; }
+  if(!researchAvailable(id)){ toast('Projektet kan ikke startes endnu.'); return; }
+  const slot=freeResearchSlot();
+  if(slot<0){ toast('Alle forskningsbænke er optaget.'); return; }
+  const cg=p.cost.gold||0, cd=p.cost.data||0;
+  if(save.gold<cg){ toast('For lidt guld til projektet.'); return; }
+  if(save.research.points<cd){ toast('For lidt forskningsdata. Smadr krystaller i minen.'); return; }
+  save.gold-=cg; save.research.points-=cd;
+  save.research.queue[slot]={id, start:Date.now(), dur:p.dur};
+  toast('Forskning startet: '+p.name);
+  sfx.ui(); persist(); refreshMenu();
+}
+function claimResearch(slot){
+  const q=researchQueueEntry(slot); if(!q) return;
+  if(!researchReady(slot)){ toast('Projektet er ikke færdigt endnu.'); return; }
+  const p=RESEARCH[q.id]; if(!p){ delete save.research.queue[slot]; persist(); refreshMenu(); return; }
+  applyResearchReward(p, q.id);
+  delete save.research.queue[slot];
+  if(!p.repeatable) save.research.done[q.id]=Date.now();
+  sfx.record(); flashScreen('#7CF6E3',.3);
+  persist(); refreshMenu();
+}
+function applyResearchReward(p, id){
+  const rw=p.reward||{};
+  if(rw.stats){
+    for(const [k,v] of Object.entries(rw.stats)){
+      save.research.bonuses[k]=(save.research.bonuses[k]||0)+v;
+    }
+  }
+  if(rw.gold){ save.gold+=rw.gold; }
+  if(rw.passiveGold){ save.research.passiveGold+=rw.passiveGold; }
+  if(rw.slot){ save.research.slots+=rw.slot; }
+  if(rw.weaponCap){ save.research.weaponCapBonus+=rw.weaponCap; }
+  if(rw.unlockChar){ gainCharacter(rw.unlockChar); }
+  if(rw.unlockWeapon){
+    ensureInventory();
+    if(!save.inventory.weapons[rw.unlockWeapon]) save.inventory.weapons[rw.unlockWeapon]={owned:true,level:1,xp:0};
+    else save.inventory.weapons[rw.unlockWeapon].owned=true;
+  }
+  toast('FORSKNING FÆRDIG: '+p.name);
+  gainXP(120);
+}
+
+
+/* ===== 08-menu-tabs.js ===== */
+/* ================= MENU / TABS ================= */
+let activeTab='campaign';
+function refreshMenu(){
+  ensureCharacters();
+  ensureResearch();
+  $('mLevel').textContent=save.level;
+  $('mXp').textContent=`${save.xp} / ${xpNeed(save.level)}`;
+  $('mGold').textContent=fmt(save.gold);
+  $('mData').textContent=fmt(save.research.points||0);
+  $('mBest').textContent=fmt(save.best);
+  document.title='GRÅDIG: Dværgkast '+GAME_VERSION;
+  ensureDailyRun();
+  $('dailyDesc').textContent = `Samme seed for alle. Forsøg tilbage: ${Math.max(0,3-save.dailyRun.tries)}/3. Fair build.`;
+  for(const [selId,type,prop] of [
+    ['pilotSel','pilots','pilot'],['coreSel','cores','core'],['chipSel','chips','chip'],['abilitySel','abilities','ability']
+  ]){
+    const s=$(selId); s.innerHTML='';
+    for(const [key,item] of Object.entries(DATA[type])){
+      const opt=document.createElement('option');
+      opt.value=key;
+      let label;
+      if(type==='pilots'){
+        const c=CHARACTERS[key];
+        label = owned(type,key) ? `${item.name} Lv${charLevel(key)}` : (item.research?`🔬 ${item.name} (research)`:`🔒 ${item.name} (${item.cost}g)`);
+      } else {
+        label = owned(type,key) ? `${item.name} Lv${itemLevel(type,key)}` : `🔒 ${item.name} (${item.cost}g)`;
+      }
+      opt.textContent=label;
+      opt.disabled=!owned(type,key);
+      if(save.selected[prop]===key) opt.selected=true;
+      s.appendChild(opt);
+    }
+  }
+  $('pilotLvl').textContent='Lv'+charLevel(save.selected.pilot);
+  $('coreLvl').textContent='Lv'+itemLevel('cores',save.selected.core);
+  $('chipLvl').textContent='Lv'+itemLevel('chips',save.selected.chip);
+  $('abilityLvl').textContent='Lv'+itemLevel('abilities',save.selected.ability);
+  renderTab();
+}
+function xpNeed(lvl){return Math.floor(160*Math.pow(lvl,1.35));}
+function gainXP(xp){
+  save.xp += xp;
+  let leveled=false;
+  while(save.xp>=xpNeed(save.level)){
+    save.xp-=xpNeed(save.level);
+    save.level++;
+    save.gold += 120 + save.level*25;
+    leveled=true;
+  }
+  if(leveled){ toast(`LEVEL ${save.level}! Bonusguld.`); sfx.level(); }
+}
+function renderTab(){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===activeTab));
+  const el=$('tabContent');
+  if(activeTab==='campaign') renderCampaign(el);
+  if(activeTab==='characters') renderCharacters(el);
+  if(activeTab==='inventory') renderInventory(el);
+  if(activeTab==='upgrades') renderUpgrades(el);
+  if(activeTab==='research') renderResearch(el);
+  if(activeTab==='skills') renderSkills(el);
+  if(activeTab==='missions') renderMissions(el);
+  if(activeTab==='achievements') renderAchievements(el);
+  if(activeTab==='leaderboard') renderLeaderboard(el);
+}
+
+
+function ensureInventory(){
+  if(!save.inventory) save.inventory={scrap:0, selectedWeapon:'axe', weapons:{axe:{owned:true,level:1,xp:0}}};
+  if(!save.inventory.weapons) save.inventory.weapons={axe:{owned:true,level:1,xp:0}};
+  if(!save.inventory.weapons.axe) save.inventory.weapons.axe={owned:true,level:1,xp:0};
+  if(!save.inventory.selectedWeapon || !save.inventory.weapons[save.inventory.selectedWeapon]) save.inventory.selectedWeapon='axe';
+}
+function weaponOwned(key){ ensureInventory(); return !!(save.inventory.weapons[key] && save.inventory.weapons[key].owned); }
+function weaponLevel(key){ ensureInventory(); return (save.inventory.weapons[key] && save.inventory.weapons[key].level) || 0; }
+function weaponMax(key){ ensureResearch(); return (WEAPONS[key]&&WEAPONS[key].max||10) + (save.research.weaponCapBonus||0); }
+function weaponMaxed(key){ return weaponLevel(key) >= weaponMax(key); }
+function weaponUpgradeCost(key){
+  const lvl=Math.max(1,weaponLevel(key));
+  const rarity=WEAPONS[key].rarity;
+  const rarityMul={Common:1,Rare:1.3,Epic:1.65,Legendary:2.1,Mythic:2.7}[rarity]||1;
+  return Math.floor(45 * rarityMul * Math.pow(lvl+1,1.35));
+}
+function weaponEvo(key){
+  // evolutions ved milepæle
+  const lvl=Math.max(1,weaponLevel(key)||1);
+  let pierce=0, note=[];
+  if(lvl>=5){ pierce+=1; }
+  if(lvl>=10){ pierce+=1; }
+  return {pierceBonus:pierce, l5:lvl>=5, l10:lvl>=10};
+}
+function weaponStats(key){
+  const w=WEAPONS[key]||WEAPONS.axe;
+  const lvl=Math.max(1,weaponLevel(key)||1);
+  const mul=1+(lvl-1)*0.16;
+  const evo=weaponEvo(key);
+  return {
+    damage:w.base.damage*mul,
+    range:w.base.range*(1+(lvl-1)*0.045),
+    cooldown:Math.max(0.34,w.base.cooldown*(1-(lvl-1)*0.034)),
+    pierce:(w.base.pierce||1)+evo.pierceBonus,
+    leech:(w.base.leech||0)*(1+(lvl-1)*0.10)
+  };
+}
+function currentWeaponKey(){
+  ensureInventory();
+  return weaponOwned(save.inventory.selectedWeapon) ? save.inventory.selectedWeapon : 'axe';
+}
+function gainWeapon(key, source){
+  ensureInventory();
+  if(!WEAPONS[key] || (WEAPONS[key].locked && !weaponOwned(key))) key=WEAPON_DROP_POOL[Math.floor(Math.random()*WEAPON_DROP_POOL.length)];
+  if(!save.inventory.weapons[key]){
+    save.inventory.weapons[key]={owned:true,level:1,xp:0};
+    toast('NYT VÅBEN: '+WEAPONS[key].name);
+    flashScreen('#ffd35a',.34); sfx.record();
+  }else{
+    const scrap=35 + Math.floor(Math.random()*35);
+    save.inventory.scrap += scrap;
+    toast('Dublet: '+WEAPONS[key].name+' → +'+scrap+' skrot');
+  }
+  if(source) floatText(source.x,source.y,'LOOT: '+WEAPONS[key].name,'#ffd35a');
+  if(save.inventory && save.inventory.weapons && Object.keys(save.inventory.weapons).filter(k=>save.inventory.weapons[k].owned).length>=4) unlock('armory');
+  persist();
+}
+function gainScrap(n, x, y){
+  ensureInventory();
+  save.inventory.scrap += Math.floor(n);
+  if(x!==undefined) floatText(x,y,'+'+Math.floor(n)+' skrot','#bfc7d9');
+}
+function upgradeWeapon(key){
+  ensureInventory();
+  if(!weaponOwned(key)){ toast('Du ejer ikke våbnet endnu. Tragisk.'); return; }
+  if(weaponMaxed(key)){ toast('Maks-level. Forsk i Mestersmedning for at hæve loftet.'); return; }
+  const cost=weaponUpgradeCost(key);
+  if(save.inventory.scrap<cost){ toast('For lidt skrot. Smadr mere lort.'); return; }
+  save.inventory.scrap-=cost;
+  save.inventory.weapons[key].level=(save.inventory.weapons[key].level||1)+1;
+  const lvl=save.inventory.weapons[key].level;
+  toast(WEAPONS[key].name+' Lv'+lvl + (lvl===5||lvl===10?' — EVOLUTION! +gennemtrængning':''));
+  sfx.level(); persist(); refreshMenu();
+}
+function equipWeapon(key){
+  ensureInventory();
+  if(!weaponOwned(key)){ toast('Låst våben. Find det i minen først.'); return; }
+  save.inventory.selectedWeapon=key;
+  toast('Udstyret: '+WEAPONS[key].name);
+  sfx.ui(); persist(); refreshMenu();
+}
+function renderInventory(el){
+  ensureInventory();
+  let html='<div class="item"><div class="itemTop"><h3>Inventory</h3><span class="badge">'+fmt(save.inventory.scrap)+' skrot</span></div><p>Våben skyder automatisk fremad mod farer. Opgradér med skrot fra loot-kasser, krystaller og smadrede farer. Ved <b>Lv5</b> og <b>Lv10</b> får hvert våben en <b>evolution</b>. Økonomien er justeret, så første upgrades ikke kræver tre arbejdsuger i en mine, heldigvis.</p></div>';
+  html+='<div class="inventoryGrid">';
+  for(const key of WEAPON_ORDER){
+    const w=WEAPONS[key], own=weaponOwned(key), lvl=weaponLevel(key), st=weaponStats(key), eq=currentWeaponKey()===key;
+    const mx=weaponMax(key), maxed=own&&weaponMaxed(key);
+    const cost=own?weaponUpgradeCost(key):0;
+    const lockTxt = w.locked && !own ? 'Forskes frem i Laboratoriet' : (own?'Find flere i minen':'Find i mine');
+    const evoTags = own ? `${lvl>=5?'<span style="color:#ffd35a">EVO I</span>':''}${lvl>=10?' <span style="color:#ff3df2">EVO II</span>':''}` : '';
+    html+=`<div class="weaponCard ${own?'':'locked'} ${eq?'equipped':''}">
+      <div class="itemTop"><h3>${own?'':'🔒 '}${w.name}</h3><span class="badge">${w.rarity}${own?' · Lv'+lvl+'/'+mx:''}</span></div>
+      <p>${w.desc} ${evoTags}</p>
+      <div class="weaponStats">
+        <span>DMG ${st.damage.toFixed(1)}</span><span>Range ${Math.round(st.range)}</span><span>CD ${st.cooldown.toFixed(2)}s</span><span>Pierce ${st.pierce}${(st.leech||0)>0?' · Leech':''}</span>
+      </div>
+      <button class="equipBtn" data-equip="${key}" ${!own||eq?'disabled':''}>${eq?'Udstyret':own?'Equip':lockTxt}</button>
+      <button class="upgradeWeaponBtn" data-wup="${key}" ${!own||maxed||save.inventory.scrap<cost?'disabled':''}>${!own?'Låst':maxed?'MAX':'Opgradér '+cost+' skrot'}</button>
+    </div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+  el.querySelectorAll('[data-equip]').forEach(btn=>btn.onclick=()=>equipWeapon(btn.dataset.equip));
+  el.querySelectorAll('[data-wup]').forEach(btn=>btn.onclick=()=>upgradeWeapon(btn.dataset.wup));
+}
+
+function objectiveText(goal){
+  const parts=[];
+  if(goal.finish) parts.push('nå mål');
+  if(goal.score) parts.push('score '+fmt(goal.score));
+  if(goal.bank) parts.push('bank '+fmt(goal.bank));
+  if(goal.coins) parts.push('saml '+goal.coins+' guld');
+  if(goal.skips) parts.push('skip '+goal.skips+' porte');
+  if(goal.perfect) parts.push('ram '+goal.perfect+' perfect');
+  if(goal.smash) parts.push('smadr '+goal.smash+' farer');
+  return parts.join(' + ');
+}
+function campaignStarsFor(id){
+  return (save.campaign && save.campaign.stars && save.campaign.stars[id]) || 0;
+}
+function renderCampaign(el){
+  if(!save.campaign) save.campaign={unlocked:1,current:1,stars:{}};
+  const unlocked=save.campaign.unlocked||1;
+  let html='<div class="item"><h3>Kampagne</h3><p>Banerne bliver længere, smallere og mere aggressive. Her lærer spillet dig at banke, skippe, bruge evner og faktisk styre dværgen i stedet for bare at sende ham i døden som en lille behåret drone.</p></div>';
+  html+='<div class="campaignGrid">';
+  for(const lvl of CAMPAIGN_LEVELS){
+    const locked=lvl.id>unlocked;
+    const stars=campaignStarsFor(lvl.id);
+    html+=`<div class="campaignCard ${locked?'locked':''}">
+      <div class="itemTop"><h3>${lvl.id}. ${lvl.name}</h3><span class="stars">${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</span></div>
+      <p>${lvl.unlock}</p>
+      <div class="objectiveLine">Mål: ${objectiveText(lvl.goal)}</div>
+      <p>Speed ${lvl.speed.toFixed(2)} · farer ${lvl.hazards.toFixed(2)} · bredde ${lvl.width.toFixed(2)}</p>
+      <button class="startBtn" data-campaign="${lvl.id}" ${locked?'disabled':''}>${locked?'Låst':'Start bane'}</button>
+    </div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+  el.querySelectorAll('[data-campaign]').forEach(btn=>btn.onclick=()=>{ audioEnsure(); audioResume(); engineStart(); startCampaignLevel(Number(btn.dataset.campaign)); });
+}
+function renderSkills(el){
+  let html='<div class="item"><h3>Skills</h3><p>Permanent progression købt for guld. Det giver flere muligheder, men hvis du flyver ind i en sten med ansigtet først, hjælper økonomisk vækst stadig ikke meget.</p></div>';
+  html+='<div class="skillGrid">';
+  for(const [key,sk] of Object.entries(SKILLS)){
+    const lvl=skillLevel(key), cost=skillCost(key);
+    const maxed=lvl>=sk.max;
+    html+=`<div class="skillCard">
+      <div class="itemTop"><h3>${sk.name}</h3><span class="badge">Lv ${lvl}/${sk.max}</span></div>
+      <p>${sk.desc}</p>
+      <div class="progress"><div style="width:${(lvl/sk.max*100).toFixed(0)}%"></div></div>
+      <button class="skillBtn" data-skill="${key}" ${maxed||save.gold<cost?'disabled':''}>${maxed?'MAX':'Køb '+cost+'g'}</button>
+    </div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+  el.querySelectorAll('[data-skill]').forEach(btn=>btn.onclick=()=>buySkill(btn.dataset.skill));
+}
+
+function renderUpgrades(el){
+  let html='<div class="item"><h3>Udstyr</h3><p>Core, bankchip og evne. Hver kan opgraderes til <b>Lv'+MAX_GEAR_LEVEL+'</b>. Piloterne er flyttet til <b>Helte</b>-fanen, hvor de leveler via XP. Gælder i Random / Kaos / Træning / Kampagne / Overlevelse — ikke i de fair modes.</p></div>';
+  html+='<div class="list">';
+  for(const [type,label] of [['cores','Core'],['chips','Bankchips'],['abilities','Evner']]){
+    html += `<div class="item"><h3>${label}</h3></div>`;
+    for(const [key,item] of Object.entries(DATA[type])){
+      const own=owned(type,key), lvl=itemLevel(type,key), maxed=own&&gearMaxed(type,key);
+      const cost=own?upgradeCost(type,key):item.cost;
+      const disabled = maxed || save.gold<cost;
+      html += `<div class="item">
+        <div class="itemTop">
+          <div><h3>${own?'':'🔒 '}${item.name} ${own?`Lv${lvl}/${MAX_GEAR_LEVEL}`:''}</h3><p>${item.desc}</p></div>
+          <button class="buyBtn" data-buy="${type}:${key}" ${disabled?'disabled':''}>${maxed?'MAX':own?'Opgradér':'Køb'} ${maxed?'':cost+'g'}</button>
+        </div>
+        ${own?`<div class="progress"><div style="width:${Math.min(100,lvl/MAX_GEAR_LEVEL*100)}%"></div></div>`:''}
+      </div>`;
+    }
+  }
+  html+='</div>';
+  el.innerHTML=html;
+  el.querySelectorAll('[data-buy]').forEach(btn=>btn.onclick=()=>buyOrUpgrade(btn.dataset.buy));
+}
+function buyOrUpgrade(str){
+  const [type,key]=str.split(':');
+  const item=getItem(type,key);
+  const isOwn=owned(type,key);
+  if(!isOwn && item.research && !researchDone(item.research)){ toast('Vølund vækkes i Laboratoriet — ikke til salg endnu.'); return; }
+  if(isOwn && gearMaxed(type,key)){ toast('Maks-level nået.'); return; }
+  const cost=isOwn?upgradeCost(type,key):item.cost;
+  if(save.gold<cost){toast('For lidt guld. Klassisk fattigdom.'); return;}
+  save.gold-=cost;
+  if(!isOwn){
+    save.owned[type].push(key);
+    save.levels[type][key]=1;
+    const prop = type==='pilots'?'pilot':type==='cores'?'core':type==='chips'?'chip':'ability';
+    save.selected[prop]=key;
+    if(type==='pilots') ensureCharacters();
+    toast(`Købt: ${item.name}`);
+  }else{
+    save.levels[type][key]=(save.levels[type][key]||1)+1;
+    toast(`Opgraderet: ${item.name} Lv${save.levels[type][key]}`);
+  }
+  sfx.ui();
+  persist(); refreshMenu();
+}
+function fmtDur(ms){
+  const s=Math.round(ms/1000);
+  if(s<60) return s+'s';
+  const m=Math.floor(s/60);
+  if(m<60) return m+' min';
+  const h=Math.floor(m/60), mm=m%60;
+  return h+' t'+(mm?(' '+mm+'m'):'');
+}
+function fmtRemain(ms){
+  ms=Math.max(0,ms);
+  const s=Math.ceil(ms/1000);
+  if(s<60) return s+'s';
+  const m=Math.floor(s/60), ss=s%60;
+  if(m<60) return m+'m '+String(ss).padStart(2,'0')+'s';
+  const h=Math.floor(m/60), mm=m%60;
+  return h+'t '+String(mm).padStart(2,'0')+'m';
+}
+function statSummary(obj){
+  const names={lift:'Løft',control:'Kontrol',greed:'Grådighed',bank:'Bank',perfect:'Perfekt',split:'Split',hp:'HP',hammer:'Smash',magnet:'Sug',speed:'Fart',cd:'Evne-cd',salvage:'Redning',coin:'Guld',xp:'XP',interest:'Rente',refund:'Refusion',weapon:'Våben',ultcharge:'Ult-lad',data:'Data'};
+  const parts=[];
+  for(const [k,v] of Object.entries(obj)){
+    if(Math.abs(v)<0.0001) continue;
+    const lbl=names[k]||k;
+    if(k==='hp') parts.push('+'+Math.round(v)+' '+lbl);
+    else parts.push((v>0?'+':'')+Math.round(v*100)+'% '+lbl);
+  }
+  return parts;
+}
+function selectCharacter(key){
+  if(!owned('pilots',key)){ toast('Helten er ikke låst op endnu.'); return; }
+  save.selected.pilot=key; sfx.ui(); persist(); refreshMenu();
+}
+function renderCharacters(el){
+  ensureCharacters();
+  const active=activeChar();
+  let html='<div class="item"><h3>Helte</h3><p>Hver helt har <b>eget level</b>, <b>XP</b>, et unikt <b>ULTIMATE</b> (knap nederst til højre i kampen) og <b>perks</b> der låses op når helten leveler. Helten du spiller, får XP efter hvert run. Vælg en helt, og dyrk dens speciale. <b>Fair modes (Dagens Mine + Duel) bruger altid Bram + standard-build — så leaderboardet ikke forurenes.</b></p></div>';
+  html+='<div class="charGrid">';
+  for(const key of CHAR_ORDER){
+    const c=CHARACTERS[key]; if(!c) continue;
+    const item=DATA.pilots[key];
+    const own=owned('pilots',key);
+    const lvl=charLevel(key), xp=charXp(key), need=charXpNeed(lvl);
+    const isActive=active===key && own;
+    const researchLock = c.research && !own;
+    const passive=statSummary(characterStats(key)).slice(0,4).join(' · ')||'—';
+    const next=c.perks.find(p=>lvl<p.lvl);
+    let perksHtml='<div class="perkList">';
+    for(const p of c.perks){
+      const got=lvl>=p.lvl;
+      perksHtml+=`<div class="perk ${got?'got':''}"><span class="perkLvl">Lv${p.lvl}</span> <b>${got?'✓ ':'🔒 '}${p.name}</b> <span class="perkNote">${p.note}</span></div>`;
+    }
+    perksHtml+='</div>';
+    let btn;
+    if(isActive) btn=`<button class="charBtn active" disabled>★ Aktiv helt</button>`;
+    else if(own) btn=`<button class="charBtn" data-pick="${key}">Vælg helt</button>`;
+    else if(researchLock) btn=`<button class="charBtn locked" disabled>🔬 Vækkes i Laboratoriet</button>`;
+    else btn=`<button class="charBtn buy" data-cbuy="${key}" ${save.gold<item.cost?'disabled':''}>Lås op · ${item.cost}g</button>`;
+    html+=`<div class="charCard ${isActive?'activeCard':''} ${own?'':'lockedCard'}" style="--cc:${c.color}">
+      <div class="charHead">
+        <div><h3>${item.name}</h3><div class="charRole" style="color:${c.color}">${c.role}${own?' · Lv'+lvl+'/'+CHAR_MAX:''}</div></div>
+        ${own?`<span class="lvlBadge" style="border-color:${c.color}66;color:${c.color}">Lv ${lvl}</span>`:''}
+      </div>
+      ${own?`<div class="xpBar"><div style="width:${lvl>=CHAR_MAX?100:(xp/need*100).toFixed(0)}%;background:${c.color}"></div></div><div class="xpTxt">${lvl>=CHAR_MAX?'MAKS LEVEL':'XP '+fmt(xp)+' / '+fmt(need)}</div>`:''}
+      <div class="ultBox" style="border-color:${c.color}55"><b style="color:${c.color}">⚡ ${c.ultName}</b><span>${c.ultDesc}</span></div>
+      <div class="passiveLine">Passiv: ${passive}</div>
+      ${own&&next?`<div class="nextPerk">Næste perk: Lv${next.lvl} — ${next.name}</div>`:''}
+      ${perksHtml}
+      ${btn}
+    </div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+  el.querySelectorAll('[data-pick]').forEach(btn=>btn.onclick=()=>selectCharacter(btn.dataset.pick));
+  el.querySelectorAll('[data-cbuy]').forEach(btn=>btn.onclick=()=>{ buyOrUpgrade('pilots:'+btn.dataset.cbuy); });
+}
+function renderResearch(el){
+  ensureResearch();
+  if(!labUnlocked()){
+    el.innerHTML='<div class="item"><h3>🔬 Laboratoriet er forseglet</h3><p>Forskning åbner ved <b>konto-level '+labUnlockedAt()+'</b>. Du er level '+save.level+'. Spil et par runs, saml XP — og kom igen, når dværgen er kommet lidt længere i karrieren.</p></div>';
+    return;
+  }
+  const R=save.research;
+  let html='<div class="item"><div class="itemTop"><h3>🔬 Laboratorie</h3><span class="badge" style="color:#7CF6E3">'+fmt(R.points)+' data</span></div><p>Start projekter der <b>forsker over tid</b> — også mens spillet er lukket. De giver permanente bonusser, hæver maks-levels og låser nye helte og våben op. Forskningsdata får du ved at <b>smadre krystaller</b> i minen, fra kampagne og fra runs.'+(R.passiveGold?' <b>Drone:</b> +'+R.passiveGold+'g/run.':'')+'</p></div>';
+
+  // Aktive bænke
+  html+='<div class="item"><h3>Forskningsbænke ('+R.slots+')</h3></div>';
+  html+='<div class="benchGrid">';
+  for(let s=0;s<R.slots;s++){
+    const q=researchQueueEntry(s);
+    if(!q){ html+='<div class="benchCard empty"><div class="benchTop"><b>Bænk '+(s+1)+'</b><span class="badge">Ledig</span></div><p>Vælg et projekt nedenfor.</p></div>'; continue; }
+    const p=RESEARCH[q.id]||{name:q.id};
+    const ready=researchReady(s), prog=researchProgress(s);
+    const remain=Math.max(0,q.dur-(Date.now()-q.start));
+    html+=`<div class="benchCard ${ready?'ready':'running'}">
+      <div class="benchTop"><b>${p.name}</b><span class="badge">${ready?'✅ Klar':'⏳ '+fmtRemain(remain)}</span></div>
+      <div class="progress"><div style="width:${(prog*100).toFixed(1)}%;background:${ready?'#63ff9a':'linear-gradient(90deg,#41e8ff,#7CF6E3)'}"></div></div>
+      <button class="labBtn ${ready?'claim':''}" data-claim="${s}" ${ready?'':'disabled'}>${ready?'Hent belønning':'Forsker…'}</button>
+    </div>`;
+  }
+  html+='</div>';
+
+  // Tilgængelige projekter
+  html+='<div class="item"><h3>Projekter</h3></div>';
+  html+='<div class="list">';
+  const free=freeResearchSlot()>=0;
+  for(const id of RESEARCH_ORDER){
+    const p=RESEARCH[id]; if(!p) continue;
+    const done=!p.repeatable && researchDone(id);
+    const running=isResearching(id);
+    const levelLock=save.level<p.reqLevel;
+    const depLock=(p.reqDone||[]).some(d=>!researchDone(d));
+    const affordable=save.gold>=(p.cost.gold||0) && R.points>=(p.cost.data||0);
+    let status='', btn='';
+    const costStr=`${p.cost.gold?p.cost.gold+'g':''}${p.cost.gold&&p.cost.data?' · ':''}${p.cost.data?p.cost.data+' data':''}`||'gratis';
+    if(done){ status='<span class="done">✓ Færdig</span>'; }
+    else if(running){ status='<span class="running">⏳ I gang</span>'; }
+    else if(levelLock){ status='<span class="lock">Kræver level '+p.reqLevel+'</span>'; }
+    else if(depLock){ const names=(p.reqDone||[]).filter(d=>!researchDone(d)).map(d=>RESEARCH[d]?RESEARCH[d].name:d).join(', '); status='<span class="lock">Kræver: '+names+'</span>'; }
+    if(!done && !running && !levelLock && !depLock){
+      btn=`<button class="buyBtn" data-start="${id}" ${(!free||!affordable)?'disabled':''}>${!free?'Ingen ledig bænk':'Start'}</button>`;
+    }
+    html+=`<div class="item ${done?'researchDone':''}">
+      <div class="itemTop">
+        <div><h3>${p.name} <span class="catTag">${p.cat}</span></h3><p>${p.desc}</p></div>
+        ${btn}
+      </div>
+      <div class="researchMeta"><span>⏱ ${fmtDur(p.dur)}</span><span>💰 ${costStr}</span>${status}</div>
+    </div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+  el.querySelectorAll('[data-claim]').forEach(btn=>btn.onclick=()=>claimResearch(Number(btn.dataset.claim)));
+  el.querySelectorAll('[data-start]').forEach(btn=>btn.onclick=()=>startResearch(btn.dataset.start));
+}
+function ensureDailyMissions(){
+  const d=dayKey();
+  if(save.mission.date!==d){
+    save.mission={date:d,daily:{
+      bank:{target:8000, value:0, done:false, text:'Bank 8.000 score'},
+      coins:{target:45, value:0, done:false, text:'Saml 45 guld'},
+      skips:{target:8, value:0, done:false, text:'Skip 8 porte'},
+      bats:{target:6, value:0, done:false, text:'Smadr 6 bats/sten'}
+    }};
+    persist();
+  }
+}
+function ensureDailyRun(){
+  const d=dayKey();
+  if(save.dailyRun.date!==d){
+    save.dailyRun={date:d, tries:0, best:0};
+    persist();
+  }
+}
+function missionAdd(key,val){
+  ensureDailyMissions();
+  const m=save.mission.daily[key]; if(!m || m.done) return;
+  m.value += val;
+  if(m.value>=m.target){
+    m.done=true; save.gold+=180; gainXP(70);
+    toast(`Mission klaret: ${m.text} +180g`);
+  }
+}
+function renderMissions(el){
+  ensureDailyMissions();
+  let html='<div class="list">';
+  for(const [k,m] of Object.entries(save.mission.daily)){
+    const pct=Math.min(100,m.value/m.target*100);
+    html += `<div class="item"><div class="itemTop"><h3>${m.done?'✅':'⬜'} ${m.text}</h3><span class="badge">${Math.min(Math.floor(m.value),m.target)}/${m.target}</span></div><div class="progress"><div style="width:${pct}%"></div></div><p>Belønning: 180g + XP</p></div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+const ACH = {
+  firstCrash:{name:'Velkommen til væggen', text:'Crash første gang.'},
+  greedy:{name:'Grådig idiot', text:'Skip 5 porte i ét run.'},
+  rich:{name:'Lille kapitalist', text:'Hav 2.000 guld.'},
+  bankman:{name:'Bankmanden', text:'Bank 20.000 i ét run.'},
+  batkiller:{name:'Skadedyrsbekæmper', text:'Smadr 10 bats/sten totalt.'},
+  perfect:{name:'Ren linje', text:'Ram 3 perfect gates i ét run.'},
+  graze:{name:'Vægkysser', text:'Surf tæt på væggen i 6 sekunder samlet i ét run.'},
+  duelist:{name:'Skurvognskongen', text:'Vind en duel mod en ven.'},
+  finisher:{name:'Hele vejen', text:'Nå minens udgang i live.'},
+  survivor:{name:'Overlever', text:'Nå wave 8 i Overlevelse.'},
+  armory:{name:'Våbenskab', text:'Find 4 forskellige våben.'},
+};
+function unlock(key){
+  if(save.achievements[key]) return;
+  save.achievements[key]=Date.now();
+  save.gold += 220; gainXP(80);
+  toast(`Achievement: ${ACH[key].name} +220g`);
+}
+function renderAchievements(el){
+  let html='<div class="list">';
+  for(const [k,a] of Object.entries(ACH)){
+    const done=!!save.achievements[k];
+    html += `<div class="item"><div class="itemTop"><h3>${done?'🏆':'🔒'} ${a.name}</h3><span class="badge">${done?'Klar':'Mangler'}</span></div><p>${a.text}</p></div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+}
+function renderLeaderboard(el){
+  const tSeed=todaySeed();
+  const today=save.leaderboard.filter(r=>r.seed===tSeed && r.mode==='Dagens Mine').sort((a,b)=>b.score-a.score).slice(0,5);
+  const all=[...save.leaderboard].sort((a,b)=>b.score-a.score).slice(0,12);
+  if(!all.length){el.innerHTML='<div class="item"><h3>Ingen runs endnu</h3><p>Spil først. Databaser bliver mærkeligt nok ikke fyldt af gode intentioner.</p></div>'; return;}
+  let html='<div class="list">';
+  if(today.length){
+    html+='<div class="item"><h3>🌞 Dagens Mine (i dag)</h3></div>';
+    html+=today.map((r,i)=>`<div class="item"><div class="itemTop"><h3>#${i+1} ${fmt(r.score)}</h3><span class="badge">forsøg</span></div><p>Peak x${r.peak.toFixed(2)} · bank ${fmt(r.bank)}</p></div>`).join('');
+  }
+  html+='<div class="item"><h3>🏆 Alle tiders</h3></div>';
+  html+=all.map((r,i)=>`<div class="item"><div class="itemTop"><h3>#${i+1} ${fmt(r.score)}</h3><span class="badge">${r.mode}</span></div><p>Peak x${r.peak.toFixed(2)} · bank ${fmt(r.bank)} · seed ${String(r.seed).slice(0,6)}</p></div>`).join('');
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+
+/* ===== 09-ui-bindings.js ===== */
+/* ================= UI-BINDINGS ================= */
+['pilotSel','coreSel','chipSel','abilitySel'].forEach(id=>{
+  $(id).addEventListener('change',e=>{
+    const prop=id==='pilotSel'?'pilot':id==='coreSel'?'core':id==='chipSel'?'chip':'ability';
+    save.selected[prop]=e.target.value; persist(); refreshMenu();
+  });
+});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab; sfx.ui(); renderTab();});
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{ audioEnsure(); audioResume(); engineStart(); startMode(b.dataset.mode); });
+$('retryBtn').onclick=()=>{ sfx.ui(); retryRun(); };
+$('newBtn').onclick=()=>{ sfx.ui(); hideGameOver(); startMode('random'); };
+$('menuBtn').onclick=()=>{ sfx.ui(); hideGameOver(); showMenu(); };
+$('shareBtn').onclick=()=>{ if(currentMode==='campaign' && lastCampaignClear){ const next=(activeCampaignLevel?activeCampaignLevel.id+1:1); if(next<=CAMPAIGN_LEVELS.length){ hideGameOver(); startCampaignLevel(next); } else showMenu(); } else shareChallenge(); };
+$('resumeBtn').onclick=()=>resumeGame();
+$('quitBtn').onclick=()=>{ $('pauseOv').style.display='none'; endRun(false,'Run afbrudt. Dværgen gik til frokost.'); };
+$('pauseBtn').onclick=()=>{ if(state==='play') pauseGame(); else if(state==='pause') resumeGame(); };
+let resetArmed=false, resetTimer=null;
+$('resetBtn').onclick=()=>{
+  const b=$('resetBtn');
+  if(!resetArmed){
+    resetArmed=true; b.textContent='Tryk igen for at slette ALT';
+    b.style.background='#ff496c'; b.style.color='#fff';
+    clearTimeout(resetTimer);
+    resetTimer=setTimeout(()=>{ resetArmed=false; b.textContent='Nulstil al fremgang'; b.style.background='#ffffff0a'; b.style.color='#ff8aa0'; }, 4000);
+    return;
+  }
+  clearTimeout(resetTimer); resetArmed=false;
+  try{ localStorage.removeItem('graadig_dvaerg_v3'); }catch(e){}
+  location.reload();
+};
+$('soundBtn').onclick=()=>{
+  save.sound=!save.sound; persist();
+  $('soundBtn').textContent = save.sound?'🔊':'🔇';
+  if(audioEnsure()) masterGain.gain.value = save.sound?0.55:0;
+  toast(save.sound?'Lyd til':'Lyd fra');
+};
+
+function toast(text){
+  const wrap=$('toast');
+  const d=document.createElement('div');
+  d.textContent=text;
+  wrap.appendChild(d);
+  setTimeout(()=>{d.style.opacity='0'; d.style.transform='translateY(-8px)';},2400);
+  setTimeout(()=>d.remove(),3000);
+}
+function flash(text){
+  const m=$('msg'); m.textContent=text; m.classList.add('show');
+  clearTimeout(flash.t); flash.t=setTimeout(()=>m.classList.remove('show'),900);
+}
+
+
+/* ===== 10-input.js ===== */
+/* ================= INPUT ================= */
+let inputDown=false;
+function isUIBtn(e){
+  return e.target && e.target.closest && e.target.closest('#hammerBtn, #ultBtn, .hudBtns, #menu, #gameOver, #pauseOv, #nameDlg');
+}
+addEventListener('pointerdown',e=>{
+  audioEnsure(); audioResume(); engineStart();
+  if(state!=='play'){ return; }
+  if(isUIBtn(e)){ return; }
+  inputDown=true;
+  e.preventDefault();
+},{passive:false});
+addEventListener('pointerup',e=>{
+  if(isUIBtn(e)) return;
+  inputDown=false;
+},{passive:true});
+addEventListener('pointercancel',()=>{inputDown=false;},{passive:true});
+$('hammerBtn').addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); triggerAbility();},{passive:false});
+$('ultBtn').addEventListener('pointerdown',e=>{e.preventDefault(); e.stopPropagation(); triggerUltimate();},{passive:false});
+addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.code==='ArrowUp'){ inputDown=true; if(state==='over') retryRun(); }
+  if(e.code==='KeyF') triggerAbility();
+  if(e.code==='KeyR' && state==='over') retryRun();
+  if(e.code==='Escape'){ if(state==='play') pauseGame(); else if(state==='pause') resumeGame(); }
+});
+addEventListener('keyup',e=>{
+  if(e.code==='Space'||e.code==='ArrowUp') inputDown=false;
+});
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('visibilitychange',()=>{ if(document.hidden && state==='play') pauseGame(); });
+addEventListener('blur',()=>{ if(state==='play') pauseGame(); });
+addEventListener('pagehide',()=>persist());
+
+
+/* ===== 11-spil-tilstand.js ===== */
+/* ================= SPIL-TILSTAND ================= */
+const SIM_DT = 1/60;
+let state='menu';
+let currentMode='daily', currentSeed=todaySeed();
+let modeMods=null, duelTarget=null, activeCampaignLevel=null, lastCampaignClear=false;
+let track=[], gates=[], coins=[], hazards=[], weaponCrates=[], gi=0, ci=0, hi=0, wi=0, trackEndX=28000;
+let particles=[], floating=[];
+let ghost=null, runGhost=[];
+let dwarf=null, camX=0, pCamX=0, dist=0;
+let score=0, banked=0, livePot=0, mult=1, peak=1, skips=0, perfects=0, collectedGold=0, smashed=0, nearCount=0;
+let coinCombo=0, lastCoinT=-9;
+let grazeT=0, grazeTick=0, grazeTotal=0;
+let recordHit=false, bestAtStart=0;
+let simTick=0, acc=0, last=0, inputLevel=0;
+let hammerCd=0, shieldHp=1, runStatsCache=null, weaponCd=0, survivalWave=1, lastWave=1, survivalKills=0;
+let ultCharge=0, bankBoostT=0, autoPerfectN=0, weaponBoostT=0, runChar='bram', ultFlashT=0, runData=0;
+let freezeT=0, dieT=0, deathReason='', shakeMag=0, flashA=0, flashCol='#fff';
+let lastFinal=0, lastSurvived=false, lastDuelWon=false;
+let lastHeroXP=0, lastHeroKey='bram', lastRunData=0;
+let introPhase=0, heldT=0;
+let hudDirty=true, hudT=0;
+
+const GATE_COLOR={bank:'#63ff9a',split:'#41e8ff',greed:'#ff3df2',perfect:'#ffd35a'};
+const GATE_TIP={bank:'GRØN = BANK · gem dine point', split:'CYAN = SPLIT · bank halvdelen', greed:'PINK = GRÅDIG · boost x', perfect:'GUL = PERFEKT · ram midten'};
+
+function showMenu(){ state='menu'; $('menu').style.display='flex'; $('duelBar').style.display='none'; refreshMenu(); engineUpdate(); }
+function hideMenu(){ $('menu').style.display='none'; }
+function hideGameOver(){ $('gameOver').style.display='none'; $('gameOver').classList.remove('arm'); }
+
+function startMode(mode){
+  if(mode==='campaign'){
+    if(!save.campaign) save.campaign={unlocked:1,current:1,stars:{}};
+    startCampaignLevel(save.campaign.current || save.campaign.unlocked || 1);
+    return;
+  }
+  if(mode==='daily'){
+    ensureDailyRun();
+    if(save.dailyRun.tries>=3){
+      toast('Ingen forsøg tilbage i dag. Minen åbner igen i morgen.');
+      activeTab='leaderboard'; renderTab();
+      return;
+    }
+    duelTarget=null;
+    startGame('daily', todaySeed());
+  } else {
+    duelTarget=null;
+    startGame(mode, randomSeed());
+  }
+}
+function retryRun(){
+  if(state!=='over') return;
+  hideGameOver();
+  if(currentMode==='daily'){
+    ensureDailyRun();
+    if(save.dailyRun.tries>=3){ toast('Ingen forsøg tilbage i dag.'); showMenu(); return; }
+    startGame('daily', todaySeed());
+  } else {
+    startGame(currentMode, currentSeed);
+  }
+}
+function startDuel(seed, targetScore, name){
+  duelTarget={score:targetScore, name:name||'Ukendt dværg'};
+  activeCampaignLevel=null;
+  startGame('duel', seed);
+}
+function startCampaignLevel(id){
+  if(!save.campaign) save.campaign={unlocked:1,current:1,stars:{}};
+  id=clamp(Math.floor(id||1),1,CAMPAIGN_LEVELS.length);
+  if(id>(save.campaign.unlocked||1)){ toast('Bane låst. Spil den forrige. Revolutionerende system.'); return; }
+  activeCampaignLevel=CAMPAIGN_LEVELS.find(l=>l.id===id) || CAMPAIGN_LEVELS[0];
+  save.campaign.current=id;
+  duelTarget=null;
+  persist();
+  startGame('campaign', activeCampaignLevel.seed);
+}
+
+function startGame(mode,seed){
+  currentMode=mode; currentSeed=seed>>>0;
+  if(mode==='campaign' && activeCampaignLevel){
+    modeMods={
+      speed:activeCampaignLevel.speed,
+      coins:activeCampaignLevel.coins,
+      hazards:activeCampaignLevel.hazards,
+      label:'Kampagne '+activeCampaignLevel.id,
+      fair:false,
+      campaign:true,
+      length:activeCampaignLevel.length,
+      width:activeCampaignLevel.width
+    };
+  } else {
+    modeMods = {
+      daily:{speed:1, coins:1, hazards:1, label:'Dagens Mine', fair:true},
+      duel:{speed:1, coins:1, hazards:1, label:'DUEL', fair:true},
+      survival:{speed:1.02, coins:1.42, hazards:1.62, label:'Overlevelse', fair:false, survival:true, length:270, width:.94},
+      random:{speed:1, coins:1, hazards:1, label:'Random', fair:false},
+      practice:{speed:.85, coins:.6, hazards:.65, label:'Træning', fair:false},
+      chaos:{speed:1.15, coins:1.55, hazards:1.45, label:'Kaos', fair:false}
+    }[mode] || {speed:1,coins:1,hazards:1,label:mode,fair:false};
+  }
+  runStatsCache = modeMods.fair ? Object.assign({},FAIR_STATS) : buildStats();
+  hideMenu(); hideGameOver(); $('pauseOv').style.display='none';
+  state='play';
+  track=makeTrack(currentSeed);
+  gates=makeGates(currentSeed);
+  coins=makeCoins(currentSeed, modeMods);
+  hazards=makeHazards(currentSeed, modeMods);
+  weaponCrates=makeWeaponCrates(currentSeed, modeMods);
+  gi=0; ci=0; hi=0; wi=0;
+  particles=[]; floating=[];
+  dwarf={ sx:clamp(W*0.24,90,170), y:H*0.5, py:H*0.5, vy:0, r:18, hitR:10.5, rot:0, inv:1.0, shield:0, magnet:0, dash:0, slow:0, over:0 };
+  camX=0; pCamX=0; dist=0;
+  score=0; banked=0; livePot=0; mult=1; peak=1; skips=0; perfects=0; collectedGold=0; smashed=0; nearCount=0;
+  coinCombo=0; lastCoinT=-9;
+  grazeT=0; grazeTick=0; grazeTotal=0;
+  recordHit=false; bestAtStart=save.best;
+  simTick=0; acc=0; inputLevel=0; inputDown=false;
+  hammerCd=0; weaponCd=0; survivalWave=1; lastWave=1; survivalKills=0; shieldHp=1+Math.floor(runStatsCache.hp||0);
+  ultCharge=0; bankBoostT=0; autoPerfectN=0; weaponBoostT=0; ultFlashT=0; runData=0;
+  runChar = modeMods.fair ? 'bram' : activeChar();
+  freezeT=0; dieT=0; shakeMag=0; flashA=0;
+  runGhost=[]; ghost=loadGhost(currentSeed);
+  $('modeBadge').textContent=modeMods.label;
+  if(mode==='survival'){ $('subInfo').textContent='Wave 1 · loot jagt'; }
+  else if(mode==='campaign' && activeCampaignLevel){ $('subInfo').textContent=activeCampaignLevel.name; }
+  else if(mode==='daily'){ ensureDailyRun(); $('subInfo').textContent='forsøg '+(save.dailyRun.tries+1)+'/3'; }
+  else if(mode==='duel' && duelTarget){ $('subInfo').textContent='mål '+fmt(duelTarget.score); }
+  else { $('subInfo').textContent='seed '+String(currentSeed).slice(0,6); }
+  $('fairPill').style.display = modeMods.fair ? 'inline-block' : 'none';
+  if(mode==='duel' && duelTarget){
+    $('duelBar').style.display='block';
+    $('duelName').textContent='DUEL mod '+duelTarget.name+' · slå '+fmt(duelTarget.score);
+    $('duelFill').style.width='0%';
+  } else if(mode==='campaign' && activeCampaignLevel){
+    $('duelBar').style.display='block';
+    $('duelName').textContent='KAMPAGNE '+activeCampaignLevel.id+' · '+objectiveText(activeCampaignLevel.goal);
+    $('duelFill').style.width='0%';
+  } else { $('duelBar').style.display='none'; }
+  if(!save.seenIntro){ introPhase=1; heldT=0; $('introText').textContent='HOLD SKÆRMEN = STIG'; $('intro').style.display='flex'; }
+  else { introPhase=0; $('intro').style.display='none'; }
+  flash(modeMods.label+' — KLAR!');
+  hudDirty=true;
+  last=now();
+  requestAnimationFrame(loop);
+}
+
+
+/* ===== 12-verden-resize-sikker-y-gemmes-som-broeker.js ===== */
+/* ================= VERDEN (resize-sikker: y gemmes som brøker) ================= */
+function makeTrack(seed){
+  const r=mulberry32(seed^0xABCDEF);
+  const points=[];
+  let center=0.5, width=0.34;
+  const N=(modeMods && modeMods.length) ? modeMods.length : 150;
+  for(let i=0;i<N;i++){
+    center = clamp(center + (r()-.5)*0.14, .23, .77);
+    const shrink = Math.min(.19, i/N*.17);
+    width = clamp((.38 - shrink + (r()-.5)*.05) * ((modeMods && modeMods.width) || 1), .135, .46);
+    if(i%17===0) width*=0.72;
+    points.push({x:i*190, c:center, w:width});
+  }
+  trackEndX=(N-1)*190;
+  return points;
+}
+function sampleTrack(x){
+  const step=190;
+  const i=clamp(Math.floor(x/step),0,track.length-2);
+  const t=clamp((x-track[i].x)/step,0,1);
+  const c=lerp(track[i].c,track[i+1].c,t);
+  const w=lerp(track[i].w,track[i+1].w,t);
+  const mid=c*H, half=w*H;
+  return {top:mid-half, bot:mid+half, mid, half};
+}
+function makeGates(seed){
+  const r=mulberry32(seed^0x12345);
+  const arr=[];
+  const types=['bank','split','greed','perfect'];
+  let x=560;
+  for(let i=0;i<60;i++){
+    x += 360 + r()*210;
+    if(x>trackEndX-700) break;
+    const type=types[Math.floor(r()*types.length)];
+    arr.push({
+      x, type,
+      o:(r()-.5)*2,
+      decay:Math.max(.62, 1-i*.006),
+      gapBase: type==='perfect'?0.082:0.108,
+      used:false, skipped:false, seen:false
+    });
+  }
+  return arr;
+}
+function gateGeom(g){
+  const s=sampleTrack(g.x);
+  const gap=g.gapBase*H*g.decay;
+  const y=clamp(s.mid + g.o*s.half*1.15, s.top+gap, s.bot-gap);
+  return {y,gap};
+}
+function makeCoins(seed,mods){
+  const r=mulberry32(seed^0x9876);
+  const arr=[];
+  const n=Math.floor(185*mods.coins);
+  for(let i=0;i<n;i++){
+    const x=340+r()*(trackEndX-1100);
+    const tF=r();
+    const val=r()<.12?5:1;
+    arr.push({x,tF,val,taken:false,r:(val===5?8:5),px:null,py:0});
+  }
+  arr.sort(function(a,b){return a.x-b.x;});
+  return arr;
+}
+function makeHazards(seed,mods){
+  const r=mulberry32(seed^0xFEED);
+  const arr=[];
+  const n=Math.floor(132*mods.hazards);
+  const sv=(mods&&mods.survival)?1.22:1;
+  for(let i=0;i<n;i++){
+    const x=760+r()*(trackEndX-1400);
+    const roll=r();
+    // bat ~38% · rock ~26% · spike ~16% · saw ~13% · crystal ~7%
+    const type = roll<.38?'bat' : roll<.64?'rock' : roll<.80?'spike' : roll<.93?'saw' : 'crystal';
+    const baseHp = type==='rock'?2.2 : type==='bat'?1.0 : type==='spike'?1.7 : type==='saw'?3.6 : 7.0;
+    // jo længere inde i banen, jo sejere farer — belønner våben-investering og holder presset oppe
+    const depth = 1 + (x/Math.max(1,trackEndX))*0.85;
+    const hp = baseHp * sv * depth * (type==='crystal'?(1+ (mods&&mods.survival?0.5:0)):1);
+    arr.push({
+      x,type,
+      edge:r()<.5?'top':'bot',
+      tF:r(),
+      phase:r()*Math.PI*2,
+      amp: type==='saw' ? (26+r()*24) : (8+r()*9),
+      dead:false, near:false, counted:false,
+      r:(type==='rock'?17:type==='bat'?14:type==='spike'?20:type==='saw'?22:19),
+      hitR:(type==='rock'?10:type==='bat'?6.5:type==='spike'?12:type==='saw'?12.5:11),
+      hp:hp, hpMax:hp
+    });
+  }
+  arr.sort(function(a,b){return a.x-b.x;});
+  return arr;
+}
+
+function makeWeaponCrates(seed,mods){
+  const r=mulberry32(seed^0xC0FFEE);
+  const arr=[];
+  const n=Math.floor((mods&&mods.survival?58:20) * ((mods&&mods.coins)||1));
+  for(let i=0;i<n;i++){
+    const x=520 + r()*(trackEndX-950);
+    const roll=r();
+    const kind = roll<0.24 ? 'weapon' : roll<0.70 ? 'scrap' : roll<0.84 ? 'medkit' : 'relic';
+    const weights = kind==='weapon'
+      ? (r()<.52?'crossbow':r()<.75?'chain':r()<.89?'blunder':r()<.97?'drillgun':'runeblade')
+      : null;
+    arr.push({x,tF:r(),kind,weapon:weights,taken:false,px:null,py:0,r:13});
+  }
+  arr.sort(function(a,b){return a.x-b.x;});
+  return arr;
+}
+
+function hazardY(h,s){
+  if(h.type==='spike') return h.edge==='top'? s.top+12 : s.bot-12;
+  const base=lerp(s.top+35,s.bot-35,h.tF);
+  if(h.type==='bat') return base + Math.sin(simTick*SIM_DT*4 + h.phase)*h.amp;
+  if(h.type==='saw') return base + Math.sin(simTick*SIM_DT*6 + h.phase)*h.amp;
+  return base; // rock + crystal stationary
+}
+function loadGhost(seed){
+  const g=save.ghosts2[String(seed)];
+  if(!g || !Array.isArray(g.path) || g.path.length<4) return null;
+  return g;
+}
+function saveGhost(seed,path,scoreVal){
+  const k=String(seed);
+  const old=save.ghosts2[k];
+  if(!old || scoreVal>old.score){
+    save.ghosts2[k]={score:scoreVal,path:path.slice(0,1600)};
+    const keys=Object.keys(save.ghosts2);
+    if(keys.length>25) delete save.ghosts2[keys[0]];
+  }
+}
+
+
+/* ===== 13-fx-hjaelpere.js ===== */
+/* ================= FX-HJÆLPERE ================= */
+function shake(m){ shakeMag=Math.max(shakeMag,m); }
+function flashScreen(col,a){ flashCol=col; flashA=Math.max(flashA,a); }
+function addParticle(x,y,color,count,power){
+  count=count||8; power=power||1;
+  if(particles.length>240) return;
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2, sp=(80+Math.random()*220)*power;
+    particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:.35+Math.random()*.35,color});
+  }
+}
+function confetti(x,y){
+  const cols=['#ffd35a','#41e8ff','#ff3df2','#63ff9a'];
+  for(let i=0;i<36;i++){
+    const a=Math.random()*Math.PI*2, sp=120+Math.random()*320;
+    particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-160,life:.6+Math.random()*.5,color:cols[i%4]});
+  }
+}
+function floatText(x,y,text,color){
+  floating.push({x,y,text,color:color||'#fff',life:1});
+}
+function pumpMult(){
+  const el=$('multVal');
+  el.classList.remove('pump');
+  void el.offsetWidth;
+  el.classList.add('pump');
+  setTimeout(function(){el.classList.remove('pump');},140);
+}
+
+
+/* ===== 14-evne.js ===== */
+/* ================= EVNE ================= */
+function triggerAbility(){
+  if(state!=='play'||hammerCd>0) return;
+  const st=runStatsCache;
+  const ab = modeMods.fair ? 'hammer' : save.selected.ability;
+  hammerCd = Math.max(.9, 1.8 - (st.hammer||0) - (st.cd||0));
+  if(ab==='dash'){
+    dwarf.dash=.36; dwarf.inv=.36; flash('BERSÆRK DASH');
+    addParticle(camX+dwarf.sx,dwarf.y,'#ff9d3d',24,1.5);
+    sfx.skip();
+  }else if(ab==='shield'){
+    dwarf.shield=2.2; dwarf.inv=.5; flash('SKJOLDBRØL');
+    addParticle(camX+dwarf.sx,dwarf.y,'#41e8ff',20,1.1);
+    sfx.split();
+  }else if(ab==='magnet'){
+    dwarf.magnet=3.8; flash('GULDMAGNET');
+    addParticle(camX+dwarf.sx,dwarf.y,'#ffd35a',18,1);
+    sfx.coin(4);
+  }else if(ab==='drill'){
+    flash('TUNNELBOR!');
+    drillBlast();
+  }else if(ab==='chrono'){
+    dwarf.slow=2.15; dwarf.inv=.35; flash('TIDSSPRÆKKE');
+    flashScreen('#41e8ff',.28); sfx.perfect(); shake(5);
+  }else if(ab==='overcharge'){
+    dwarf.over=2.2; mult*=1.42; livePot+=260*mult; flash('OVERLADNING x'+mult.toFixed(2));
+    flashScreen('#ff3df2',.32); sfx.skip(); pumpMult(); shake(8);
+  }else{
+    flash('HAMMER!');
+    smashAhead();
+  }
+  buzz(15);
+}
+
+function drillBlast(){
+  const wx=camX+dwarf.sx;
+  let hit=0;
+  for(let i=hi;i<hazards.length;i++){
+    const h=hazards[i];
+    if(h.x>wx+260) break;
+    if(h.dead) continue;
+    const sh=sampleTrack(h.x), hy=hazardY(h,sh);
+    if(h.x>wx-25 && Math.abs(hy-dwarf.y)<115){
+      killHazard(h,hy,'BOR',1.25); hit++; smashed++;
+    }
+  }
+  if(hit){ sfx.smash(); shake(13); flashScreen('#ff9d3d',.28); missionAdd('bats',hit); }
+  else { sfx.ui(); }
+}
+
+function smashAhead(){
+  const wx=camX+dwarf.sx;
+  let hit=0;
+  for(let i=hi;i<hazards.length;i++){
+    const h=hazards[i];
+    if(h.x>wx+170) break;
+    if(h.dead) continue;
+    const s=sampleTrack(h.x);
+    const hy=hazardY(h,s);
+    const dx=h.x-wx, dy=hy-dwarf.y;
+    if(dx>-20 && dx<150 && Math.abs(dy)<80){
+      killHazard(h,hy,'SMASH',1); hit++; smashed++;
+    }
+  }
+  if(hit){ sfx.smash(); shake(7); missionAdd('bats',hit); if(smashed>=10) unlock('batkiller'); }
+  else sfx.ui();
+}
+
+
+/* ===== 15-ultimate-kun-pve-fair-modes-laast-til-bram.js ===== */
+/* ================= ULTIMATE (kun PvE — fair modes låst til Bram) ================= */
+function addUlt(n){
+  if(state!=='play') return;
+  ultCharge = Math.min(1, ultCharge + n*(1+(runStatsCache?(runStatsCache.ultcharge||0):0)));
+}
+function clearHazardsOnScreen(reason, rmul, scoreEach){
+  const wx=camX+dwarf.sx; let hit=0;
+  for(let i=hi;i<hazards.length;i++){
+    const h=hazards[i];
+    if(h.x>wx+W) break;
+    if(h.dead || h.x<wx-120) continue;
+    const sh=sampleTrack(h.x), hy=hazardY(h,sh);
+    killHazard(h,hy,reason,rmul||1); smashed++; hit++;
+    if(scoreEach) livePot+=scoreEach*mult;
+  }
+  if(hit) missionAdd('bats',hit);
+  return hit;
+}
+function triggerUltimate(){
+  if(state!=='play' || ultCharge<1) return;
+  ultCharge=0; ultFlashT=0.6;
+  const c=CHARACTERS[runChar]||CHARACTERS.bram;
+  const wx=camX+dwarf.sx;
+  flash(c.ultName.toUpperCase()+'!');
+  flashScreen(c.color||'#ffd35a',.42); shake(16); sfx.record(); buzz(40);
+  confetti(wx,dwarf.y-30);
+  switch(runChar){
+    case 'bram':{ // Guldregn
+      const grab=livePot*0.55*2;
+      banked+=grab; livePot*=0.45; bankBoostT=4; mult=Math.max(1,mult*1.12);
+      floatText(wx,dwarf.y-60,'GULDREGN +'+fmt(grab),'#ffd35a');
+      for(let i=0;i<3;i++) addParticle(wx+i*8,dwarf.y,'#ffd35a',18,1.4);
+      sfx.bank(true); break; }
+    case 'ragnar':{ // Blodrus
+      mult*=1.8; dwarf.inv=3.5; dwarf.over=3.5; livePot+=300*mult;
+      floatText(wx,dwarf.y-60,'BLODRUS x'+mult.toFixed(2),'#ff496c');
+      flashScreen('#ff3df2',.3); pumpMult(); break; }
+    case 'frida':{ // Nålestik
+      dwarf.slow=4; autoPerfectN=3; dwarf.inv=1.2;
+      floatText(wx,dwarf.y-60,'NÅLESTIK · 3 auto-perfekt','#b388ff');
+      flashScreen('#41e8ff',.3); sfx.perfect(); break; }
+    case 'ulf':{ // Jordskælv
+      const hit=clearHazardsOnScreen('SKÆLV',1.2,120);
+      shieldHp=Math.min(ultShieldCap(), shieldHp+2);
+      livePot+=400*mult;
+      floatText(wx,dwarf.y-60,'JORDSKÆLV · '+hit+' knust','#ffb347');
+      sfx.smash(); break; }
+    case 'sigrid':{ // Krudttønde
+      let hit=0;
+      for(let i=hi;i<hazards.length;i++){
+        const h=hazards[i];
+        if(h.x>wx+W*1.3) break;
+        if(h.dead || h.x<wx-60) continue;
+        const sh=sampleTrack(h.x), hy=hazardY(h,sh);
+        killHazard(h,hy,'SPRÆNG',1.5); smashed++; hit++;
+      }
+      if(hit) missionAdd('bats',hit);
+      livePot+=520*mult; gainScrap(60+hit*8, wx, dwarf.y);
+      floatText(wx,dwarf.y-60,'KRUDTTØNDE · '+hit+' væk','#ff7a3d');
+      sfx.smash(); shake(20); break; }
+    case 'grim':{ // Støvsuger-storm
+      let got=0;
+      for(let i=ci;i<coins.length;i++){
+        const co=coins[i];
+        const cx=co.px===null?co.x:co.px;
+        if(cx>wx+W) break;
+        if(co.taken || cx<camX-80) continue;
+        co.taken=true;
+        const gain=Math.ceil(co.val*(1+(runStatsCache.coin||0)));
+        collectedGold+=gain; livePot+=gain*12*mult; got+=gain;
+      }
+      for(let i=wi;i<weaponCrates.length;i++){
+        const cr=weaponCrates[i];
+        const cx=cr.px===null?cr.x:cr.px;
+        if(cx>wx+W) break;
+        if(cr.taken || cx<camX-120) continue;
+        collectWeaponCrate(cr,cx,cr.py||dwarf.y);
+      }
+      livePot+=got*4*mult;
+      floatText(wx,dwarf.y-60,'STØVSUGER-STORM +'+fmt(got)+'g','#ffd35a');
+      sfx.coin(6); break; }
+    case 'thorin':{ // Sidste Ord
+      shieldHp=ultShieldCap(); mult*=1.5; dwarf.over=3; dwarf.inv=1.5;
+      clearHazardsOnScreen('SIDSTE ORD',1,80);
+      livePot+=260*mult;
+      floatText(wx,dwarf.y-60,'SIDSTE ORD · fuld HP','#63ff9a');
+      flashScreen('#63ff9a',.32); pumpMult(); break; }
+    case 'volund':{ // Rune-overladning
+      weaponBoostT=6; mult*=1.35; dwarf.inv=1.0;
+      floatText(wx,dwarf.y-60,'RUNE-OVERLADNING · våben x1.6','#7CF6E3');
+      flashScreen('#7CF6E3',.32); sfx.skip(); pumpMult(); break; }
+    default: livePot+=200*mult;
+  }
+  score=banked+livePot;
+  hudDirty=true;
+}
+function ultShieldCap(){ return modeMods.survival?6:5; }
+
+
+/* ===== 16-sim-fixed-timestep-fair-paa-alle-skaerme.js ===== */
+/* ================= SIM (fixed timestep — fair på alle skærme) ================= */
+
+function killHazard(h, hy, reason, rewardMul){
+  if(!h || h.dead) return;
+  h.dead=true;
+  survivalKills++;
+  if(h.type==='crystal'){
+    const st=runStatsCache||{};
+    const goldR = 220 * (rewardMul||1) * mult;
+    livePot += goldR;
+    addUlt(0.12);
+    const dataAmt = Math.max(1, Math.round((2 + survivalWave*0.3) * (1+(st.data||0)*0.6) * (1+(researchBonusStats().data||0)*0.6)));
+    gainData(dataAmt, h.x, hy-18);
+    gainScrap(70 + Math.floor(Math.random()*70) + survivalWave*4, h.x, hy+18);
+    addParticle(h.x,hy,'#7CF6E3',24,1.6);
+    addParticle(h.x,hy,'#b388ff',14,1.2);
+    floatText(h.x,hy,'KRYSTAL +'+Math.floor(goldR),'#7CF6E3');
+    flashScreen('#7CF6E3',.18); sfx.perfect();
+    persist();
+    return;
+  }
+  const reward=(reason==='WEAPON'?75:60) * (rewardMul||1) * mult;
+  livePot += reward;
+  if(currentMode==='survival'){
+    livePot += 18*survivalWave*mult;
+    // Mere konkret progression: kills giver små mængder skrot, så runs altid føles brugbare.
+    if(reason==='WEAPON' || reason==='SMASH' || reason==='BOR' || reason==='PARRY'){
+      const scrapDrip = 2 + Math.floor(survivalWave*0.55) + (h.type==='saw'?2:0);
+      gainScrap(scrapDrip, h.x, hy+16);
+    }
+  }
+  addUlt(0.06);
+  addParticle(h.x,hy,reason==='WEAPON'?'#ffd35a':'#ff9d3d',16,1.25);
+  floatText(h.x,hy,(reason||'KILL')+' +'+Math.floor(reward), reason==='WEAPON'?'#ffd35a':'#ff9d3d');
+  if(Math.random() < (currentMode==='survival'?0.28:0.10)){
+    const roll=Math.random();
+    const kind = roll<0.13?'weapon':roll<0.72?'scrap':roll<0.86?'medkit':'relic';
+    weaponCrates.push({x:h.x+30,tF:clamp(hy/H,0.1,0.9),kind:kind,weapon:null,taken:false,px:h.x+30,py:hy,r:12});
+    weaponCrates.sort(function(a,b){return a.x-b.x;});
+  }
+}
+function autoFireWeapon(dt, wx){
+  ensureInventory();
+  const key=currentWeaponKey();
+  const w=WEAPONS[key]; if(!w) return;
+  const st=weaponStats(key);
+  weaponCd-=dt;
+  if(weaponCd>0) return;
+  const wmul = 1 + (runStatsCache.weapon||0);
+  const boosting = weaponBoostT>0;
+  const dmg = st.damage * wmul * (boosting?1.6:1);
+  let targets=[];
+  for(let i=hi;i<hazards.length;i++){
+    const h=hazards[i];
+    if(h.x>wx+st.range) break;
+    if(h.dead || h.x<wx+18) continue;
+    const sh=sampleTrack(h.x), hy=hazardY(h,sh);
+    const dy=Math.abs(hy-dwarf.y);
+    const cone = key==='blunder' ? 92 : key==='chain' ? 62 : 48;
+    if(dy<cone) targets.push({h,hy,d:h.x-wx+dy*.35});
+  }
+  if(!targets.length) return;
+  targets.sort((a,b)=>a.d-b.d);
+  const pierce=(st.pierce||1) + (boosting?2:0);
+  for(let i=0;i<Math.min(pierce,targets.length);i++){
+    const t=targets[i];
+    t.h.hp=(t.h.hp||1)-dmg;
+    addParticle(wx+24,dwarf.y,'#ffd35a',4,0.55);
+    addParticle(t.h.x,t.hy,'#ffd35a',8,0.85);
+    floatText(t.h.x,t.hy,'-'+dmg.toFixed(1),'#ffd35a');
+    if(t.h.hp<=0){
+      killHazard(t.h,t.hy,'WEAPON',1+(st.leech||0));
+      if(st.leech) livePot+=90*mult*st.leech;
+    }
+  }
+  weaponCd=st.cooldown * (boosting?0.4:1);
+  sfx.tick();
+}
+function collectWeaponCrate(c,cx,cy){
+  c.taken=true;
+  if(c.kind==='weapon'){
+    const key=c.weapon || WEAPON_DROP_POOL[Math.floor(Math.random()*WEAPON_DROP_POOL.length)];
+    gainWeapon(key,{x:cx,y:cy});
+  }else if(c.kind==='medkit'){
+    shieldHp=Math.min(shieldHp+1, ultShieldCap());
+    floatText(cx,cy,'+1 HP','#63ff9a'); sfx.bank(false);
+  }else if(c.kind==='relic'){
+    // Relics giver nu run-specifikke buffs, ikke bare lidt tal-konfetti.
+    const r=Math.random();
+    if(r<0.25){
+      weaponBoostT += 5.5;
+      floatText(cx,cy,'RELIK: VÅBENRUS','#ffd35a');
+    }else if(r<0.50){
+      dwarf.magnet += 5.5;
+      floatText(cx,cy,'RELIK: STOR-SUG','#41e8ff');
+    }else if(r<0.75){
+      bankBoostT += 5.5;
+      floatText(cx,cy,'RELIK: BANKBOOST','#63ff9a');
+    }else{
+      shieldHp=Math.min(ultShieldCap(), shieldHp+1);
+      floatText(cx,cy,'RELIK: +1 HP','#63ff9a');
+    }
+    mult*=1.18; livePot+=360*mult;
+    sfx.perfect(); pumpMult(); flashScreen('#ff3df2',.18);
+  }else{
+    const scrap=45 + Math.floor(Math.random()*55) + (currentMode==='survival'?survivalWave*5:0);
+    gainScrap(scrap,cx,cy);
+    sfx.coin(3);
+  }
+  addParticle(cx,cy,'#bfc7d9',12,1.0);
+  persist();
+}
+
+function stepSim(){
+  simTick++;
+  const dt=SIM_DT;
+  const st=runStatsCache;
+  pCamX=camX; dwarf.py=dwarf.y;
+
+  let speed=(190 + dist*0.0025 + (st.speed||0)*120) * modeMods.speed;
+  if(dwarf.dash>0) speed+=220;
+  if(dwarf.slow>0) speed*=0.58;
+  if(dwarf.over>0) speed*=1.10;
+  if(modeMods.survival) speed *= 1 + Math.min(1.0,(survivalWave-1)*0.05);
+  camX += speed*dt; dist=camX;
+
+  const spdN=clamp((speed-190)/280,0,1);
+  const targetSX=clamp(W*(0.26-0.08*spdN),86,180);
+  dwarf.sx += (targetSX-dwarf.sx)*Math.min(1,dt*3);
+  const wx=camX+dwarf.sx;
+
+  const lift=620*(1+(st.lift||0)*0.8);
+  const grav=455*(1-(st.control||0)*0.22);
+  inputLevel += ((inputDown?1:0)-inputLevel)*(1-Math.pow(0.02,dt*8));
+  dwarf.vy += (grav*(1-inputLevel) - lift*inputLevel)*dt;
+  if(dwarf.dash>0){ dwarf.dash-=dt; dwarf.vy*=.94; }
+  const damp=0.982-(st.control||0)*0.035;
+  dwarf.vy *= Math.pow(damp, dt*60);
+  dwarf.vy=clamp(dwarf.vy,-390,430);
+  dwarf.y += dwarf.vy*dt;
+  dwarf.rot = lerp(dwarf.rot, clamp(dwarf.vy/360,-0.95,0.95), .10);
+
+  if(hammerCd>0) hammerCd-=dt;
+  dwarf.inv=Math.max(0,dwarf.inv-dt);
+  dwarf.shield=Math.max(0,dwarf.shield-dt);
+  dwarf.magnet=Math.max(0,dwarf.magnet-dt);
+  dwarf.slow=Math.max(0,dwarf.slow-dt);
+  dwarf.over=Math.max(0,dwarf.over-dt);
+  if(bankBoostT>0) bankBoostT-=dt;
+  if(weaponBoostT>0) weaponBoostT-=dt;
+  if(ultFlashT>0) ultFlashT-=dt;
+  addUlt(dt*0.018);
+
+  const s=sampleTrack(wx);
+  const topGap=(dwarf.y-dwarf.hitR)-s.top;
+  const botGap=s.bot-(dwarf.y+dwarf.hitR);
+  if(topGap<0 || botGap<0){
+    damageOrEnd('Minevæg. Hitboxen er lille — den her var din egen.');
+    if(state!=='play') return;
+    dwarf.y=clamp(dwarf.y, s.top+dwarf.hitR+2, s.bot-dwarf.hitR-2);
+    dwarf.vy*=-0.25;
+  } else {
+    const g=Math.min(topGap,botGap);
+    if(g<11){
+      grazeT+=dt; grazeTotal+=dt; grazeTick+=dt;
+      if(grazeTick>=0.2){
+        grazeTick=0;
+        mult+=0.035; livePot+=14*mult; addUlt(0.02);
+        const sideY = topGap<botGap ? s.top+2 : s.bot-2;
+        addParticle(wx-6,sideY,'#41e8ff',2,0.5);
+        floatText(wx,sideY+(topGap<botGap?24:-24),'+kys','#41e8ff');
+        sfx.tick();
+      }
+      if(grazeTotal>=6) unlock('graze');
+    } else { grazeT=0; grazeTick=0; }
+  }
+
+  mult += dt*(0.075 + skips*.012 + (st.greed||0)*.05);
+  peak=Math.max(peak,mult);
+  livePot += dt*95*mult*(1+(st.greed||0));
+  if(st.interest && banked>0) livePot += dt * Math.min(80, banked/900) * st.interest;
+  if(modeMods.survival){
+    survivalWave=Math.max(1, Math.floor(dist/900)+1);
+    if(survivalWave!==lastWave){
+      lastWave=survivalWave;
+      shieldHp=Math.min(ultShieldCap(), shieldHp + (survivalWave%3===0?1:0));
+      if(survivalWave>=8) unlock('survivor');
+      flash('WAVE '+survivalWave+(survivalWave%5===0?' · MINIBOSS!':''));
+      if(survivalWave%4===0){
+        // små belønningskasser efter milestones, fordi ren smerte er dårlig retention. Utroligt nok.
+        weaponCrates.push({x:camX+dwarf.sx+W*0.72,tF:0.45,kind:'relic',weapon:null,taken:false,px:null,py:0,r:13});
+        weaponCrates.push({x:camX+dwarf.sx+W*0.82,tF:0.58,kind:'scrap',weapon:null,taken:false,px:null,py:0,r:13});
+        weaponCrates.sort(function(a,b){return a.x-b.x;});
+      }
+      flashScreen('#63ff9a',.18); sfx.level();
+    }
+    mult += dt*0.012*survivalWave;
+    livePot += dt*survivalWave*18;
+    $('subInfo').textContent='Wave '+survivalWave+' · kills '+survivalKills+' · '+WEAPONS[currentWeaponKey()].name;
+  }
+  autoFireWeapon(dt, wx);
+  score=banked+livePot;
+
+  if(!recordHit && bestAtStart>500 && score>bestAtStart){
+    recordHit=true;
+    flashScreen('#ffd35a',.45); shake(13);
+    floatText(wx,dwarf.y-70,'NY REKORD!','#ffd35a');
+    confetti(wx,dwarf.y-30);
+    sfx.record();
+  }
+
+  if(wx>=trackEndX-40){
+    banked+=livePot; livePot=0; score=banked;
+    sfx.finish(); flashScreen('#63ff9a',.5);
+    endRun(true,'MÅL! Du nåede udgangen i live — hele potten banket.');
+    return;
+  }
+
+  // Porte
+  for(let i=gi;i<gates.length;i++){
+    const g=gates[i];
+    if(g.x>wx+W) break;
+    if(g.used) continue;
+    const geom=gateGeom(g);
+    if(!g.seen && !save.seenGates[g.type] && g.x>wx && g.x-wx<W*0.72){
+      g.seen=true; save.seenGates[g.type]=1;
+      floatText(g.x, Math.max(60,geom.y-geom.gap-46), GATE_TIP[g.type], GATE_COLOR[g.type]);
+    }
+    if(g.x < wx-40){
+      g.used=true; g.skipped=true; skips++; missionAdd('skips',1);
+      mult *= (1.22 + (st.greed||0)*.55);
+      floatText(g.x,geom.y,'SKIP x'+mult.toFixed(2),'#ff3df2');
+      addParticle(g.x,geom.y,'#ff3df2',12,1.1);
+      sfx.skip(); pumpMult();
+      continue;
+    }
+    if(Math.abs(g.x-wx)<24 && Math.abs(geom.y-dwarf.y)<geom.gap){
+      g.used=true;
+      handleGate(g, geom, st);
+    }
+  }
+  while(gates[gi] && gates[gi].used) gi++;
+
+  // Mønter (front-støvsuger)
+  const nozzleX=wx+30, nozzleY=dwarf.y-3;
+  const vacLen=145+(st.magnet||0)*130+(dwarf.magnet>0?120:0);
+  const vacHalf=36+(st.magnet||0)*38+(dwarf.magnet>0?26:0);
+  if(simTick*SIM_DT - lastCoinT > 1.4) coinCombo=0;
+  for(let i=ci;i<coins.length;i++){
+    const c=coins[i];
+    if(c.px===null && c.x>wx+W+140) break;
+    if(c.taken) continue;
+    let cx, cy;
+    if(c.px===null){
+      const sc=sampleTrack(c.x);
+      cx=c.x; cy=lerp(sc.top+35,sc.bot-35,c.tF);
+    } else { cx=c.px; cy=c.py; }
+    const dx=cx-nozzleX, dy=cy-nozzleY;
+    if(dx<-32 || dx>vacLen+40 || Math.abs(dy)>vacHalf+55) continue;
+    const cone=vacHalf*(1-clamp(dx/vacLen,0,1)*0.45);
+    if(dx>-12 && dx<vacLen && Math.abs(dy)<cone){
+      if(c.px===null){ c.px=cx; c.py=cy; }
+      const pull=(7.5+(st.magnet||0)*5+(dwarf.magnet>0?5:0))*dt;
+      c.px += (nozzleX-c.px)*pull;
+      c.py += (nozzleY-c.py)*pull;
+      cx=c.px; cy=c.py;
+    }
+    if(Math.hypot(cx-nozzleX,cy-nozzleY) < 18+c.r){
+      c.taken=true;
+      const gain=Math.ceil(c.val*(currentMode==='chaos'?2:1)*(1+(st.coin||0)));
+      collectedGold+=gain;
+      coinCombo++; lastCoinT=simTick*SIM_DT;
+      livePot += gain*12*mult; addUlt(0.004);
+      missionAdd('coins',gain);
+      addParticle(cx,cy,'#ffd35a',6,0.8);
+      floatText(cx,cy,'+'+gain+'g','#ffd35a');
+      sfx.coin(coinCombo); buzz(8);
+    }
+  }
+  while(ci<coins.length){
+    const c=coins[ci];
+    const cx=c.px===null?c.x:c.px;
+    if(c.taken || cx<camX-80) ci++; else break;
+  }
+
+
+  // Våbenkasser / survival-loot
+  for(let i=wi;i<weaponCrates.length;i++){
+    const c=weaponCrates[i];
+    const baseX=c.px===null?c.x:c.px;
+    if(baseX>wx+W+140) break;
+    if(c.taken) continue;
+    let cx, cy;
+    if(c.px===null){
+      const sc=sampleTrack(c.x);
+      cx=c.x; cy=lerp(sc.top+42,sc.bot-42,c.tF);
+    } else { cx=c.px; cy=c.py; }
+    const dx=cx-nozzleX, dy=cy-nozzleY;
+    const crateVac=vacLen*(c.kind==='weapon'?0.85:0.72);
+    if(dx>-18 && dx<crateVac && Math.abs(dy)<vacHalf+34){
+      if(c.px===null){ c.px=cx; c.py=cy; }
+      const pull=(5.2+(st.magnet||0)*3.5+(dwarf.magnet>0?4:0))*dt;
+      c.px += (nozzleX-c.px)*pull;
+      c.py += (nozzleY-c.py)*pull;
+      cx=c.px; cy=c.py;
+    }
+    if(Math.hypot(cx-nozzleX,cy-nozzleY)<24+c.r){
+      collectWeaponCrate(c,cx,cy);
+    }
+  }
+  while(wi<weaponCrates.length){
+    const c=weaponCrates[wi];
+    const cx=c.px===null?c.x:c.px;
+    if(c.taken || cx<camX-120) wi++; else break;
+  }
+
+  // Farer
+  for(let i=hi;i<hazards.length;i++){
+    const h=hazards[i];
+    if(h.x>wx+W) break;
+    if(h.dead) continue;
+    const sh=sampleTrack(h.x);
+    const hy=hazardY(h,sh);
+    const d=Math.hypot(h.x-wx,hy-dwarf.y);
+    const rr=dwarf.hitR+h.hitR;
+    if(d<rr){
+      if(dwarf.dash>0 || dwarf.inv>0 || dwarf.shield>0){
+        killHazard(h,hy,'PARRY',0.8); smashed++; missionAdd('bats',1);
+        sfx.smash();
+      } else {
+        damageOrEnd(h.type==='bat'?'Flagermus i skægget.':h.type==='rock'?'Sten direkte i karrieren.':'Spiddet. Av.');
+        if(state!=='play') return;
+      }
+    } else if(d<rr+16){
+      h.near=true;
+    }
+    if(!h.dead && h.near && !h.counted && h.x<wx-30){
+      h.counted=true; nearCount++;
+      mult+=0.06; livePot+=45*mult; addUlt(0.03);
+      floatText(h.x,hy,'TÆT PÅ! +'+Math.floor(45*mult),'#41e8ff');
+      sfx.near(); pumpMult();
+    }
+  }
+  while(hazards[hi] && (hazards[hi].dead || hazards[hi].x<wx-240)) hi++;
+
+  if(simTick%3===0){
+    runGhost.push({x:Math.round(wx), f:Math.round(dwarf.y/H*1000)/1000});
+    if(runGhost.length>1600) runGhost.shift();
+  }
+
+  if(introPhase===1){
+    if(inputLevel>0.7) heldT+=dt;
+    if(heldT>0.35){ introPhase=2; $('introText').textContent='SLIP = FALD'; }
+  } else if(introPhase===2){
+    if(!inputDown){ introPhase=0; $('intro').style.display='none'; save.seenIntro=true; }
+  }
+
+  hudDirty=true;
+}
+
+function damageOrEnd(reason){
+  if(dwarf.inv>0) return;
+  if(shieldHp>0){
+    shieldHp--; dwarf.inv=1.0;
+    flash('REDDET! HP -1');
+    addParticle(camX+dwarf.sx,dwarf.y,'#41e8ff',22,1.2);
+    flashScreen('#41e8ff',.3); shake(10);
+    sfx.hit();
+    return;
+  }
+  beginDeath(reason);
+}
+function beginDeath(reason){
+  state='dying';
+  deathReason=reason||'Dværgen ramte noget. Sikkert væggen. Den var stor.';
+  dieT=0.8;
+  const wx=camX+dwarf.sx;
+  addParticle(wx,dwarf.y,'#ff9d3d',26,1.8);
+  addParticle(wx,dwarf.y,'#ff496c',20,1.4);
+  addParticle(wx,dwarf.y,'#bfc7d9',14,1.2);
+  flashScreen('#ff496c',.5); shake(22);
+  sfx.crash();
+  if(introPhase){ introPhase=0; $('intro').style.display='none'; }
+  engineUpdate();
+}
+
+function handleGate(g, geom, st){
+  let amount=0, label='';
+  if(g.type==='bank'){
+    amount=livePot*(1.0+(st.bank||0))*(bankBoostT>0?1.5:1);
+    banked += amount; livePot=livePot*(st.refund||0);
+    mult=Math.max(1,mult*(0.52-(st.bank||0)*.05));
+    skips=0; label='BANK +'+fmt(amount); addUlt(0.05);
+    sfx.bank(amount>2500); flashScreen('#63ff9a',.3); freezeT=Math.max(freezeT,0.07); shake(6);
+  } else if(g.type==='split'){
+    amount=livePot*(0.55+(st.split||0));
+    banked += amount; livePot-=amount;
+    mult=Math.max(1,mult*.78);
+    label='SPLIT +'+fmt(amount);
+    sfx.split(); flashScreen('#41e8ff',.22); freezeT=Math.max(freezeT,0.05); shake(4);
+  } else if(g.type==='greed'){
+    mult *= 1.38+(st.greed||0)*.45;
+    livePot += 220*mult;
+    label='GRÅDIG x'+mult.toFixed(2);
+    sfx.skip(); flashScreen('#ff3df2',.25); shake(5); pumpMult();
+  } else if(g.type==='perfect'){
+    const precision=1-Math.abs(geom.y-dwarf.y)/geom.gap;
+    if(precision>.72 || autoPerfectN>0){
+      if(autoPerfectN>0 && precision<=.72){ autoPerfectN--; floatText(g.x,geom.y-30,'AUTO-PERFEKT','#b388ff'); }
+      amount=livePot*(0.75+(st.perfect||0));
+      banked += amount; livePot*=.3; mult*=1.18;
+      perfects++;
+      label='PERFEKT +'+fmt(amount);
+      if(perfects>=3) unlock('perfect');
+      sfx.perfect(); flashScreen('#ffd35a',.35); freezeT=Math.max(freezeT,0.07); shake(8);
+    } else {
+      amount=livePot*.35; banked+=amount; livePot*=.65;
+      label='SKÆV +'+fmt(amount);
+      sfx.split(); freezeT=Math.max(freezeT,0.04);
+    }
+  }
+  missionAdd('bank',Math.floor(amount));
+  addParticle(g.x,geom.y,GATE_COLOR[g.type],20,1.2);
+  floatText(g.x,geom.y,label,'#fff');
+  if(banked>=20000) unlock('bankman');
+}
+
+
+/* ===== 17-run-slut.js ===== */
+/* ================= RUN SLUT ================= */
+/* Belønnings-kurver: afkoblet fra den eksploderende score.
+   sqrt-dæmpning gør at et 150-mio-run og et 2-mio-run giver næsten det samme,
+   og et hårdt loft sikrer at fremgang tager mange runs (uger), ikke 3 runs. */
+function heroXpForRun(final, smashed, wave, perfectsN, distV, xpStat){
+  const base=6;
+  const scorePart=Math.min(170, Math.sqrt(Math.max(0,final))/9);
+  const skillPart=(smashed||0)*1.1 + (wave>1?wave*4:0) + (perfectsN||0)*3 + Math.floor((distV||0)/2600)*4;
+  return Math.round(Math.min(340, (base+scorePart+skillPart)*(1+(xpStat||0)*0.4)));
+}
+function accXpForRun(final, smashed, survived, campClear, xpStat){
+  const scorePart=Math.min(120, Math.sqrt(Math.max(0,final))/13);
+  const bonus=10 + (smashed||0)*0.7 + (survived?18:0) + (campClear?35:0);
+  return Math.round(Math.min(250, (scorePart+bonus)*(1+(xpStat||0)*0.4)));
+}
+function dataForRun(final){
+  return Math.round(Math.min(24, Math.sqrt(Math.max(0,final))/80));
+}
+function gradeFor(final, oldBest, survived){
+  if(duelTarget) return lastDuelWon ? 'DUELVINDER 👑' : 'Duel tabt';
+  if(final>0 && oldBest>0 && final>=oldBest) return 'MINEKONGE 👑 · NY REKORD';
+  if(oldBest<=0) return final>0 ? 'Ny i minen' : 'Grus';
+  const r=final/oldBest;
+  if(r>=0.8) return 'Sjakbajs';
+  if(r>=0.5) return 'Minearbejder';
+  if(r>=0.25) return 'Lærling';
+  return 'Grus';
+}
+function endRun(survived,reason){
+  if(state==='over') return;
+  state='over';
+  $('pauseOv').style.display='none';
+  $('duelBar').style.display='none';
+  if(introPhase){ introPhase=0; $('intro').style.display='none'; }
+  const st=runStatsCache||{};
+  const final=Math.floor(banked + (survived?livePot:(livePot*Math.max(0,(st.salvage||0)))));
+  lastFinal=final; lastSurvived=survived;
+  const oldBest=save.best;
+
+  if(currentMode==='daily'){
+    ensureDailyRun();
+    save.dailyRun.tries++;
+    save.dailyRun.best=Math.max(save.dailyRun.best, final);
+  }
+  lastCampaignClear=false;
+  if(currentMode==='campaign' && activeCampaignLevel){
+    if(!save.campaign) save.campaign={unlocked:1,current:1,stars:{}};
+    lastCampaignClear=campaignClearCheck(final,survived);
+    const stars=campaignStarCount(final,survived);
+    const prev=save.campaign.stars[activeCampaignLevel.id]||0;
+    if(stars>prev){
+      save.campaign.stars[activeCampaignLevel.id]=stars;
+      const reward=Math.floor(activeCampaignLevel.reward*(stars-prev));
+      save.gold+=reward;
+      gainXP(Math.floor(reward*.55));
+      toast('Kampagne: '+stars+'★ · +'+reward+'g');
+    }
+    if(lastCampaignClear && activeCampaignLevel.id>=save.campaign.unlocked){
+      save.campaign.unlocked=Math.min(CAMPAIGN_LEVELS.length, activeCampaignLevel.id+1);
+      save.campaign.current=Math.min(CAMPAIGN_LEVELS.length, activeCampaignLevel.id+1);
+    }
+  }
+
+  const goldGain = Math.floor(collectedGold + Math.min(450, final/180) + (save.research.passiveGold||0));
+  save.gold += Math.max(0, goldGain);
+  save.runs++;
+  if(final>save.best){ save.best=final; save.bestDist=Math.floor(dist); }
+  // Meta-fremgang er afkoblet fra den eksploderende score: dæmpet (sqrt) + hårdt loft per run.
+  // Score må gerne være kæmpestor (flex) — men XP/data tjener du langsomt og jævnt.
+  const xpStat=st.xp||0;
+  gainXP(accXpForRun(final, smashed, survived, lastCampaignClear, xpStat));
+  // Helt-EXP til den valgte helt (også i fair modes — det er stadig din helt)
+  const heroKey=activeChar();
+  const heroXP=heroXpForRun(final, smashed, (currentMode==='survival'?survivalWave:1), perfects, dist, xpStat);
+  lastHeroXP=heroXP; lastHeroKey=heroKey;
+  gainCharXP(heroKey, heroXP);
+  // Data fra run (krystaller giver løbende i minen; dette er en lille bonus oveni — også loftet)
+  const runDataBonus=dataForRun(final);
+  if(runDataBonus>0) gainData(runDataBonus);
+  if(lastCampaignClear) gainData(6 + (activeCampaignLevel?activeCampaignLevel.id:0));
+  lastRunData=runData;
+  save.leaderboard.push({score:final,bank:Math.floor(banked),peak:peak,seed:currentSeed,mode:modeMods.label,at:Date.now()});
+  save.leaderboard=save.leaderboard.sort(function(a,b){return b.score-a.score;}).slice(0,60);
+  saveGhost(currentSeed, runGhost, final);
+
+  if(!survived) unlock('firstCrash');
+  if(survived) unlock('finisher');
+  if(skips>=5) unlock('greedy');
+  if(save.gold>=2000) unlock('rich');
+
+  lastDuelWon=false;
+  if(duelTarget){
+    lastDuelWon = final>duelTarget.score;
+    if(lastDuelWon){ save.duelWins++; save.wins++; unlock('duelist'); }
+  }
+  persist();
+
+  $('oScore').textContent=fmt(final);
+  $('oBank').textContent=fmt(banked);
+  $('oPeak').textContent='x'+peak.toFixed(2);
+  $('oDist').textContent=fmt(dist/12)+' m';
+  const hcName=(DATA.pilots[lastHeroKey]&&DATA.pilots[lastHeroKey].name) || (CHARACTERS[lastHeroKey]&&CHARACTERS[lastHeroKey].role) || 'Bram Jernskæg';
+  $('oHeroXp').textContent='+'+fmt(lastHeroXP)+' · '+hcName+' Lv'+charLevel(lastHeroKey);
+  $('oData').textContent='+'+fmt(lastRunData);
+  $('oGrade').textContent=gradeFor(final,oldBest,survived);
+
+  if(duelTarget){
+    const diff=Math.abs(final-duelTarget.score);
+    $('overTitle').textContent = lastDuelWon ? 'DU VANDT! 👑' : 'Tabt.';
+    $('overText').textContent = lastDuelWon
+      ? 'Du slog '+duelTarget.name+' med '+fmt(diff)+' point. Send revanchen.'
+      : duelTarget.name+' beholder tronen. Der manglede '+fmt(diff)+' point.';
+  } else if(currentMode==='campaign' && activeCampaignLevel){
+    const stars=campaignStarCount(final,survived);
+    $('overTitle').textContent = lastCampaignClear ? 'BANE KLARET! '+stars+'★' : 'Bane fejlet.';
+    $('overText').textContent = lastCampaignClear
+      ? activeCampaignLevel.name+' klaret. Næste mine låst op, fordi mennesker åbenbart kræver belønning for ikke at dø.'
+      : 'Mål: '+objectiveText(activeCampaignLevel.goal)+'. Du var ikke helt der endnu.';
+  } else {
+    $('overTitle').textContent = survived ? 'MÅL!' : 'Crash.';
+    $('overText').textContent = reason || 'Dværgen ramte noget. Sikkert væggen. Den var stor.';
+  }
+  $('shareBtn').textContent = (currentMode==='campaign' && lastCampaignClear) ? 'Næste bane' : (currentMode==='survival' ? 'Del overlevelse' : (duelTarget ? 'Send revanche' : 'Udfordr en ven'));
+  const rb=$('retryBtn');
+  if(currentMode==='daily' && save.dailyRun.tries>=3){ rb.disabled=true; rb.textContent='I morgen igen'; }
+  else { rb.disabled=false; rb.textContent='Prøv igen'; }
+
+  const go=$('gameOver');
+  go.style.display='flex';
+  go.classList.remove('arm');
+  setTimeout(function(){ go.classList.add('arm'); }, 350);
+  hudDirty=true; hudT=1;
+  engineUpdate();
+}
+
+
+/* ===== 18-pause.js ===== */
+/* ================= PAUSE ================= */
+function pauseGame(){
+  if(state!=='play') return;
+  state='pause';
+  inputDown=false;
+  $('pauseOv').style.display='flex';
+  engineUpdate();
+  persist();
+}
+function resumeGame(){
+  if(state!=='pause') return;
+  $('pauseOv').style.display='none';
+  state='play';
+  last=now(); acc=0;
+  requestAnimationFrame(loop);
+}
+
+
+/* ===== 19-duel-links-deling.js ===== */
+/* ================= DUEL-LINKS & DELING ================= */
+function buildChallengeURL(scoreVal){
+  return location.origin+location.pathname+'#duel='+currentSeed+'x'+scoreVal+'x'+encodeURIComponent(save.name||'Dværg');
+}
+async function shareChallenge(){
+  if(lastFinal<=0){ toast('Spil et run først.'); return; }
+  const name=await ensureName();
+  if(!name) return;
+  const url=buildChallengeURL(lastFinal);
+  const text='⛏️ Slå mine '+fmt(lastFinal)+' point i GRÅDIG Dværgkast! Samme bane, samme vilkår.';
+  if(navigator.share){
+    try{ await navigator.share({title:'GRÅDIG Dværgkast', text:text, url:url}); toast('Udfordring sendt!'); return; }
+    catch(e){ if(e && e.name==='AbortError') return; }
+  }
+  try{ await navigator.clipboard.writeText(text+' '+url); toast('Link kopieret — send det til en ven!'); }
+  catch(e){ toast('Kunne ikke dele linket.'); }
+}
+let nameResolve=null;
+function ensureName(){
+  return new Promise(function(res){
+    if(save.name){ res(save.name); return; }
+    nameResolve=res;
+    $('nameInput').value='';
+    $('nameDlg').style.display='flex';
+    setTimeout(function(){ $('nameInput').focus(); },60);
+  });
+}
+$('nameOk').onclick=function(){
+  const v=($('nameInput').value||'').trim().slice(0,14)||'Dværg';
+  save.name=v; persist();
+  $('nameDlg').style.display='none';
+  if(nameResolve){ nameResolve(v); nameResolve=null; }
+};
+$('nameCancel').onclick=function(){
+  $('nameDlg').style.display='none';
+  if(nameResolve){ nameResolve(null); nameResolve=null; }
+};
+function parseDuelHash(){
+  const h=location.hash||'';
+  if(h.indexOf('#duel=')!==0) return false;
+  const parts=h.slice(6).split('x');
+  if(parts.length<3) return false;
+  const seed=Number(parts[0])>>>0;
+  const sc=Math.max(1,Math.floor(Number(parts[1])||0));
+  let name='Ukendt dværg';
+  try{ name=decodeURIComponent(parts.slice(2).join('x')).slice(0,14)||name; }catch(e){}
+  if(!seed||!sc) return false;
+  setTimeout(function(){
+    audioEnsure(); engineStart();
+    startDuel(seed, sc, name);
+  }, 300);
+  return true;
+}
+
+
+/* ===== 20-hud.js ===== */
+/* ================= HUD ================= */
+
+function campaignProgress(){
+  if(!activeCampaignLevel) return 0;
+  const g=activeCampaignLevel.goal;
+  const vals=[];
+  if(g.finish) vals.push(clamp((camX+dwarf.sx)/Math.max(1,trackEndX-40),0,1));
+  if(g.score) vals.push(clamp(score/g.score,0,1));
+  if(g.bank) vals.push(clamp(banked/g.bank,0,1));
+  if(g.coins) vals.push(clamp(collectedGold/g.coins,0,1));
+  if(g.skips) vals.push(clamp(skips/g.skips,0,1));
+  if(g.perfect) vals.push(clamp(perfects/g.perfect,0,1));
+  if(g.smash) vals.push(clamp(smashed/g.smash,0,1));
+  return vals.length ? Math.min.apply(null,vals) : 0;
+}
+function campaignClearCheck(final,survived){
+  if(!activeCampaignLevel) return false;
+  const g=activeCampaignLevel.goal;
+  if(g.finish && !survived) return false;
+  if(g.score && final<g.score) return false;
+  if(g.bank && banked<g.bank) return false;
+  if(g.coins && collectedGold<g.coins) return false;
+  if(g.skips && skips<g.skips) return false;
+  if(g.perfect && perfects<g.perfect) return false;
+  if(g.smash && smashed<g.smash) return false;
+  return true;
+}
+function campaignStarCount(final,survived){
+  if(!activeCampaignLevel) return 0;
+  let stars = campaignClearCheck(final,survived) ? 1 : 0;
+  if(!stars) return 0;
+  const g=activeCampaignLevel.goal;
+  if(final >= (g.score||12000)*1.25 || banked >= (g.bank||9000)*1.25) stars++;
+  if(survived && peak>=8) stars++;
+  return clamp(stars,1,3);
+}
+
+function hudTick(dt){
+  hudT+=dt;
+  if(!hudDirty || hudT<0.08) return;
+  hudT=0; hudDirty=false;
+  $('liveVal').textContent=fmt(livePot);
+  $('bankVal').textContent=fmt(banked);
+  $('goldVal').textContent=fmt(collectedGold);
+  $('multVal').textContent='x'+mult.toFixed(2);
+  $('skipVal').textContent=skips;
+  $('hpVal').textContent=shieldHp;
+  const cdEl=$('hammerCd'), hb=$('hammerBtn');
+  if(hammerCd>0){ cdEl.textContent=hammerCd.toFixed(1); hb.classList.add('cd'); }
+  else { cdEl.textContent='klar'; hb.classList.remove('cd'); }
+  const ub=$('ultBtn');
+  if(ub){
+    const c=CHARACTERS[runChar]||CHARACTERS.bram;
+    ub.style.setProperty('--ult', ultCharge.toFixed(3));
+    ub.style.setProperty('--ultcol', c.color||'#7CF6E3');
+    $('ultLbl').textContent = ultCharge>=1 ? (c.ultShort||'KLAR') : Math.floor(ultCharge*100)+'%';
+    ub.classList.toggle('ready', ultCharge>=1);
+  }
+  if(duelTarget && state==='play'){
+    $('duelFill').style.width=Math.min(100, score/duelTarget.score*100).toFixed(1)+'%';
+  } else if(currentMode==='campaign' && activeCampaignLevel && state==='play'){
+    $('duelFill').style.width=(campaignProgress()*100).toFixed(1)+'%';
+  }
+}
+
+
+/* ===== 21-loop.js ===== */
+/* ================= LOOP ================= */
+function loop(){
+  if(state==='menu' || state==='over' || state==='pause') return;
+  const n=now();
+  const dt=Math.min(0.1, n-last);
+  last=n;
+  if(state==='play'){
+    if(freezeT>0){
+      freezeT-=dt;
+    } else {
+      acc+=dt;
+      let steps=0;
+      while(acc>=SIM_DT && steps<5){
+        stepSim();
+        acc-=SIM_DT;
+        steps++;
+        if(state!=='play') break;
+      }
+      if(steps>=5) acc=0;
+    }
+  } else if(state==='dying'){
+    dieT-=dt;
+    if(dieT<=0){
+      endRun(false, deathReason);
+      return;
+    }
+  }
+  const fxScale = state==='dying' ? 0.35 : 1;
+  updateFX(dt*fxScale, dt);
+  draw(state==='play' ? clamp(acc/SIM_DT,0,1) : 0);
+  engineUpdate();
+  heartbeatUpdate(dt);
+  hudTick(dt);
+  requestAnimationFrame(loop);
+}
+function updateFX(dt, realDt){
+  for(const p of particles){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=220*dt; p.life-=dt; }
+  particles=particles.filter(function(p){return p.life>0;});
+  for(const f of floating){ f.y-=35*dt; f.life-=dt*0.8; }
+  floating=floating.filter(function(f){return f.life>0;});
+  shakeMag=Math.max(0, shakeMag - realDt*46);
+  flashA=Math.max(0, flashA - realDt*1.6);
+}
+
+
+/* ===== 22-sprites-erstatter-shadowblur-mobil-fps.js ===== */
+/* ================= SPRITES (erstatter shadowBlur => mobil-fps) ================= */
+const spriteCache={};
+function glowSprite(color){
+  if(spriteCache[color]) return spriteCache[color];
+  const s=48;
+  const c=document.createElement('canvas'); c.width=s; c.height=s;
+  const g=c.getContext('2d');
+  const grd=g.createRadialGradient(s/2,s/2,1,s/2,s/2,s/2);
+  grd.addColorStop(0,color);
+  grd.addColorStop(0.4,color+'aa');
+  grd.addColorStop(1,color+'00');
+  g.fillStyle=grd;
+  g.fillRect(0,0,s,s);
+  spriteCache[color]=c;
+  return c;
+}
+let coinSpr1=null, coinSpr5=null;
+function makeCoinSprite(big){
+  const r=big?8:5, pad=13, s=(r+pad)*2;
+  const c=document.createElement('canvas'); c.width=s; c.height=s;
+  const g=c.getContext('2d');
+  const grd=g.createRadialGradient(s/2,s/2,1,s/2,s/2,s/2);
+  grd.addColorStop(0,'#ffd35a'); grd.addColorStop(0.45,'#ffd35a55'); grd.addColorStop(1,'#ffd35a00');
+  g.fillStyle=grd; g.fillRect(0,0,s,s);
+  g.fillStyle='#ffd35a'; g.beginPath(); g.arc(s/2,s/2,r,0,Math.PI*2); g.fill();
+  g.fillStyle='#8a5d00'; g.beginPath(); g.arc(s/2,s/2,r*0.55,0,Math.PI*2); g.fill();
+  if(big){ g.fillStyle='#ffd35a'; g.font='900 9px system-ui'; g.textAlign='center'; g.textBaseline='middle'; g.fillText('5',s/2,s/2+0.5); }
+  return c;
+}
+let starsBuilt=false;
+function buildStars(){
+  if(starsBuilt) return;
+  starsBuilt=true;
+  starFar=document.createElement('canvas'); starFar.width=512; starFar.height=512;
+  starNear=document.createElement('canvas'); starNear.width=512; starNear.height=512;
+  const r1=mulberry32(987654);
+  let g=starFar.getContext('2d');
+  for(let i=0;i<46;i++){
+    g.fillStyle=i%3?'#41e8ff':'#ff3df2';
+    g.globalAlpha=0.16+r1()*0.2;
+    g.beginPath(); g.arc(r1()*512, r1()*512, 1+r1()*1.5, 0, Math.PI*2); g.fill();
+  }
+  g=starNear.getContext('2d');
+  for(let i=0;i<26;i++){
+    g.fillStyle=i%4?'#8d63ff':'#ffd35a';
+    g.globalAlpha=0.18+r1()*0.25;
+    g.beginPath(); g.arc(r1()*512, r1()*512, 1.5+r1()*2, 0, Math.PI*2); g.fill();
+  }
+}
+let trackGrad=null;
+function buildVignettes(){
+  trackGrad=null;
+  const w=Math.max(2,W), h=Math.max(2,H);
+  vignCanvas=document.createElement('canvas'); vignCanvas.width=w; vignCanvas.height=h;
+  let g=vignCanvas.getContext('2d');
+  let grd=g.createRadialGradient(w/2,h/2,Math.min(w,h)*.2,w/2,h/2,Math.max(w,h)*.65);
+  grd.addColorStop(0,'#00000000'); grd.addColorStop(1,'#00000088');
+  g.fillStyle=grd; g.fillRect(0,0,w,h);
+  dangerCanvas=document.createElement('canvas'); dangerCanvas.width=w; dangerCanvas.height=h;
+  g=dangerCanvas.getContext('2d');
+  grd=g.createRadialGradient(w/2,h/2,Math.min(w,h)*.25,w/2,h/2,Math.max(w,h)*.62);
+  grd.addColorStop(0,'#ff496c00'); grd.addColorStop(1,'#ff496c55');
+  g.fillStyle=grd; g.fillRect(0,0,w,h);
+}
+
+
+/* ===== 23-tegning.js ===== */
+/* ================= TEGNING ================= */
+function draw(alpha){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  const cam = lerp(pCamX, camX, alpha);
+  const dy = lerp(dwarf.py, dwarf.y, alpha);
+  let shx=0, shy=0;
+  if(shakeMag>0.2){ shx=(Math.random()-0.5)*shakeMag; shy=(Math.random()-0.5)*shakeMag; }
+  drawBackground(cam);
+  ctx.save();
+  ctx.translate(shx, shy);
+  drawTrack(cam);
+  drawFlags(cam);
+  drawGhost(cam);
+  if(state==='play') drawVacuum(dy);
+  drawGates(cam);
+  drawCoins(cam);
+  drawWeaponCrates(cam);
+  drawHazards(cam);
+  if(state==='play') drawDwarf(dy);
+  drawParticles(cam);
+  ctx.restore();
+  ctx.drawImage(vignCanvas,0,0,W,H);
+  if(state==='play'){
+    const danger=clamp((mult-8)/14,0,1);
+    if(danger>0.02){
+      ctx.globalAlpha=danger*(0.45+0.45*Math.sin(now()*6));
+      ctx.drawImage(dangerCanvas,0,0,W,H);
+      ctx.globalAlpha=1;
+    }
+  }
+  if(flashA>0){
+    ctx.globalAlpha=Math.min(0.55,flashA);
+    ctx.fillStyle=flashCol;
+    ctx.fillRect(0,0,W,H);
+    ctx.globalAlpha=1;
+  }
+}
+function drawBackground(cam){
+  ctx.fillStyle='#070711';
+  ctx.fillRect(0,0,W,H);
+  buildStars();
+  ctx.globalAlpha=0.5;
+  const o1=-((cam*0.12)%512);
+  for(let x=o1-512;x<W+512;x+=512){
+    ctx.drawImage(starFar,x,0);
+    if(H>512) ctx.drawImage(starFar,x,512);
+  }
+  ctx.globalAlpha=0.6;
+  const o2=-((cam*0.3)%512);
+  for(let x=o2-512;x<W+512;x+=512){
+    ctx.drawImage(starNear,x,64);
+    if(H>576) ctx.drawImage(starNear,x,576);
+  }
+  ctx.globalAlpha=0.10;
+  ctx.strokeStyle='#41e8ff';
+  ctx.lineWidth=1;
+  const off=(cam*0.6)%73;
+  ctx.beginPath();
+  for(let i=0;i<14;i++){
+    const y=(i*73+off)%H;
+    ctx.moveTo(0,y); ctx.lineTo(W,y-30);
+  }
+  ctx.stroke();
+  ctx.globalAlpha=1;
+}
+function drawTrack(cam){
+  const start=cam-80, end=cam+W+120;
+  ctx.beginPath();
+  let first=true;
+  for(let x=start;x<end;x+=42){
+    const s=sampleTrack(x);
+    if(first){ctx.moveTo(x-cam,s.top); first=false;} else ctx.lineTo(x-cam,s.top);
+  }
+  for(let x=end;x>=start;x-=42){
+    const s=sampleTrack(x);
+    ctx.lineTo(x-cam,s.bot);
+  }
+  ctx.closePath();
+  if(!trackGrad){
+    trackGrad=ctx.createLinearGradient(0,0,W,H);
+    trackGrad.addColorStop(0,'#11113a'); trackGrad.addColorStop(1,'#191019');
+  }
+  ctx.fillStyle=trackGrad;
+  ctx.fill();
+  strokeWall(cam,start,end,'top','#41e8ff');
+  strokeWall(cam,start,end,'bot','#ff3df2');
+}
+function strokeWall(cam,start,end,which,color){
+  ctx.lineJoin='round';
+  ctx.strokeStyle=color;
+  const passes=[[13,0.20],[4,1]];
+  for(let p=0;p<2;p++){
+    ctx.lineWidth=passes[p][0]; ctx.globalAlpha=passes[p][1];
+    ctx.beginPath();
+    let first=true;
+    for(let x=start;x<end;x+=30){
+      const s=sampleTrack(x);
+      const y=which==='top'?s.top:s.bot;
+      if(first){ctx.moveTo(x-cam,y); first=false;} else ctx.lineTo(x-cam,y);
+    }
+    ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+}
+function drawFlags(cam){
+  if(save.bestDist>800 && save.bestDist<trackEndX-200) drawFlag(cam, save.bestDist, '#ffd35a', 'REKORD');
+  drawFlag(cam, trackEndX-40, '#63ff9a', 'MÅL');
+}
+function drawFlag(cam,x,color,label){
+  const sxx=x-cam;
+  if(sxx<-60||sxx>W+60) return;
+  const s=sampleTrack(x);
+  ctx.strokeStyle='#bfc7d9'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(sxx,s.top+6); ctx.lineTo(sxx,s.top+58); ctx.stroke();
+  ctx.fillStyle=color;
+  ctx.beginPath(); ctx.moveTo(sxx,s.top+8); ctx.lineTo(sxx+34,s.top+18); ctx.lineTo(sxx,s.top+28); ctx.closePath(); ctx.fill();
+  ctx.font='900 11px system-ui'; ctx.textAlign='left';
+  ctx.fillText(label, sxx+4, s.top+72);
+}
+function drawGhost(cam){
+  if(!ghost) return;
+  ctx.globalAlpha=0.25;
+  ctx.strokeStyle='#ffffff'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  let first=true;
+  const p=ghost.path;
+  for(let i=0;i<p.length;i+=2){
+    const gx=p[i].x-cam;
+    if(gx<-60){first=true; continue;}
+    if(gx>W+60) break;
+    const gy=p[i].f*H;
+    if(first){ctx.moveTo(gx,gy); first=false;} else ctx.lineTo(gx,gy);
+  }
+  ctx.stroke();
+  ctx.globalAlpha=1;
+}
+function drawVacuum(dy){
+  const st=runStatsCache;
+  const x=dwarf.sx+26, y=dy-3;
+  const len=145+(st.magnet||0)*130+(dwarf.magnet>0?120:0);
+  const half=36+(st.magnet||0)*38+(dwarf.magnet>0?26:0);
+  ctx.save();
+  ctx.globalAlpha=dwarf.magnet>0?.30:.16;
+  const grd=ctx.createLinearGradient(x,y,x+len,y);
+  grd.addColorStop(0,'#ffd35aaa'); grd.addColorStop(.45,'#41e8ff55'); grd.addColorStop(1,'#41e8ff00');
+  ctx.fillStyle=grd;
+  ctx.beginPath();
+  ctx.moveTo(x,y-14);
+  ctx.quadraticCurveTo(x+len*.45,y-half,x+len,y-half*.45);
+  ctx.lineTo(x+len,y+half*.45);
+  ctx.quadraticCurveTo(x+len*.45,y+half,x,y+14);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function drawGates(cam){
+  ctx.textAlign='center';
+  ctx.font='900 12px system-ui';
+  for(let i=gi;i<gates.length;i++){
+    const g=gates[i];
+    const sxx=g.x-cam;
+    if(sxx>W+80) break;
+    if(g.used||sxx<-80) continue;
+    const geom=gateGeom(g);
+    const col=GATE_COLOR[g.type];
+    const pulse=1+0.10*Math.sin(now()*5+g.x*0.01);
+    ctx.strokeStyle=col;
+    ctx.globalAlpha=0.25; ctx.lineWidth=11*pulse;
+    ctx.beginPath(); ctx.moveTo(sxx,geom.y-geom.gap); ctx.lineTo(sxx,geom.y+geom.gap); ctx.stroke();
+    ctx.globalAlpha=1; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(sxx,geom.y-geom.gap); ctx.lineTo(sxx,geom.y+geom.gap); ctx.stroke();
+    const spr=glowSprite(col);
+    ctx.drawImage(spr,sxx-13,geom.y-geom.gap-13,26,26);
+    ctx.drawImage(spr,sxx-13,geom.y+geom.gap-13,26,26);
+    ctx.fillStyle=col;
+    const lbl=g.type==='bank'?'BANK':g.type==='split'?'SPLIT':g.type==='greed'?'GRÅDIG':'PERFEKT';
+    ctx.fillText(lbl,sxx,geom.y-geom.gap-10);
+    if(g.type==='perfect'){
+      ctx.globalAlpha=0.85;
+      ctx.fillRect(sxx-7,geom.y-2,14,4);
+      ctx.globalAlpha=1;
+    }
+  }
+}
+function drawCoins(cam){
+  if(!coinSpr1){ coinSpr1=makeCoinSprite(false); coinSpr5=makeCoinSprite(true); }
+  for(let i=ci;i<coins.length;i++){
+    const c=coins[i];
+    const cx=c.px===null?c.x:c.px;
+    const sxx=cx-cam;
+    if(c.px===null && sxx>W+60) break;
+    if(c.taken||sxx<-40||sxx>W+60) continue;
+    let cy;
+    if(c.px===null){
+      const s=sampleTrack(c.x);
+      cy=lerp(s.top+35,s.bot-35,c.tF);
+    } else cy=c.py;
+    const spr=c.val===5?coinSpr5:coinSpr1;
+    ctx.drawImage(spr,sxx-spr.width/2,cy-spr.height/2);
+  }
+}
+
+function drawWeaponCrates(cam){
+  for(let i=wi;i<weaponCrates.length;i++){
+    const c=weaponCrates[i];
+    const cx=c.px===null?c.x:c.px;
+    const sxx=cx-cam;
+    if(c.px===null && sxx>W+80) break;
+    if(c.taken||sxx<-60||sxx>W+80) continue;
+    let cy;
+    if(c.px===null){
+      const sc=sampleTrack(c.x);
+      cy=lerp(sc.top+42,sc.bot-42,c.tF);
+    } else cy=c.py;
+    const col=c.kind==='weapon'?'#ffd35a':c.kind==='medkit'?'#63ff9a':c.kind==='relic'?'#ff3df2':'#bfc7d9';
+    ctx.save();
+    ctx.translate(sxx,cy);
+    ctx.rotate(Math.sin(now()*3+c.x*.01)*0.12);
+    ctx.fillStyle='#111124';
+    ctx.strokeStyle=col;
+    ctx.lineWidth=3;
+    ctx.shadowColor=col;
+    ctx.shadowBlur=12;
+    roundRect(ctx,-13,-13,26,26,6,true,true);
+    ctx.shadowBlur=0;
+    ctx.fillStyle=col;
+    ctx.font='900 15px system-ui';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(c.kind==='weapon'?'⚔':c.kind==='medkit'?'+':c.kind==='relic'?'✦':'⚙',0,1);
+    ctx.restore();
+  }
+}
+
+function drawHazards(cam){
+  for(let i=hi;i<hazards.length;i++){
+    const h=hazards[i];
+    const sxx=h.x-cam;
+    if(sxx>W+80) break;
+    if(h.dead||sxx<-80) continue;
+    const s=sampleTrack(h.x);
+    const y=hazardY(h,s);
+    if(h.type==='bat'){
+      ctx.drawImage(glowSprite('#ff3df2'),sxx-20,y-20,40,40);
+      ctx.strokeStyle='#ff3df2'; ctx.fillStyle='#260026'; ctx.lineWidth=3;
+      const flap=Math.sin(now()*14+h.phase)*6;
+      ctx.beginPath();
+      ctx.moveTo(sxx,y); ctx.quadraticCurveTo(sxx-22,y-20+flap,sxx-34,y+5);
+      ctx.quadraticCurveTo(sxx-10,y-5,sxx,y);
+      ctx.moveTo(sxx,y); ctx.quadraticCurveTo(sxx+22,y-20+flap,sxx+34,y+5);
+      ctx.quadraticCurveTo(sxx+10,y-5,sxx,y);
+      ctx.stroke();
+      ctx.beginPath(); ctx.arc(sxx,y,8,0,Math.PI*2); ctx.fill();
+    } else if(h.type==='rock'){
+      ctx.fillStyle='#7f879c';
+      ctx.beginPath();
+      for(let k=0;k<8;k++){
+        const a=k/8*Math.PI*2, rr=h.r*(.75+((k*31)%9)/18);
+        const px=sxx+Math.cos(a)*rr, py=y+Math.sin(a)*rr;
+        if(k===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle='#2a2f3d'; ctx.lineWidth=2; ctx.stroke();
+    } else if(h.type==='saw'){
+      const spin=now()*9+h.phase;
+      ctx.save(); ctx.translate(sxx,y); ctx.rotate(spin);
+      ctx.fillStyle='#9aa3b5'; ctx.strokeStyle='#3a4150'; ctx.lineWidth=2;
+      ctx.beginPath();
+      const teeth=10;
+      for(let k=0;k<teeth*2;k++){
+        const a=k/(teeth*2)*Math.PI*2;
+        const rr=(k%2===0)?h.r:h.r*0.68;
+        const px=Math.cos(a)*rr, py=Math.sin(a)*rr;
+        if(k===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='#2a2f3d'; ctx.beginPath(); ctx.arc(0,0,h.r*0.3,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      if(h.hpMax>1 && h.hp<h.hpMax){
+        ctx.fillStyle='#ff496c'; ctx.fillRect(sxx-h.r,y-h.r-7,h.r*2*(h.hp/h.hpMax),3);
+      }
+    } else if(h.type==='crystal'){
+      const pulse=0.5+0.5*Math.sin(now()*4+h.phase);
+      ctx.drawImage(glowSprite('#7CF6E3'),sxx-26,y-26,52,52);
+      ctx.save(); ctx.translate(sxx,y);
+      const g=ctx.createLinearGradient(0,-h.r,0,h.r);
+      g.addColorStop(0,'#b388ff'); g.addColorStop(.5,'#7CF6E3'); g.addColorStop(1,'#41e8ff');
+      ctx.fillStyle=g; ctx.strokeStyle='#eafcff'; ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(0,-h.r); ctx.lineTo(h.r*0.7,-h.r*0.2);
+      ctx.lineTo(h.r*0.45,h.r); ctx.lineTo(-h.r*0.45,h.r);
+      ctx.lineTo(-h.r*0.7,-h.r*0.2); ctx.closePath();
+      ctx.globalAlpha=0.85+0.15*pulse; ctx.fill(); ctx.globalAlpha=1; ctx.stroke();
+      ctx.strokeStyle='#ffffff66'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,-h.r); ctx.lineTo(0,h.r);
+      ctx.moveTo(-h.r*0.7,-h.r*0.2); ctx.lineTo(h.r*0.7,-h.r*0.2); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle='#0a0f17cc'; ctx.fillRect(sxx-h.r,y-h.r-9,h.r*2,4);
+      ctx.fillStyle='#7CF6E3'; ctx.fillRect(sxx-h.r,y-h.r-9,h.r*2*(h.hp/h.hpMax),4);
+    } else {
+      ctx.drawImage(glowSprite('#ff496c'),sxx-22,y-22,44,44);
+      ctx.fillStyle='#ff496c';
+      ctx.beginPath();
+      if(h.edge==='top'){ ctx.moveTo(sxx,y+h.r); ctx.lineTo(sxx+h.r,y-h.r); ctx.lineTo(sxx-h.r,y-h.r); }
+      else { ctx.moveTo(sxx,y-h.r); ctx.lineTo(sxx+h.r,y+h.r); ctx.lineTo(sxx-h.r,y+h.r); }
+      ctx.closePath(); ctx.fill();
+    }
+  }
+}
+function drawDwarf(dy){
+  const x=dwarf.sx, y=dy;
+  ctx.save();
+  if(dwarf.inv>0){
+    ctx.globalAlpha=0.55+0.45*Math.sin(now()*30);
+  }
+  ctx.translate(x,y); ctx.rotate(dwarf.rot*.55);
+  if(dwarf.inv>0 || dwarf.shield>0){
+    ctx.strokeStyle=dwarf.shield>0?'#41e8ff':'#ffffff';
+    ctx.lineWidth=3;
+    ctx.globalAlpha=.8;
+    ctx.beginPath(); ctx.arc(0,0,30,0,Math.PI*2); ctx.stroke();
+    ctx.globalAlpha=dwarf.inv>0 ? 0.55+0.45*Math.sin(now()*30) : 1;
+  }
+  const grd=ctx.createRadialGradient(-30,0,2,-30,0,35);
+  grd.addColorStop(0,'#fff'); grd.addColorStop(.3,'#ff9d3d'); grd.addColorStop(1,'#ff3d3d00');
+  ctx.fillStyle=grd;
+  ctx.beginPath(); ctx.ellipse(-34,0,38,14,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#5b3618'; ctx.lineWidth=5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(-2,15); ctx.lineTo(-18,26); ctx.moveTo(8,14); ctx.lineTo(22,25); ctx.stroke();
+  ctx.fillStyle='#3b78ff'; ctx.strokeStyle='#101020'; ctx.lineWidth=2;
+  roundRect(ctx,-16,-8,32,30,9,true,true);
+  ctx.fillStyle='#2a2a35'; ctx.strokeStyle='#41e8ff'; ctx.lineWidth=2;
+  roundRect(ctx,18,-6,22,13,5,true,true);
+  ctx.fillStyle='#080812'; ctx.beginPath(); ctx.arc(40,0,6,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#ffd35a'; ctx.font='900 8px system-ui'; ctx.textAlign='center';
+  ctx.fillText((WEAPONS[currentWeaponKey()]?WEAPONS[currentWeaponKey()].name[0]:'Ø'),29,-10);
+  ctx.strokeStyle='#101020';
+  ctx.fillStyle='#f1b278';
+  ctx.beginPath(); ctx.arc(4,-18,15,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#c96f2a';
+  ctx.beginPath();
+  ctx.moveTo(-10,-12); ctx.quadraticCurveTo(4,16,20,-10); ctx.quadraticCurveTo(6,2,-10,-12); ctx.fill();
+  ctx.fillStyle='#bfc7d9'; ctx.beginPath(); ctx.arc(4,-24,16,Math.PI,0); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle='#ffd35a'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(-8,-31); ctx.lineTo(-22,-42); ctx.moveTo(16,-31); ctx.lineTo(31,-42); ctx.stroke();
+  ctx.fillStyle='#050505'; ctx.beginPath(); ctx.arc(0,-19,2,0,Math.PI*2); ctx.arc(10,-19,2,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#5b3618'; ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(17,1); ctx.lineTo(32,-15); ctx.stroke();
+  ctx.fillStyle='#929bad'; ctx.strokeStyle='#101020'; ctx.lineWidth=2;
+  roundRect(ctx,25,-24,24,12,3,true,true);
+  ctx.globalAlpha=.18; ctx.strokeStyle='#63ff9a'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(0,0,dwarf.hitR,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+}
+function roundRect(c,x,y,w,h,r,fill,stroke){
+  c.beginPath();
+  c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r);
+  c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+  if(fill)c.fill(); if(stroke)c.stroke();
+}
+function drawParticles(cam){
+  for(const p of particles){
+    ctx.globalAlpha=clamp(p.life*2.2,0,1);
+    ctx.drawImage(glowSprite(p.color),p.x-cam-7,p.y-7,14,14);
+  }
+  ctx.globalAlpha=1;
+  ctx.font='900 15px system-ui';
+  ctx.textAlign='center';
+  for(const f of floating){
+    ctx.globalAlpha=clamp(f.life,0,1);
+    ctx.fillStyle='#000';
+    ctx.fillText(f.text,f.x-cam+1.5,f.y+1.5);
+    ctx.fillStyle=f.color;
+    ctx.fillText(f.text,f.x-cam,f.y);
+  }
+  ctx.globalAlpha=1;
+}
+function drawIdle(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.fillStyle='#070711'; ctx.fillRect(0,0,W,H);
+  buildStars();
+  ctx.globalAlpha=.5;
+  for(let x=0;x<W+512;x+=512){ ctx.drawImage(starFar,x,0); if(H>512) ctx.drawImage(starFar,x,512); }
+  ctx.globalAlpha=1;
+}
+
+
+/* ===== 24-boot.js ===== */
+/* ================= BOOT ================= */
+resize();
+buildStars();
+drawIdle();
+ensureDailyMissions();
+ensureDailyRun();
+$('soundBtn').textContent = save.sound ? '🔊' : '🔇';
+const bootParams=new URLSearchParams(location.search);
+if(!parseDuelHash() && bootParams.get('seed')){
+  setTimeout(function(){ startGame('random', Number(bootParams.get('seed'))>>>0); }, 300);
+}
+refreshMenu();
+// Live nedtælling i Laboratoriet (kun når fanen er åben i menuen)
+setInterval(function(){
+  if(state==='menu' && activeTab==='research' && $('menu').style.display!=='none'){ renderTab(); }
+}, 1000);
+
+})();
+
+</script>
+</body>
+</html>

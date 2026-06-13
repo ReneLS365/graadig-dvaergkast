@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#090914">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="./src/pwa/manifest.webmanifest">
+<link rel="stylesheet" href="./src/styles/main.css">
+<title>GRÅDIG: Dværgkast v14 Core Refactor</title>
+</head>
+<body>
+<div id="app">
+  <div id="gameWrap">
+    <canvas id="game"></canvas>
+
+    <div id="hud">
+      <div class="topGrid">
+        <div class="card">
+          <div class="statRow">
+            <div class="stat"><span class="label">Live</span><span id="liveVal" class="value">0</span></div>
+            <div class="stat"><span class="label">Bank</span><span id="bankVal" class="value">0</span></div>
+            <div class="stat"><span class="label">Guld</span><span id="goldVal" class="value">0</span></div>
+          </div>
+        </div>
+        <div class="card centerTitle">
+          <div class="logo">DVÆRGKAST</div>
+          <div class="sub"><span id="modeBadge">Daily</span> · <span id="subInfo">seed 0</span></div>
+          <div class="hudBtns">
+            <button id="pauseBtn" aria-label="Pause">⏸</button>
+            <button id="soundBtn" aria-label="Lyd">🔊</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="statRow" style="justify-content:flex-end">
+            <div class="stat"><span class="label">Multi</span><span id="multVal" class="value big">x1.00</span></div>
+            <div class="stat"><span class="label">Skip</span><span id="skipVal" class="value">0</span></div>
+            <div class="stat"><span class="label">HP</span><span id="hpVal" class="value">1</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="duelBar">
+      <b id="duelName">DUEL</b>
+      <div class="duelTrack"><div id="duelFill"></div></div>
+    </div>
+
+    <div id="msg"></div>
+    <div class="toast" id="toast"></div>
+    <div id="intro"><div id="introText">HOLD SKÆRMEN = STIG</div></div>
+
+    <div id="bottomControls">
+      <div id="hint">
+        <span class="pill">Hold = stig</span>
+        <span class="pill">Slip = fald</span>
+        <span class="pill">Kys væggen = bonus</span><span class="pill">Relic = midlertidig buff</span>
+        <span class="pill" id="fairPill" style="display:none">FAIR SEED · alle har samme build</span>
+      </div>
+      <button id="hammerBtn">EVNE<br><span id="hammerCd">klar</span></button>
+      <button id="ultBtn">ULT<br><span id="ultLbl">lader</span></button>
+    </div>
+
+    <div id="menu">
+      <div class="menuBox">
+        <div class="header">
+          <div class="titleBlock">
+            <h1>GRÅDIG:<br><span>Dværgkast Survival+ v14</span></h1>
+            <p>Overlevelse, inventory, våben, loot crates, skills og kampagne. <b>Repo-build:</b> spillet er nu delt op i rigtig projektstruktur. Progressionen er stadig strammere, survival er hårdere, og der er tilføjet bedre dev-flow, balancing-noter og single-file build.</p>
+          </div>
+          <div class="playerBox">
+            <div class="mini"><span class="label">Level</span><b id="mLevel">1</b></div>
+            <div class="mini"><span class="label">XP</span><b id="mXp">0/250</b></div>
+            <div class="mini"><span class="label">Guld</span><b id="mGold">0</b></div>
+            <div class="mini"><span class="label">Data</span><b id="mData">0</b></div>
+            <div class="mini"><span class="label">Bedst</span><b id="mBest">0</b></div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="panel">
+            <h2>Spil</h2>
+            <div class="modeGrid">
+              <button class="bigBtn primary" data-mode="survival"><strong>Overlevelse</strong><span>Waves, loot crates, våben og længere runs. Her skal spillet bide igen.</span></button>
+              <button class="bigBtn" data-mode="campaign"><strong>Kampagne</strong><span>Baner, mål, boss-miner og progress. Start dér, ikke i tilfældigt kaos.</span></button>
+              <button class="bigBtn" data-mode="daily"><strong>Dagens Mine</strong><span id="dailyDesc">Samme seed for alle. 3 forsøg. Fair build.</span></button>
+              <button class="bigBtn" data-mode="random"><strong>Random Kast</strong><span>Ny bane, dit build, nye dårlige beslutninger.</span></button>
+              <button class="bigBtn" data-mode="practice"><strong>Træning</strong><span>Ingen stress. Lær styring og porte.</span></button>
+              <button class="bigBtn gold" data-mode="chaos"><strong>Kaos-run</strong><span>Flere mønter, flere farer, færre undskyldninger.</span></button>
+            </div>
+
+            <h2 style="margin-top:14px">Build <span class="label" style="font-size:10px">(gælder i Random / Kaos / Træning)</span></h2>
+            <div class="loadouts">
+              <div class="loadRow"><b>Pilot</b><select id="pilotSel"></select><span class="badge" id="pilotLvl">Lv1</span></div>
+              <div class="loadRow"><b>Core</b><select id="coreSel"></select><span class="badge" id="coreLvl">Lv1</span></div>
+              <div class="loadRow"><b>Bankchip</b><select id="chipSel"></select><span class="badge" id="chipLvl">Lv1</span></div>
+              <div class="loadRow"><b>Evne</b><select id="abilitySel"></select><span class="badge" id="abilityLvl">Lv1</span></div>
+            </div>
+
+            <div style="margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35">
+              Dagens Mine og dueller spilles med samme standard-build for alle — dér vinder tommelfingeren, ikke pengepungen. Dit gear gør dig stærkere alle andre steder.
+            </div>
+            <div class="devNote">
+              v14 core-refactor repo-build <span class="repoBadge">STRUCTURED</span><br>
+              Dev: <kbd class="cmd">npm run dev</kbd> eller <kbd class="cmd">python -m http.server 8080</kbd><br>
+              Single HTML findes i <kbd class="cmd">dist/graadig-dvaergkast-v11.html</kbd>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="tabs">
+              <button class="tab active" data-tab="campaign">Kampagne</button>
+              <button class="tab" data-tab="characters">Helte</button>
+              <button class="tab" data-tab="inventory">Inventory</button>
+              <button class="tab" data-tab="upgrades">Udstyr</button>
+              <button class="tab" data-tab="research">Laboratorie</button>
+              <button class="tab" data-tab="skills">Skills</button>
+              <button class="tab" data-tab="missions">Missioner</button>
+              <button class="tab" data-tab="achievements">Achievements</button>
+              <button class="tab" data-tab="leaderboard">Leaderboard</button>
+            </div>
+            <div id="tabContent"></div>
+            <div style="margin-top:14px;text-align:center;">
+              <button id="exportSaveBtn" style="background:#ffffff0a;border:1px solid #63ff9a55;color:#9dffc0;border-radius:12px;padding:8px 14px;font-weight:900;font-size:12px;margin:3px;">Eksportér save</button>
+              <button id="importSaveBtn" style="background:#ffffff0a;border:1px solid #41e8ff55;color:#a8f5ff;border-radius:12px;padding:8px 14px;font-weight:900;font-size:12px;margin:3px;">Importér save</button>
+              <input id="importSaveFile" type="file" accept="application/json,.json" style="display:none">
+              <button id="resetBtn" style="background:#ffffff0a;border:1px solid #ff496c44;color:#ff8aa0;border-radius:12px;padding:8px 14px;font-weight:900;font-size:12px;margin:3px;">Nulstil al fremgang</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="pauseOv">
+      <div class="overBox small">
+        <h2>Pause</h2>
+        <p style="color:var(--muted);font-weight:800">Dværgen hænger i luften og venter.</p>
+        <div class="overBtns" style="pointer-events:auto">
+          <button class="primary" id="resumeBtn">Fortsæt</button>
+          <button id="quitBtn">Afslut run</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="gameOver">
+      <div class="overBox">
+        <h2 id="overTitle">Crash.</h2>
+        <p id="overText" style="color:var(--muted);font-weight:800">Dværgen blev til byggestøv.</p>
+        <span id="oGrade">Lærling</span>
+        <div class="overStats">
+          <div class="mini"><span class="label">Score</span><b id="oScore">0</b></div>
+          <div class="mini"><span class="label">Banket</span><b id="oBank">0</b></div>
+          <div class="mini"><span class="label">Peak</span><b id="oPeak">x1.00</b></div>
+          <div class="mini"><span class="label">Distance</span><b id="oDist">0 m</b></div>
+          <div class="mini"><span class="label">Helt-EXP</span><b id="oHeroXp">+0</b></div>
+          <div class="mini"><span class="label">Data</span><b id="oData">+0</b></div>
+        </div>
+        <div class="overBtns">
+          <button class="primary" id="retryBtn">Prøv igen</button>
+          <button class="gold" id="shareBtn">Udfordr en ven</button>
+          <button id="newBtn">Ny random</button>
+          <button id="menuBtn">Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="nameDlg">
+      <div class="overBox small">
+        <h2 style="font-size:30px">Dit navn</h2>
+        <p style="color:var(--muted);font-weight:800">Vises når du udfordrer venner.</p>
+        <input id="nameInput" maxlength="14" placeholder="Dværgnavn" autocomplete="off">
+        <div class="overBtns" style="pointer-events:auto">
+          <button class="primary" id="nameOk">Gem</button>
+          <button id="nameCancel">Annullér</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="./dist/app.bundle.js"></script>
+</body>
+</html>

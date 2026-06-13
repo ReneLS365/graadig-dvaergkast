@@ -1,0 +1,22 @@
+{
+  "name": "graadig-dvaergkast-core-refactor",
+  "version": "0.14.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:game": "node tools/build-game-bundle.mjs",
+    "build:single": "node tools/build-single-html.mjs",
+    "check": "node tools/check-repo.mjs",
+    "smoke": "node tools/smoke-check.mjs",
+    "balance:check": "node tools/balance-check.mjs",
+    "simulate": "node tools/simulate-run.mjs",
+    "build": "npm run check && npm run balance:check && npm run build:game && npm run build:single",
+    "dev": "npm run build:game && vite --host 0.0.0.0",
+    "serve": "npm run build:game && python3 -m http.server 8080",
+    "clean": "node tools/clean.mjs"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  },
+  "description": "GRÅDIG Dværgkast v14 core-refactor, GitHub/Codex ready."
+}

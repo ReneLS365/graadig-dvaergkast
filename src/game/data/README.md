@@ -1,0 +1,3 @@
+# Data modules
+
+Future home for DATA, CAMPAIGN_LEVELS, SKILLS, WEAPONS, CHARACTERS and RESEARCH.
