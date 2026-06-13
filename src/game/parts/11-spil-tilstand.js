@@ -1,13 +1,15 @@
 /* ================= SPIL-TILSTAND ================= */
 const SIM_DT = 1/60;
-let state='menu';
-let currentMode='daily', currentSeed=todaySeed();
+const gameState=createInitialGameState();
+let state=gameState.app.mode;
+let currentMode=gameState.app.currentMode, currentSeed=todaySeed();
+gameState.app.currentSeed=currentSeed;
 let modeMods=null, duelTarget=null, activeCampaignLevel=null, lastCampaignClear=false;
 let track=[], gates=[], coins=[], hazards=[], weaponCrates=[], gi=0, ci=0, hi=0, wi=0, trackEndX=28000;
 let particles=[], floating=[];
 let ghost=null, runGhost=[];
 let dwarf=null, camX=0, pCamX=0, dist=0;
-let score=0, banked=0, livePot=0, mult=1, peak=1, skips=0, perfects=0, collectedGold=0, smashed=0, nearCount=0;
+let score=gameState.run.score, banked=gameState.run.banked, livePot=gameState.run.livePot, mult=gameState.run.multiplier, peak=1, skips=0, perfects=0, collectedGold=0, smashed=0, nearCount=0;
 let coinCombo=0, lastCoinT=-9;
 let grazeT=0, grazeTick=0, grazeTotal=0;
 let recordHit=false, bestAtStart=0;
@@ -23,7 +25,7 @@ let hudDirty=true, hudT=0;
 const GATE_COLOR={bank:'#63ff9a',split:'#41e8ff',greed:'#ff3df2',perfect:'#ffd35a'};
 const GATE_TIP={bank:'GRØN = BANK · gem dine point', split:'CYAN = SPLIT · bank halvdelen', greed:'PINK = GRÅDIG · boost x', perfect:'GUL = PERFEKT · ram midten'};
 
-function showMenu(){ state='menu'; $('menu').style.display='flex'; $('duelBar').style.display='none'; refreshMenu(); engineUpdate(); }
+function showMenu(){ state='menu'; gameState.app.mode=state; $('menu').style.display='flex'; $('duelBar').style.display='none'; refreshMenu(); engineUpdate(); }
 function hideMenu(){ $('menu').style.display='none'; }
 function hideGameOver(){ $('gameOver').style.display='none'; $('gameOver').classList.remove('arm'); }
 
@@ -76,6 +78,7 @@ function startCampaignLevel(id){
 
 function startGame(mode,seed){
   currentMode=mode; currentSeed=seed>>>0;
+  gameState.app.currentMode=currentMode; gameState.app.currentSeed=currentSeed;
   if(mode==='campaign' && activeCampaignLevel){
     modeMods={
       speed:activeCampaignLevel.speed,
@@ -99,7 +102,7 @@ function startGame(mode,seed){
   }
   runStatsCache = modeMods.fair ? Object.assign({},FAIR_STATS) : buildStats();
   hideMenu(); hideGameOver(); $('pauseOv').style.display='none';
-  state='play';
+  state='play'; gameState.app.mode=state;
   track=makeTrack(currentSeed);
   gates=makeGates(currentSeed);
   coins=makeCoins(currentSeed, modeMods);
@@ -109,7 +112,8 @@ function startGame(mode,seed){
   particles=[]; floating=[];
   dwarf={ sx:clamp(W*0.24,90,170), y:H*0.5, py:H*0.5, vy:0, r:18, hitR:10.5, rot:0, inv:1.0, shield:0, magnet:0, dash:0, slow:0, over:0 };
   camX=0; pCamX=0; dist=0;
-  score=0; banked=0; livePot=0; mult=1; peak=1; skips=0; perfects=0; collectedGold=0; smashed=0; nearCount=0;
+  resetRunState(gameState);
+  score=gameState.run.score; banked=gameState.run.banked; livePot=gameState.run.livePot; mult=gameState.run.multiplier; peak=1; skips=0; perfects=0; collectedGold=0; smashed=0; nearCount=0;
   coinCombo=0; lastCoinT=-9;
   grazeT=0; grazeTick=0; grazeTotal=0;
   recordHit=false; bestAtStart=save.best;
@@ -138,7 +142,17 @@ function startGame(mode,seed){
   if(!save.seenIntro){ introPhase=1; heldT=0; $('introText').textContent='HOLD SKÆRMEN = STIG'; $('intro').style.display='flex'; }
   else { introPhase=0; $('intro').style.display='none'; }
   flash(modeMods.label+' — KLAR!');
+  syncRunStateFromLegacy();
   hudDirty=true;
   last=now();
   requestAnimationFrame(loop);
+}
+
+function syncRunStateFromLegacy(){
+  gameState.run.score=score;
+  gameState.run.banked=banked;
+  gameState.run.livePot=livePot;
+  gameState.run.multiplier=mult;
+  gameState.run.distance=dist;
+  gameState.ui.hudDirty=hudDirty;
 }

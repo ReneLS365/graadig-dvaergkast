@@ -28,12 +28,14 @@ function gradeFor(final, oldBest, survived){
 }
 function endRun(survived,reason){
   if(state==='over') return;
-  state='over';
+  state='over'; gameState.app.mode=state;
+  syncRunStateFromLegacy();
   $('pauseOv').style.display='none';
   $('duelBar').style.display='none';
   if(introPhase){ introPhase=0; $('intro').style.display='none'; }
   const st=runStatsCache||{};
   const final=Math.floor(banked + (survived?livePot:(livePot*Math.max(0,(st.salvage||0)))));
+  gameState.run.survived=survived;
   lastFinal=final; lastSurvived=survived;
   const oldBest=save.best;
 
@@ -129,6 +131,7 @@ function endRun(survived,reason){
   go.style.display='flex';
   go.classList.remove('arm');
   setTimeout(function(){ go.classList.add('arm'); }, 350);
+  syncRunStateFromLegacy();
   hudDirty=true; hudT=1;
   engineUpdate();
 }

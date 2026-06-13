@@ -25,6 +25,7 @@ function loop(){
       return;
     }
   }
+  syncRunStateFromLegacy();
   const fxScale = state==='dying' ? 0.35 : 1;
   updateFX(dt*fxScale, dt);
   draw(state==='play' ? clamp(acc/SIM_DT,0,1) : 0);
