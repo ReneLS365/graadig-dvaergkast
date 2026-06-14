@@ -115,14 +115,15 @@ function stepSim(){
   simTick++;
   const dt=SIM_DT;
   const st=runStatsCache;
+  const run=gameState.run;
   pCamX=camX; dwarf.py=dwarf.y;
 
-  let speed=(190 + dist*0.0025 + (st.speed||0)*120) * modeMods.speed;
+  let speed=(190 + run.distance*0.0025 + (st.speed||0)*120) * modeMods.speed;
   if(dwarf.dash>0) speed+=220;
   if(dwarf.slow>0) speed*=0.58;
   if(dwarf.over>0) speed*=1.10;
   if(modeMods.survival) speed *= 1 + Math.min(1.0,(survivalWave-1)*0.05);
-  camX += speed*dt; dist=camX;
+  camX += speed*dt; run.distance=camX;
 
   const spdN=clamp((speed-190)/280,0,1);
   const targetSX=clamp(W*(0.26-0.08*spdN),86,180);
@@ -165,7 +166,7 @@ function stepSim(){
       grazeT+=dt; grazeTotal+=dt; grazeTick+=dt;
       if(grazeTick>=0.2){
         grazeTick=0;
-        mult+=0.035; livePot+=14*mult; addUlt(0.02);
+        run.multiplier+=0.035; run.livePot+=14*run.multiplier; addUlt(0.02);
         const sideY = topGap<botGap ? s.top+2 : s.bot-2;
         addParticle(wx-6,sideY,'#41e8ff',2,0.5);
         floatText(wx,sideY+(topGap<botGap?24:-24),'+kys','#41e8ff');
@@ -175,12 +176,12 @@ function stepSim(){
     } else { grazeT=0; grazeTick=0; }
   }
 
-  mult += dt*(0.075 + skips*.012 + (st.greed||0)*.05);
-  peak=Math.max(peak,mult);
-  livePot += dt*95*mult*(1+(st.greed||0));
-  if(st.interest && banked>0) livePot += dt * Math.min(80, banked/900) * st.interest;
+  run.multiplier += dt*(0.075 + run.skips*.012 + (st.greed||0)*.05);
+  run.peak=Math.max(run.peak,run.multiplier);
+  run.livePot += dt*95*run.multiplier*(1+(st.greed||0));
+  if(st.interest && run.banked>0) run.livePot += dt * Math.min(80, run.banked/900) * st.interest;
   if(modeMods.survival){
-    survivalWave=Math.max(1, Math.floor(dist/900)+1);
+    survivalWave=Math.max(1, Math.floor(run.distance/900)+1);
     if(survivalWave!==lastWave){
       lastWave=survivalWave;
       shieldHp=Math.min(ultShieldCap(), shieldHp + (survivalWave%3===0?1:0));
@@ -194,14 +195,14 @@ function stepSim(){
       }
       flashScreen('#63ff9a',.18); sfx.level();
     }
-    mult += dt*0.012*survivalWave;
-    livePot += dt*survivalWave*18;
+    run.multiplier += dt*0.012*survivalWave;
+    run.livePot += dt*survivalWave*18;
     $('subInfo').textContent='Wave '+survivalWave+' · kills '+survivalKills+' · '+WEAPONS[currentWeaponKey()].name;
   }
   autoFireWeapon(dt, wx);
-  score=banked+livePot;
+  run.score=run.banked+run.livePot;
 
-  if(!recordHit && bestAtStart>500 && score>bestAtStart){
+  if(!recordHit && bestAtStart>500 && run.score>bestAtStart){
     recordHit=true;
     flashScreen('#ffd35a',.45); shake(13);
     floatText(wx,dwarf.y-70,'NY REKORD!','#ffd35a');
@@ -210,7 +211,7 @@ function stepSim(){
   }
 
   if(wx>=trackEndX-40){
-    banked+=livePot; livePot=0; score=banked;
+    run.banked+=run.livePot; run.livePot=0; run.score=run.banked;
     sfx.finish(); flashScreen('#63ff9a',.5);
     endRun(true,'MÅL! Du nåede udgangen i live — hele potten banket.');
     return;
