@@ -38,3 +38,11 @@ Derfor:
 - simpel test-run med seed uden rendering
 - replay validation senere med server
 - auto-save migration versionering
+
+## v14 save migration hardening
+
+Save schema version `4` remains on the existing `graadig_dvaerg_v3` localStorage key for old-save compatibility.
+
+The migration path now defensively rebuilds required save containers when imported or stored JSON has malformed nested values, including inventory, research queues, character roster data, and array fields such as leaderboard data. Invalid imported JSON and non-object imports are rejected instead of replacing the current save with defaults.
+
+`npm run check` includes `npm run save:check`, which covers old schema migration, malformed nested data, primitive/non-object data, and future-version normalization.
