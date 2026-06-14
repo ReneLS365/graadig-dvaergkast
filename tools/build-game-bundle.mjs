@@ -16,7 +16,7 @@ if (!Array.isArray(order) || order.length < 5) {
 
 const missing = [];
 const coreFiles = ['src/game/core/game-state.js'];
-let source = '';
+let source = "'use strict';\n";
 for (const coreFile of coreFiles) {
   if (!fs.existsSync(coreFile)) {
     missing.push(coreFile);
