@@ -41,7 +41,6 @@ const DATA = {
     overcharge:{name:'Overladning',desc:'Pumper multiplier nu. Gør næste sekunder mere farlige.', cost:1700, stats:{greed:0.08, speed:0.03}}, 
   }
 };
-const FAIR_STATS = {lift:.02,control:.08,greed:0,bank:.10,perfect:.15,split:.10,hp:0,hammer:.10,magnet:.15,speed:0,cd:0,dash:0,salvage:0,coin:0,xp:0,interest:0,refund:0,weapon:0,ultcharge:0,data:0};
 const MAX_GEAR_LEVEL=10;
 
 const CAMPAIGN_LEVELS = [

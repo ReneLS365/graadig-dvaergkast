@@ -1,8 +1,11 @@
 {
   "version": "v14-core-refactor",
-  "hash": "3648482cf220",
+  "hash": "73ecfc2744bc",
   "core": [
     "src/game/core/game-state.js"
+  ],
+  "data": [
+    "src/game/data/fair-stats.js"
   ],
   "parts": [
     "01-bootstrap.js",
@@ -30,5 +33,5 @@
     "23-tegning.js",
     "24-boot.js"
   ],
-  "builtAt": "2026-06-14T16:40:50.773Z"
+  "builtAt": "2026-06-14T17:09:37.447Z"
 }
