@@ -28,13 +28,14 @@ function gradeFor(final, oldBest, survived){
 }
 function endRun(survived,reason){
   if(state==='over') return;
+  const run=gameState.run;
   state='over';
   $('pauseOv').style.display='none';
   $('duelBar').style.display='none';
   if(introPhase){ introPhase=0; $('intro').style.display='none'; }
   const st=runStatsCache||{};
-  const final=Math.floor(banked + (survived?livePot:(livePot*Math.max(0,(st.salvage||0)))));
-  gameState.run.survived = survived;
+  const final=Math.floor(run.banked + (survived?run.livePot:(run.livePot*Math.max(0,(st.salvage||0)))));
+  run.survived = survived;
   lastFinal=final; lastSurvived=survived;
   const oldBest=save.best;
 
@@ -65,14 +66,14 @@ function endRun(survived,reason){
   const goldGain = Math.floor(collectedGold + Math.min(450, final/180) + (save.research.passiveGold||0));
   save.gold += Math.max(0, goldGain);
   save.runs++;
-  if(final>save.best){ save.best=final; save.bestDist=Math.floor(dist); }
+  if(final>save.best){ save.best=final; save.bestDist=Math.floor(run.distance); }
   // Meta-fremgang er afkoblet fra den eksploderende score: dæmpet (sqrt) + hårdt loft per run.
   // Score må gerne være kæmpestor (flex) — men XP/data tjener du langsomt og jævnt.
   const xpStat=st.xp||0;
   gainXP(accXpForRun(final, smashed, survived, lastCampaignClear, xpStat));
   // Helt-EXP til den valgte helt (også i fair modes — det er stadig din helt)
   const heroKey=activeChar();
-  const heroXP=heroXpForRun(final, smashed, (currentMode==='survival'?survivalWave:1), perfects, dist, xpStat);
+  const heroXP=heroXpForRun(final, smashed, (currentMode==='survival'?survivalWave:1), perfects, run.distance, xpStat);
   lastHeroXP=heroXP; lastHeroKey=heroKey;
   gainCharXP(heroKey, heroXP);
   // Data fra run (krystaller giver løbende i minen; dette er en lille bonus oveni — også loftet)
@@ -80,13 +81,13 @@ function endRun(survived,reason){
   if(runDataBonus>0) gainData(runDataBonus);
   if(lastCampaignClear) gainData(6 + (activeCampaignLevel?activeCampaignLevel.id:0));
   lastRunData=runData;
-  save.leaderboard.push({score:final,bank:Math.floor(banked),peak:peak,seed:currentSeed,mode:modeMods.label,at:Date.now()});
+  save.leaderboard.push({score:final,bank:Math.floor(run.banked),peak:run.peak,seed:currentSeed,mode:modeMods.label,at:Date.now()});
   save.leaderboard=save.leaderboard.sort(function(a,b){return b.score-a.score;}).slice(0,60);
   saveGhost(currentSeed, runGhost, final);
 
   if(!survived) unlock('firstCrash');
   if(survived) unlock('finisher');
-  if(skips>=5) unlock('greedy');
+  if(run.skips>=5) unlock('greedy');
   if(save.gold>=2000) unlock('rich');
 
   lastDuelWon=false;
@@ -97,9 +98,9 @@ function endRun(survived,reason){
   persist();
 
   $('oScore').textContent=fmt(final);
-  $('oBank').textContent=fmt(banked);
-  $('oPeak').textContent='x'+peak.toFixed(2);
-  $('oDist').textContent=fmt(dist/12)+' m';
+  $('oBank').textContent=fmt(run.banked);
+  $('oPeak').textContent='x'+run.peak.toFixed(2);
+  $('oDist').textContent=fmt(run.distance/12)+' m';
   const hcName=(DATA.pilots[lastHeroKey]&&DATA.pilots[lastHeroKey].name) || (CHARACTERS[lastHeroKey]&&CHARACTERS[lastHeroKey].role) || 'Bram Jernskæg';
   $('oHeroXp').textContent='+'+fmt(lastHeroXP)+' · '+hcName+' Lv'+charLevel(lastHeroKey);
   $('oData').textContent='+'+fmt(lastRunData);
