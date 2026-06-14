@@ -2,12 +2,13 @@
 
 function killHazard(h, hy, reason, rewardMul){
   if(!h || h.dead) return;
+  const run=gameState.run;
   h.dead=true;
   survivalKills++;
   if(h.type==='crystal'){
     const st=runStatsCache||{};
-    const goldR = 220 * (rewardMul||1) * mult;
-    livePot += goldR;
+    const goldR = 220 * (rewardMul||1) * run.multiplier;
+    run.livePot += goldR;
     addUlt(0.12);
     const dataAmt = Math.max(1, Math.round((2 + survivalWave*0.3) * (1+(st.data||0)*0.6) * (1+(researchBonusStats().data||0)*0.6)));
     gainData(dataAmt, h.x, hy-18);
@@ -19,10 +20,10 @@ function killHazard(h, hy, reason, rewardMul){
     persist();
     return;
   }
-  const reward=(reason==='WEAPON'?75:60) * (rewardMul||1) * mult;
-  livePot += reward;
+  const reward=(reason==='WEAPON'?75:60) * (rewardMul||1) * run.multiplier;
+  run.livePot += reward;
   if(currentMode==='survival'){
-    livePot += 18*survivalWave*mult;
+    run.livePot += 18*survivalWave*run.multiplier;
     // Mere konkret progression: kills giver små mængder skrot, så runs altid føles brugbare.
     if(reason==='WEAPON' || reason==='SMASH' || reason==='BOR' || reason==='PARRY'){
       const scrapDrip = 2 + Math.floor(survivalWave*0.55) + (h.type==='saw'?2:0);
@@ -70,7 +71,7 @@ function autoFireWeapon(dt, wx){
     floatText(t.h.x,t.hy,'-'+dmg.toFixed(1),'#ffd35a');
     if(t.h.hp<=0){
       killHazard(t.h,t.hy,'WEAPON',1+(st.leech||0));
-      if(st.leech) livePot+=90*mult*st.leech;
+      if(st.leech) gameState.run.livePot+=90*gameState.run.multiplier*st.leech;
     }
   }
   weaponCd=st.cooldown * (boosting?0.4:1);
@@ -100,7 +101,7 @@ function collectWeaponCrate(c,cx,cy){
       shieldHp=Math.min(ultShieldCap(), shieldHp+1);
       floatText(cx,cy,'RELIK: +1 HP','#63ff9a');
     }
-    mult*=1.18; livePot+=360*mult;
+    gameState.run.multiplier*=1.18; gameState.run.livePot+=360*gameState.run.multiplier;
     sfx.perfect(); pumpMult(); flashScreen('#ff3df2',.18);
   }else{
     const scrap=45 + Math.floor(Math.random()*55) + (currentMode==='survival'?survivalWave*5:0);
@@ -228,9 +229,9 @@ function stepSim(){
       floatText(g.x, Math.max(60,geom.y-geom.gap-46), GATE_TIP[g.type], GATE_COLOR[g.type]);
     }
     if(g.x < wx-40){
-      g.used=true; g.skipped=true; skips++; missionAdd('skips',1);
-      mult *= (1.22 + (st.greed||0)*.55);
-      floatText(g.x,geom.y,'SKIP x'+mult.toFixed(2),'#ff3df2');
+      g.used=true; g.skipped=true; run.skips++; missionAdd('skips',1);
+      run.multiplier *= (1.22 + (st.greed||0)*.55);
+      floatText(g.x,geom.y,'SKIP x'+run.multiplier.toFixed(2),'#ff3df2');
       addParticle(g.x,geom.y,'#ff3df2',12,1.1);
       sfx.skip(); pumpMult();
       continue;
@@ -271,7 +272,7 @@ function stepSim(){
       const gain=Math.ceil(c.val*(currentMode==='chaos'?2:1)*(1+(st.coin||0)));
       collectedGold+=gain;
       coinCombo++; lastCoinT=simTick*SIM_DT;
-      livePot += gain*12*mult; addUlt(0.004);
+      run.livePot += gain*12*run.multiplier; addUlt(0.004);
       missionAdd('coins',gain);
       addParticle(cx,cy,'#ffd35a',6,0.8);
       floatText(cx,cy,'+'+gain+'g','#ffd35a');
@@ -337,8 +338,8 @@ function stepSim(){
     }
     if(!h.dead && h.near && !h.counted && h.x<wx-30){
       h.counted=true; nearCount++;
-      mult+=0.06; livePot+=45*mult; addUlt(0.03);
-      floatText(h.x,hy,'TÆT PÅ! +'+Math.floor(45*mult),'#41e8ff');
+      run.multiplier+=0.06; run.livePot+=45*run.multiplier; addUlt(0.03);
+      floatText(h.x,hy,'TÆT PÅ! +'+Math.floor(45*run.multiplier),'#41e8ff');
       sfx.near(); pumpMult();
     }
   }
@@ -386,36 +387,37 @@ function beginDeath(reason){
 }
 
 function handleGate(g, geom, st){
+  const run=gameState.run;
   let amount=0, label='';
   if(g.type==='bank'){
-    amount=livePot*(1.0+(st.bank||0))*(bankBoostT>0?1.5:1);
-    banked += amount; livePot=livePot*(st.refund||0);
-    mult=Math.max(1,mult*(0.52-(st.bank||0)*.05));
-    skips=0; label='BANK +'+fmt(amount); addUlt(0.05);
+    amount=run.livePot*(1.0+(st.bank||0))*(bankBoostT>0?1.5:1);
+    run.banked += amount; run.livePot=run.livePot*(st.refund||0);
+    run.multiplier=Math.max(1,run.multiplier*(0.52-(st.bank||0)*.05));
+    run.skips=0; label='BANK +'+fmt(amount); addUlt(0.05);
     sfx.bank(amount>2500); flashScreen('#63ff9a',.3); freezeT=Math.max(freezeT,0.07); shake(6);
   } else if(g.type==='split'){
-    amount=livePot*(0.55+(st.split||0));
-    banked += amount; livePot-=amount;
-    mult=Math.max(1,mult*.78);
+    amount=run.livePot*(0.55+(st.split||0));
+    run.banked += amount; run.livePot-=amount;
+    run.multiplier=Math.max(1,run.multiplier*.78);
     label='SPLIT +'+fmt(amount);
     sfx.split(); flashScreen('#41e8ff',.22); freezeT=Math.max(freezeT,0.05); shake(4);
   } else if(g.type==='greed'){
-    mult *= 1.38+(st.greed||0)*.45;
-    livePot += 220*mult;
-    label='GRÅDIG x'+mult.toFixed(2);
+    run.multiplier *= 1.38+(st.greed||0)*.45;
+    run.livePot += 220*run.multiplier;
+    label='GRÅDIG x'+run.multiplier.toFixed(2);
     sfx.skip(); flashScreen('#ff3df2',.25); shake(5); pumpMult();
   } else if(g.type==='perfect'){
     const precision=1-Math.abs(geom.y-dwarf.y)/geom.gap;
     if(precision>.72 || autoPerfectN>0){
       if(autoPerfectN>0 && precision<=.72){ autoPerfectN--; floatText(g.x,geom.y-30,'AUTO-PERFEKT','#b388ff'); }
-      amount=livePot*(0.75+(st.perfect||0));
-      banked += amount; livePot*=.3; mult*=1.18;
+      amount=run.livePot*(0.75+(st.perfect||0));
+      run.banked += amount; run.livePot*=.3; run.multiplier*=1.18;
       perfects++;
       label='PERFEKT +'+fmt(amount);
       if(perfects>=3) unlock('perfect');
       sfx.perfect(); flashScreen('#ffd35a',.35); freezeT=Math.max(freezeT,0.07); shake(8);
     } else {
-      amount=livePot*.35; banked+=amount; livePot*=.65;
+      amount=run.livePot*.35; run.banked+=amount; run.livePot*=.65;
       label='SKÆV +'+fmt(amount);
       sfx.split(); freezeT=Math.max(freezeT,0.04);
     }
@@ -423,5 +425,5 @@ function handleGate(g, geom, st){
   missionAdd('bank',Math.floor(amount));
   addParticle(g.x,geom.y,GATE_COLOR[g.type],20,1.2);
   floatText(g.x,geom.y,label,'#fff');
-  if(banked>=20000) unlock('bankman');
+  if(run.banked>=20000) unlock('bankman');
 }
