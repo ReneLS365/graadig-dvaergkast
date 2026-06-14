@@ -1,38 +1,65 @@
 # Balance Notes
 
-## v11 principper
+## Current principles
 
-- Konto-level skal stige langsomt.
-- Helte-level skal føles værdifuldt.
-- Våben må ikke maxes på en enkelt aften.
-- Skrot skal primært komme fra survival og våbendrops.
-- Data skal være research-valuta og ikke regne ned fra himlen som konfetti.
+- Account level should rise slowly.
+- Hero levels should feel valuable.
+- Weapons should not be maxed in a single evening.
+- Scrap should primarily come from survival and weapon drops.
+- Data should be a research currency, not confetti.
+- Score may grow quickly; account power must stay controlled.
 
-## Ting der skal testes manuelt
+## New direction guardrails
 
-### Første 10 minutter
+GRÅDIG is moving toward a Mine Core wave survival roguelite with in-run choices and long-term progression. This PR does not change any balance values, but future balance work must protect these rules:
 
-Spilleren bør kunne:
+- Skill remains more important than owned progression.
+- Temporary in-run upgrades should create run variety, not permanent account inflation.
+- Workshop upgrades should provide visible goals without trivializing early waves.
+- Cards should be constrained by active slots so collection does not become unlimited stacking.
+- Research/lab slots should create planning pressure without requiring manipulative pacing.
+- Milestones should reward meaningful achievements, not every tiny action.
+- Difficulty tiers should let advanced players push deeper without making baseline survival hostile.
+- Daily and Duel must stay fair through standard builds or explicitly documented fair variants.
 
-- forstå styring
-- dø et par gange
-- samle lidt guld
-- føle at første upgrade er inden for rækkevidde
+## Economy boundaries for future work
 
-### Første 30 minutter
+Before changing numeric values, document the intended effect in this file and verify with checks/simulation where available.
 
-Spilleren bør have:
+Currencies should keep distinct identities:
 
-- mindst ét nyt våben eller tydelig progress mod det
-- mindst én skill eller gear upgrade
-- forstået forskellen mellem bank, greed og survival loot
+- Gold: immediate greed/run reward fantasy.
+- Scrap: weapons, workshop, and durable equipment progress.
+- Data: research and lab planning.
+- Relics: rare discoveries, milestones, and special long-term unlocks.
 
-### Efter 2 timer
+Do not silently move rewards between currencies during refactor tasks.
 
-Spilleren bør ikke have:
+## Things to test manually
 
-- maxet flere våben
-- maxet helte
-- låst alt op
+### First 10 minutes
 
-Hvis det sker, er økonomien for gavmild. Ja, spillere hader begrænsninger, men de hader også at være færdige.
+The player should be able to:
+
+- understand controls
+- die a few times
+- collect a little gold
+- feel that the first upgrade is within reach
+
+### First 30 minutes
+
+The player should have:
+
+- at least one new weapon or clear progress toward it
+- at least one skill or gear upgrade
+- understood the difference between bank, greed and survival loot
+
+### After 2 hours
+
+The player should not have:
+
+- maxed multiple weapons
+- maxed heroes
+- unlocked everything
+
+If that happens, the economy is too generous. Players hate limits, but they also hate being finished.
