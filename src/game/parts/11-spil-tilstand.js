@@ -7,8 +7,8 @@ let modeMods=null, duelTarget=null, activeCampaignLevel=null, lastCampaignClear=
 let track=[], gates=[], coins=[], hazards=[], weaponCrates=[], gi=0, ci=0, hi=0, wi=0, trackEndX=28000;
 let particles=[], floating=[];
 let ghost=null, runGhost=[];
-let dwarf=null, camX=0, pCamX=0, dist=0;
-let peak=1, skips=0, perfects=0, collectedGold=0, smashed=0, nearCount=0;
+let dwarf=null, camX=0, pCamX=0;
+let perfects=0, collectedGold=0, smashed=0, nearCount=0;
 let coinCombo=0, lastCoinT=-9;
 let grazeT=0, grazeTick=0, grazeTotal=0;
 let recordHit=false, bestAtStart=0;
@@ -26,7 +26,11 @@ Object.defineProperties(globalThis, {
   score: { get(){ return gameState.run.score; }, set(value){ gameState.run.score = value; } },
   banked: { get(){ return gameState.run.banked; }, set(value){ gameState.run.banked = value; } },
   livePot: { get(){ return gameState.run.livePot; }, set(value){ gameState.run.livePot = value; } },
-  mult: { get(){ return gameState.run.multiplier; }, set(value){ gameState.run.multiplier = value; } }
+  mult: { get(){ return gameState.run.multiplier; }, set(value){ gameState.run.multiplier = value; } },
+  dist: { get(){ return gameState.run.distance; }, set(value){ gameState.run.distance = value; } },
+  survived: { get(){ return gameState.run.survived; }, set(value){ gameState.run.survived = value; } },
+  peak: { get(){ return gameState.run.peak; }, set(value){ gameState.run.peak = value; } },
+  skips: { get(){ return gameState.run.skips; }, set(value){ gameState.run.skips = value; } }
 });
 
 const GATE_COLOR={bank:'#63ff9a',split:'#41e8ff',greed:'#ff3df2',perfect:'#ffd35a'};
@@ -119,9 +123,9 @@ function startGame(mode,seed){
   gi=0; ci=0; hi=0; wi=0;
   particles=[]; floating=[];
   dwarf={ sx:clamp(W*0.24,90,170), y:H*0.5, py:H*0.5, vy:0, r:18, hitR:10.5, rot:0, inv:1.0, shield:0, magnet:0, dash:0, slow:0, over:0 };
-  camX=0; pCamX=0; dist=0;
+  camX=0; pCamX=0;
   resetRunState(gameState);
-  score=0; banked=0; livePot=0; mult=1; peak=1; skips=0; perfects=0; collectedGold=0; smashed=0; nearCount=0;
+  score=0; banked=0; livePot=0; mult=1; dist=0; survived=false; peak=1; skips=0; perfects=0; collectedGold=0; smashed=0; nearCount=0;
   coinCombo=0; lastCoinT=-9;
   grazeT=0; grazeTick=0; grazeTotal=0;
   recordHit=false; bestAtStart=save.best;
