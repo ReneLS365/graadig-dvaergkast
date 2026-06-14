@@ -21,7 +21,7 @@ function draw(alpha){
   ctx.restore();
   ctx.drawImage(vignCanvas,0,0,W,H);
   if(state==='play'){
-    const danger=clamp((mult-8)/14,0,1);
+    const danger=clamp((gameState.run.multiplier-8)/14,0,1);
     if(danger>0.02){
       ctx.globalAlpha=danger*(0.45+0.45*Math.sin(now()*6));
       ctx.drawImage(dangerCanvas,0,0,W,H);

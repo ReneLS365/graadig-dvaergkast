@@ -23,7 +23,8 @@ function triggerAbility(){
     dwarf.slow=2.15; dwarf.inv=.35; flash('TIDSSPRÆKKE');
     flashScreen('#41e8ff',.28); sfx.perfect(); shake(5);
   }else if(ab==='overcharge'){
-    dwarf.over=2.2; mult*=1.42; livePot+=260*mult; flash('OVERLADNING x'+mult.toFixed(2));
+    const run = gameState.run;
+    dwarf.over=2.2; run.multiplier*=1.42; run.livePot+=260*run.multiplier; flash('OVERLADNING x'+run.multiplier.toFixed(2));
     flashScreen('#ff3df2',.32); sfx.skip(); pumpMult(); shake(8);
   }else{
     flash('HAMMER!');
