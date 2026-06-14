@@ -20,6 +20,7 @@ const required = [
   'tools/build-single-html.mjs',
   'tools/balance-check.mjs',
   'tools/simulate-run.mjs',
+  'tools/save-migration-check.mjs',
   'docs/CODEX_HANDOFF.md',
   'docs/V14_ACCEPTANCE.md',
   'codex/CODEX_START_HERE.md'
