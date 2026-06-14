@@ -34,6 +34,7 @@ function endRun(survived,reason){
   if(introPhase){ introPhase=0; $('intro').style.display='none'; }
   const st=runStatsCache||{};
   const final=Math.floor(banked + (survived?livePot:(livePot*Math.max(0,(st.salvage||0)))));
+  gameState.run.survived = survived;
   lastFinal=final; lastSurvived=survived;
   const oldBest=save.best;
 
