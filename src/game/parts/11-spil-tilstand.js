@@ -125,7 +125,7 @@ function startGame(mode,seed){
   dwarf={ sx:clamp(W*0.24,90,170), y:H*0.5, py:H*0.5, vy:0, r:18, hitR:10.5, rot:0, inv:1.0, shield:0, magnet:0, dash:0, slow:0, over:0 };
   camX=0; pCamX=0;
   resetRunState(gameState);
-  score=0; banked=0; livePot=0; mult=1; dist=0; survived=false; peak=1; skips=0; perfects=0; collectedGold=0; smashed=0; nearCount=0;
+  perfects=0; collectedGold=0; smashed=0; nearCount=0;
   coinCombo=0; lastCoinT=-9;
   grazeT=0; grazeTick=0; grazeTotal=0;
   recordHit=false; bestAtStart=save.best;
