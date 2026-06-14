@@ -56,19 +56,20 @@ function engineUpdate(){
   const target = (playing && save.sound) ? 0.05 : 0;
   engGain.gain.setTargetAtTime(target, AC.currentTime, 0.08);
   if(playing){
-    const f = 52 + Math.min(20,mult)*6;
+    const f = 52 + Math.min(20,gameState.run.multiplier)*6;
     engOsc.frequency.setTargetAtTime(f, AC.currentTime, 0.1);
     engOsc2.frequency.setTargetAtTime(f*0.503, AC.currentTime, 0.1);
   }
 }
 let beatAcc=0;
 function heartbeatUpdate(dt){
-  if(state!=='play' || mult<6 || !AC || !save.sound) return;
-  const bpm = 60 + mult*7;
+  const runMultiplier = gameState.run.multiplier;
+  if(state!=='play' || runMultiplier<6 || !AC || !save.sound) return;
+  const bpm = 60 + runMultiplier*7;
   beatAcc += dt;
   if(beatAcc >= 60/bpm){
     beatAcc=0;
-    const v=Math.min(0.4, 0.12+(mult-6)*0.02);
+    const v=Math.min(0.4, 0.12+(runMultiplier-6)*0.02);
     tone(58,0.13,'sine',v,34);
   }
 }
