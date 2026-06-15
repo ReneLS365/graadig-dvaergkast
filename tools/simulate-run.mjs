@@ -35,10 +35,12 @@ const EPILOGUE = `
   get gameState(){ return gameState; },
   get dwarf(){ return dwarf; },
   get camX(){ return camX; },
+  get hazards(){ return hazards; },
   startGame: (m, s) => startGame(m, s),
   stepSim: () => stepSim(),
   setInput: (v) => { inputDown = v; },
-  sampleTrack: (x) => sampleTrack(x)
+  sampleTrack: (x) => sampleTrack(x),
+  hazardY: (h, s) => hazardY(h, s)
 };
 `;
 
@@ -141,6 +143,46 @@ function mulberry32(seed) {
   };
 }
 
+// Look-ahead steering bot: pick the tunnel slot with the most clearance from
+// imminent hazards, biased toward the centre and toward the dwarf's current
+// height (limited control authority). Pure function of exposed state -> stays
+// deterministic. Returns the desired inputDown for this tick.
+function chooseInput(sim) {
+  const d = sim.dwarf;
+  const wx = sim.camX + d.sx;
+  const s = sim.sampleTrack(wx);
+  const margin = d.hitR + 6;
+  const top = s.top + margin;
+  const bot = s.bot - margin;
+  if (bot <= top) return d.y > s.mid;
+
+  const look = 260;
+  const imminent = [];
+  for (const h of sim.hazards) {
+    if (h.dead) continue;
+    const dx = h.x - wx;
+    if (dx < -24 || dx > look) continue;
+    imminent.push({ hy: sim.hazardY(h, sim.sampleTrack(h.x)), dx, reach: h.hitR + d.hitR + 10 });
+  }
+
+  const N = 13;
+  let best = s.mid;
+  let bestScore = -Infinity;
+  for (let i = 0; i < N; i++) {
+    const y = top + (bot - top) * (i / (N - 1));
+    let score = -Math.abs(y - s.mid) * 0.04 - Math.abs(y - d.y) * 0.02;
+    for (const im of imminent) {
+      const clearance = im.reach + 16 - Math.abs(y - im.hy);
+      if (clearance > 0) {
+        const urgency = 1 + (1 - Math.min(1, im.dx / look)) * 3;
+        score -= clearance * urgency;
+      }
+    }
+    if (score > bestScore) { bestScore = score; best = y; }
+  }
+  return d.y > best; // below target -> hold to rise
+}
+
 function runSeed(seed) {
   const sandbox = makeSandbox();
   vm.createContext(sandbox);
@@ -155,10 +197,7 @@ function runSeed(seed) {
 
   let ticks = 0;
   while (sim.state === 'play' && ticks < MAX_TICKS) {
-    const d = sim.dwarf;
-    const wx = sim.camX + d.sx;
-    const mid = sim.sampleTrack(wx).mid;
-    sim.setInput(d.y > mid); // below the tunnel centre -> hold to rise
+    sim.setInput(chooseInput(sim));
     sim.stepSim();
     ticks++;
   }

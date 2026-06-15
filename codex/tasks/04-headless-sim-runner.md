@@ -7,7 +7,9 @@ Lav deterministic simulation for 100 seeds.
 `tools/simulate-run.mjs` (kør med `npm run simulate`) loader den ægte
 `dist/app.bundle.js` i en `node:vm`-sandbox med minimale DOM/canvas/audio-stubs
 og driver den rigtige `stepSim()` over 100 seeds med en deterministisk
-styrings-bot. Det er det første tjek i repoet, der faktisk *eksekverer* gameplay.
+look-ahead-styrings-bot, der dodger hazards. Det er det første tjek i repoet,
+der faktisk *eksekverer* gameplay. Botten når mål-linjen i ca. en tredjedel af
+runs, så både død- og finish/banking-grenene bliver dækket.
 
 Accept:
 - [x] Deterministisk simulation for 100 seeds (verificeret ved gen-kørsel i frisk sandbox)
