@@ -6,3 +6,4 @@
 - [ ] npm run balance:check
 - [ ] npm run smoke
 - [ ] npm run build
+- [ ] npm run simulate

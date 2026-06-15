@@ -25,17 +25,29 @@ Derfor:
 - tjekker nødvendige filer
 - tjekker at alle 24 game parts findes
 - bygger `dist/app.bundle.js`
-- kører `node --check`
-- tjekker vigtige symboler
+- kører `node --check` (kun syntaks)
+- tjekker vigtige symboler (kun tekst-tilstedeværelse)
 
 ## Source hash
 
 `dist/build-meta.json` indeholder hash over source-parts. Det gør det nemmere at se om bundle faktisk matcher kildekoden.
 
+## Vigtigt: checks der kun læser tekst er ikke nok
+
+`check`/`smoke` kører `node --check` (syntaks) og tjekker at visse symboler findes
+som tekst i bundlen. De *eksekverer ikke* spillet. Det er grunden til at et brudt
+build (manglende canvas/`W`/`H`/`resize`-bootstrap + ubundlet math/rng) kunne
+overleve mange grønne PR'er. Lære: en ændring er ikke verificeret før spillet er kørt.
+
+## Headless simulation (kører faktisk gameplay)
+
+`npm run simulate` (`tools/simulate-run.mjs`) loader den ægte bundle i en vm-sandbox
+med DOM/canvas-stubs og driver `stepSim()` deterministisk over 100 seeds. Det fanger
+runtime-fejl, NaN-økonomi og non-determinisme. Kører i CI.
+
 ## Næste stabilitetsopgaver
 
-- Playwright/browser smoke test
-- simpel test-run med seed uden rendering
+- browser/headless-DOM smoke test (Task 05) — fang fejl i render-/UI-laget
 - replay validation senere med server
 - auto-save migration versionering
 

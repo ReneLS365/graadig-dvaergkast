@@ -15,7 +15,11 @@ if (!Array.isArray(order) || order.length < 5) {
 }
 
 const missing = [];
-const coreFiles = ['src/game/core/game-state.js'];
+const coreFiles = [
+  'src/game/core/game-state.js',
+  'src/game/core/math.js',
+  'src/game/core/rng.js'
+];
 const dataFiles = ['src/game/data/fair-stats.js'];
 let source = "'use strict';\n";
 for (const coreFile of coreFiles) {

@@ -40,16 +40,10 @@ npm run clean
 
 ## Codex
 
-Start her:
+Start her — status og næste opgave står i:
 
 ```txt
 codex/CODEX_START_HERE.md
-```
-
-Første opgave:
-
-```txt
-codex/tasks/01-game-state-extraction.md
 ```
 
 ## Struktur

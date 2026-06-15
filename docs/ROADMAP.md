@@ -115,6 +115,8 @@ Planned work:
 - GitHub release preparation
 - known issues document
 
-## Technical next step after this documentation PR
+## Technical next step
 
-Continue with `codex/tasks/01-game-state-extraction.md` only after the design-direction PR is reviewed and merged.
+Den aktuelle status og næste opgave vedligeholdes i `codex/CODEX_START_HERE.md`.
+Tasks 00, 01, 03 og 04 er færdige; næste er 02 (data-module extraction), derefter
+05 (browser smoke test). v14 forbliver refactor/stabilitet — content starter i v15.

@@ -46,3 +46,30 @@ function safeCall(label, fn){
     return null;
   }
 }
+
+/* ================= CANVAS + VERDENS-MÅL (resize-sikker) =================
+   clamp/lerp/fmt kommer fra src/game/core/math.js + part 08,
+   hashStr/mulberry32 kommer fra src/game/core/rng.js. */
+const $ = (id)=>document.getElementById(id);
+const canvas = $('game');
+const ctx = canvas.getContext('2d', { alpha:false });
+
+let W=0, H=0, DPR=1;
+let vignCanvas=null, dangerCanvas=null, starFar=null, starNear=null;
+function resize(){
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = Math.max(1, innerWidth); H = Math.max(1, innerHeight);
+  canvas.width=Math.floor(W*DPR); canvas.height=Math.floor(H*DPR);
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  buildVignettes();
+}
+addEventListener('resize', resize, {passive:true});
+
+const fmt = fmtFloorDa;
+function now(){ return performance.now()/1000; }
+function todaySeed(){
+  const d=new Date();
+  return hashStr(`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}-dvaerg`);
+}
+function randomSeed(){ return (Math.random()*4294967295)>>>0; }
+function dayKey(){ return new Date().toDateString(); }

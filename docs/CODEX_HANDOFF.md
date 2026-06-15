@@ -2,19 +2,11 @@
 
 Runtime: `src/game/parts/*` -> `dist/app.bundle.js`
 
-## Current required first step
+## Where we are / what's next
 
-The design-direction documentation PR is Task 00:
-
-```txt
-codex/tasks/00-design-direction-tower-loop.md
-```
-
-After Task 00 is reviewed and merged, continue with:
-
-```txt
-codex/tasks/01-game-state-extraction.md
-```
+Status og næste opgave vedligeholdes ét sted: `codex/CODEX_START_HERE.md`.
+Tasks 00, 01, 03 og 04 er færdige; 02 (data-modules) er i gang og er næste skridt,
+derefter 05 (browser smoke test). Start altid med at læse `CODEX_START_HERE.md`.
 
 ## Locked design direction
 
@@ -62,4 +54,5 @@ npm run check
 npm run balance:check
 npm run smoke
 npm run build
+npm run simulate   # eneste check der faktisk kører spillet — kør det altid
 ```
