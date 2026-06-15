@@ -9,7 +9,11 @@ Lav deterministic simulation for 100 seeds.
 og driver den rigtige `stepSim()` over 100 seeds med en deterministisk
 look-ahead-styrings-bot, der dodger hazards. Det er det første tjek i repoet,
 der faktisk *eksekverer* gameplay. Botten når mål-linjen i ca. en tredjedel af
-runs, så både død- og finish/banking-grenene bliver dækket.
+runs; resten dør. Begge udfald drives helt igennem `endRun` (mål kalder
+`endRun(true)` inde i `stepSim`; død sætter kun `state='dying'`, så harness'en
+kalder `endRun(false, deathReason)` ligesom browser-loopet gør), så både
+finish/banking- og død-/save-/XP-grenen bliver dækket. Hver seed skal nå den
+terminale `'over'`-tilstand.
 
 Accept:
 - [x] Deterministisk simulation for 100 seeds (verificeret ved gen-kørsel i frisk sandbox)

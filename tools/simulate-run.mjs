@@ -38,6 +38,8 @@ const EPILOGUE = `
   get hazards(){ return hazards; },
   startGame: (m, s) => startGame(m, s),
   stepSim: () => stepSim(),
+  endRun: (s, r) => endRun(s, r),
+  get deathReason(){ return deathReason; },
   setInput: (v) => { inputDown = v; },
   sampleTrack: (x) => sampleTrack(x),
   hazardY: (h, s) => hazardY(h, s)
@@ -202,6 +204,16 @@ function runSeed(seed) {
     ticks++;
   }
 
+  // A collision calls beginDeath(), which only sets state='dying'; the browser
+  // loop (part 21) runs the death countdown and then endRun(false, ...). We drive
+  // stepSim directly, so we must invoke that same terminal path explicitly --
+  // otherwise the death end-run branch (final score, save, XP, unlocks, game-over
+  // UI) would never run and regressions there would stay invisible. The finish
+  // path already calls endRun(true) from inside stepSim, so it needs no nudge.
+  if (sim.state === 'dying') {
+    sim.endRun(false, sim.deathReason);
+  }
+
   const run = sim.gameState.run;
   return {
     seed,
@@ -239,7 +251,9 @@ for (let seed = 0; seed < SEEDS; seed++) {
   if (r.score < 0) fail(`seed ${seed}: negative score ${r.score}`);
   if (r.distance < 0) fail(`seed ${seed}: negative distance ${r.distance}`);
   if (r.peak < 1) fail(`seed ${seed}: peak below 1 (${r.peak})`);
-  if (!r.ended) fail(`seed ${seed}: run never terminated within ${MAX_TICKS} ticks`);
+  // Require a real terminal end-run state, not just "not playing": a run stuck in
+  // 'dying' would mean endRun never fired and the death branch went unexercised.
+  if (r.state !== 'over') fail(`seed ${seed}: did not reach endRun ('over'); ended in '${r.state}' after ${r.ticks} ticks`);
   if (r.survived) reachedFinish++; else died++;
   results.push(r);
 }
