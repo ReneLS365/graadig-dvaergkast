@@ -1,4 +1,4 @@
-const CACHE_NAME = 'graadig-v12-cache';
+const CACHE_NAME = 'graadig-v14-cache';
 const ASSETS = [
   './',
   './index.html',
