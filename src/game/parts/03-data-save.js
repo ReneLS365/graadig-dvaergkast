@@ -84,5 +84,3 @@ const WEAPONS = {
   runeblade:{name:'Runesværd',rarity:'Mythic',max:18,desc:'Kort cooldown og giver lidt live pot ved kills.',base:{damage:1.05,range:175,cooldown:0.72,pierce:1,leech:0.12}},
   tesla:{name:'Tesla-spole',rarity:'Mythic',max:18,locked:true,desc:'Forsknings-prototype. Lyn springer mellem mange farer og giver lidt live pot. Kun fra Laboratoriet.',base:{damage:0.95,range:230,cooldown:0.86,pierce:5,leech:0.08}}
 };
-const WEAPON_ORDER=['axe','crossbow','chain','blunder','drillgun','runeblade','tesla'];
-const WEAPON_DROP_POOL=['crossbow','chain','blunder','drillgun','runeblade'];

@@ -1,13 +1,14 @@
 {
   "version": "v14-core-refactor",
-  "hash": "819b705bd765",
+  "hash": "de09016ec8b0",
   "core": [
     "src/game/core/game-state.js",
     "src/game/core/math.js",
     "src/game/core/rng.js"
   ],
   "data": [
-    "src/game/data/fair-stats.js"
+    "src/game/data/fair-stats.js",
+    "src/game/data/weapon-metadata.js"
   ],
   "parts": [
     "01-bootstrap.js",
@@ -35,5 +36,5 @@
     "23-tegning.js",
     "24-boot.js"
   ],
-  "builtAt": "2026-06-15T15:56:36.486Z"
+  "builtAt": "2026-06-15T16:27:23.865Z"
 }
