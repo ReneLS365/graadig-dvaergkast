@@ -22,7 +22,8 @@ const coreFiles = [
 ];
 const dataFiles = [
   'src/game/data/fair-stats.js',
-  'src/game/data/weapon-metadata.js'
+  'src/game/data/weapon-metadata.js',
+  'src/game/data/campaign-levels.js'
 ];
 let source = "'use strict';\n";
 for (const coreFile of coreFiles) {
