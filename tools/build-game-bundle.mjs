@@ -20,7 +20,10 @@ const coreFiles = [
   'src/game/core/math.js',
   'src/game/core/rng.js'
 ];
-const dataFiles = ['src/game/data/fair-stats.js'];
+const dataFiles = [
+  'src/game/data/fair-stats.js',
+  'src/game/data/weapon-metadata.js'
+];
 let source = "'use strict';\n";
 for (const coreFile of coreFiles) {
   if (!fs.existsSync(coreFile)) {
