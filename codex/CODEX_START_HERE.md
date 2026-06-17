@@ -46,9 +46,9 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 <!-- STATUS:DATA-SLICES AUTO START — genereret af tools/status.mjs (npm run status). Rediger ikke i hånden. -->
 **Data-module extraction (auto-genereret fra kildekoden):**
 
-- Flyttet til `src/game/data/`: `CAMPAIGN_LEVELS`, `FAIR_STATS`, `SKILLS`, `WEAPONS`, `WEAPON_DROP_POOL`, `WEAPON_ORDER`
-- Mangler stadig inline i `src/game/parts/` (planlagte mål): `CHARACTERS`, `DATA`, `RESEARCH`
-- Utracket inline data i `src/game/parts/` (kun synlighed, ikke planlagt mål): `ACH`, `CHAR_ORDER`, `GATE_COLOR`, `GATE_TIP`, `RESEARCH_ORDER`
+- Flyttet til `src/game/data/`: `CAMPAIGN_LEVELS`, `CHARACTERS`, `CHAR_MAX`, `CHAR_ORDER`, `FAIR_STATS`, `SKILLS`, `WEAPONS`, `WEAPON_DROP_POOL`, `WEAPON_ORDER`
+- Mangler stadig inline i `src/game/parts/` (planlagte mål): `DATA`, `RESEARCH`
+- Utracket inline data i `src/game/parts/` (kun synlighed, ikke planlagt mål): `ACH`, `GATE_COLOR`, `GATE_TIP`, `RESEARCH_ORDER`
 <!-- STATUS:DATA-SLICES AUTO END -->
 
 Kør `npm run status` efter en slice-flytning. `npm run check` fejler hvis blokken
