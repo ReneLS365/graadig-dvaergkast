@@ -21,6 +21,8 @@ const required = [
   'tools/balance-check.mjs',
   'tools/simulate-run.mjs',
   'tools/save-migration-check.mjs',
+  'tools/economy-snapshot.mjs',
+  'tools/economy-golden.json',
   'docs/CODEX_HANDOFF.md',
   'docs/V14_ACCEPTANCE.md',
   'codex/CODEX_START_HERE.md'
