@@ -6,9 +6,10 @@
   "scripts": {
     "build:game": "node tools/build-game-bundle.mjs",
     "build:single": "node tools/build-single-html.mjs",
-    "check": "node tools/check-repo.mjs && npm run save:check && npm run status:check",
+    "check": "node tools/check-repo.mjs && npm run save:check && npm run status:check && npm run refs:check",
     "status": "node tools/status.mjs --write",
     "status:check": "node tools/status.mjs --check",
+    "refs:check": "node tools/check-doc-refs.mjs",
     "smoke": "node tools/smoke-check.mjs",
     "balance:check": "node tools/balance-check.mjs",
     "simulate": "node tools/simulate-run.mjs",

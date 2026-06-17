@@ -25,7 +25,7 @@ const BUNDLER = 'tools/build-game-bundle.mjs';
 const SLICE_CANDIDATES = ['DATA', 'CAMPAIGN_LEVELS', 'SKILLS', 'WEAPONS', 'CHARACTERS', 'RESEARCH', 'FAIR_STATS'];
 
 // Files whose AUTO block should be kept in sync. Each must contain the marker pair.
-const TARGETS = ['codex/CODEX_START_HERE.md'];
+const TARGETS = ['codex/CODEX_START_HERE.md', 'src/game/data/README.md'];
 
 const MARK_START = '<!-- STATUS:DATA-SLICES AUTO START — genereret af tools/status.mjs (npm run status). Rediger ikke i hånden. -->';
 const MARK_END = '<!-- STATUS:DATA-SLICES AUTO END -->';
