@@ -45,6 +45,28 @@ overleve mange grønne PR'er. Lære: en ændring er ikke verificeret før spille
 med DOM/canvas-stubs og driver `stepSim()` deterministisk over 100 seeds. Det fanger
 runtime-fejl, NaN-økonomi og non-determinisme. Kører i CI.
 
+## Economy golden master (kører faktisk buildStats)
+
+`npm run economy:check` (`tools/economy-snapshot.mjs`) loader den ægte bundle i en
+vm-sandbox og pinner spil-økonomien mod en committet golden-master,
+`tools/economy-golden.json`. Det lukker et hul i `simulate`: simulatoren kører kun
+standard-loadoutet (bram + oak + tin + hammer @ Lv1, frisk save), så den rører kun
+4 af ~28 item-definitioner og ingen level-skalering. En tabt ciffer i fx `thorin`
+eller et gear på Lv10 ville ellers passere alle checks lydløst.
+
+Golden-master pinner:
+
+- hele `DATA` + `CHARACTERS` rå (alle felter: stats, cost, name, desc, base, growth, perks, ult, research)
+- alle pilots via `characterStats()` ved Lv 1/5/10/30 (fanger alle perks)
+- alle cores/chips/abilities via `itemStats()` ved Lv 1/5/10 (level-skalering)
+- fuld `buildStats()`-summering for udvalgte loadouts (default + heavy)
+
+Bevidst ikke dækket (baseline nul): skills, research-bonusser og fair-mode
+(`FAIR_STATS`). Ændrer du økonomi-tal **bevidst**, kør `npm run economy:snapshot`
+og commit diffen sammen med ændringen. `economy:check` kører i `npm run check` (og
+dermed CI). Formålet er at en data-slice-extraktion (fx `DATA`) kan bevises
+værdi-identisk.
+
 ## Næste stabilitetsopgaver
 
 - browser/headless-DOM smoke test (Task 05) — fang fejl i render-/UI-laget

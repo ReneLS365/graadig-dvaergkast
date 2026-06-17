@@ -1,0 +1,1445 @@
+{
+  "_meta": {
+    "charMax": 30,
+    "covers": [
+      "rå struktur-pin af hele DATA + CHARACTERS verbatim (alle felter: stats, cost, name, desc, base, growth, perks, ult, research)",
+      "alle pilots via characterStats() (base + growth + unlocked perks) ved pilotLevels",
+      "alle cores/chips/abilities via itemStats() (level-skalering) ved gearLevels",
+      "fuld buildStats()-summering for loadouts: default, heavy"
+    ],
+    "description": "Golden-master for buildStats()-økonomien. Pinner pilot/core/chip/ability-bidrag og fuld summering, så en data-slice-extraktion kan bevises værdi-identisk.",
+    "excludes": [
+      "skills (save.skills={}) — baseline nul",
+      "research-bonusser (save.research.bonuses={}) — baseline nul",
+      "fair-mode / FAIR_STATS — separat konstant, uden for scope"
+    ],
+    "gearLevels": [
+      1,
+      5,
+      10
+    ],
+    "maxGearLevel": 10,
+    "pilotLevels": [
+      1,
+      5,
+      10,
+      30
+    ],
+    "precisionDecimals": 9,
+    "update": "npm run economy:snapshot"
+  },
+  "abilities": {
+    "chrono": {
+      "1": {
+        "cd": 0.12,
+        "control": 0.04
+      },
+      "5": {
+        "cd": 0.1728,
+        "control": 0.0576
+      },
+      "10": {
+        "cd": 0.2388,
+        "control": 0.0796
+      }
+    },
+    "dash": {
+      "1": {
+        "control": -0.04,
+        "dash": 1
+      },
+      "5": {
+        "control": -0.0576,
+        "dash": 1.44
+      },
+      "10": {
+        "control": -0.0796,
+        "dash": 1.99
+      }
+    },
+    "drill": {
+      "1": {
+        "cd": -0.05,
+        "hammer": 0.45
+      },
+      "5": {
+        "cd": -0.072,
+        "hammer": 0.648
+      },
+      "10": {
+        "cd": -0.0995,
+        "hammer": 0.8955
+      }
+    },
+    "hammer": {
+      "1": {
+        "hammer": 0
+      },
+      "5": {
+        "hammer": 0
+      },
+      "10": {
+        "hammer": 0
+      }
+    },
+    "magnet": {
+      "1": {
+        "magnet": 0.9
+      },
+      "5": {
+        "magnet": 1.296
+      },
+      "10": {
+        "magnet": 1.791
+      }
+    },
+    "overcharge": {
+      "1": {
+        "greed": 0.08,
+        "speed": 0.03
+      },
+      "5": {
+        "greed": 0.1152,
+        "speed": 0.0432
+      },
+      "10": {
+        "greed": 0.1592,
+        "speed": 0.0597
+      }
+    },
+    "shield": {
+      "1": {
+        "cd": 0.2,
+        "hp": 1
+      },
+      "5": {
+        "cd": 0.288,
+        "hp": 1.44
+      },
+      "10": {
+        "cd": 0.398,
+        "hp": 1.99
+      }
+    }
+  },
+  "chips": {
+    "deep": {
+      "1": {
+        "bank": 0.24,
+        "greed": -0.08
+      },
+      "5": {
+        "bank": 0.3456,
+        "greed": -0.1152
+      },
+      "10": {
+        "bank": 0.4776,
+        "greed": -0.1592
+      }
+    },
+    "interest": {
+      "1": {
+        "bank": 0.05,
+        "interest": 0.22
+      },
+      "5": {
+        "bank": 0.072,
+        "interest": 0.3168
+      },
+      "10": {
+        "bank": 0.0995,
+        "interest": 0.4378
+      }
+    },
+    "perfect": {
+      "1": {
+        "control": -0.03,
+        "perfect": 0.35
+      },
+      "5": {
+        "control": -0.0432,
+        "perfect": 0.504
+      },
+      "10": {
+        "control": -0.0597,
+        "perfect": 0.6965
+      }
+    },
+    "risk": {
+      "1": {
+        "bank": -0.12,
+        "greed": 0.22,
+        "salvage": -0.04
+      },
+      "5": {
+        "bank": -0.1728,
+        "greed": 0.3168,
+        "salvage": -0.0576
+      },
+      "10": {
+        "bank": -0.2388,
+        "greed": 0.4378,
+        "salvage": -0.0796
+      }
+    },
+    "splitter": {
+      "1": {
+        "bank": -0.04,
+        "split": 0.25
+      },
+      "5": {
+        "bank": -0.0576,
+        "split": 0.36
+      },
+      "10": {
+        "bank": -0.0796,
+        "split": 0.4975
+      }
+    },
+    "tin": {
+      "1": {},
+      "5": {},
+      "10": {}
+    },
+    "vampire": {
+      "1": {
+        "greed": 0.04,
+        "refund": 0.18
+      },
+      "5": {
+        "greed": 0.0576,
+        "refund": 0.2592
+      },
+      "10": {
+        "greed": 0.0796,
+        "refund": 0.3582
+      }
+    }
+  },
+  "cores": {
+    "anvil": {
+      "1": {
+        "bank": 0.16,
+        "control": 0.08,
+        "speed": -0.08
+      },
+      "5": {
+        "bank": 0.2304,
+        "control": 0.1152,
+        "speed": -0.1152
+      },
+      "10": {
+        "bank": 0.3184,
+        "control": 0.1592,
+        "speed": -0.1592
+      }
+    },
+    "coil": {
+      "1": {
+        "control": -0.07,
+        "greed": 0.1,
+        "speed": 0.13
+      },
+      "5": {
+        "control": -0.1008,
+        "greed": 0.144,
+        "speed": 0.1872
+      },
+      "10": {
+        "control": -0.1393,
+        "greed": 0.199,
+        "speed": 0.2587
+      }
+    },
+    "drillcore": {
+      "1": {
+        "control": 0.03,
+        "hammer": 0.32
+      },
+      "5": {
+        "control": 0.0432,
+        "hammer": 0.4608
+      },
+      "10": {
+        "control": 0.0597,
+        "hammer": 0.6368
+      }
+    },
+    "gyro": {
+      "1": {
+        "control": 0.16,
+        "greed": -0.03,
+        "lift": 0.02
+      },
+      "5": {
+        "control": 0.2304,
+        "greed": -0.0432,
+        "lift": 0.0288
+      },
+      "10": {
+        "control": 0.3184,
+        "greed": -0.0597,
+        "lift": 0.0398
+      }
+    },
+    "oak": {
+      "1": {
+        "control": 0.04,
+        "lift": 0,
+        "speed": 0
+      },
+      "5": {
+        "control": 0.0576,
+        "lift": 0,
+        "speed": 0
+      },
+      "10": {
+        "control": 0.0796,
+        "lift": 0,
+        "speed": 0
+      }
+    },
+    "phoenix": {
+      "1": {
+        "bank": -0.04,
+        "salvage": 0.18
+      },
+      "5": {
+        "bank": -0.0576,
+        "salvage": 0.2592
+      },
+      "10": {
+        "bank": -0.0796,
+        "salvage": 0.3582
+      }
+    },
+    "rocket": {
+      "1": {
+        "control": -0.08,
+        "greed": 0.08,
+        "lift": 0.1,
+        "speed": 0.1
+      },
+      "5": {
+        "control": -0.1152,
+        "greed": 0.1152,
+        "lift": 0.144,
+        "speed": 0.144
+      },
+      "10": {
+        "control": -0.1592,
+        "greed": 0.1592,
+        "lift": 0.199,
+        "speed": 0.199
+      }
+    }
+  },
+  "integration": {
+    "default": {
+      "bank": 0.1,
+      "cd": 0,
+      "coin": 0,
+      "control": 0.07,
+      "dash": 0,
+      "data": 0,
+      "greed": 0,
+      "hammer": 0,
+      "hp": 0,
+      "interest": 0,
+      "lift": 0,
+      "magnet": 0,
+      "perfect": 0,
+      "refund": 0,
+      "salvage": 0,
+      "speed": 0,
+      "split": 0,
+      "ultcharge": 0,
+      "weapon": 0,
+      "xp": 0
+    },
+    "heavy": {
+      "bank": -0.3184,
+      "cd": 0,
+      "coin": 0,
+      "control": -0.06,
+      "dash": 0,
+      "data": 0,
+      "greed": 1.251,
+      "hammer": 0,
+      "hp": 3,
+      "interest": 0,
+      "lift": 0,
+      "magnet": 0,
+      "perfect": 0,
+      "refund": 0,
+      "salvage": 0.6156,
+      "speed": 0.0597,
+      "split": 0,
+      "ultcharge": 0.08,
+      "weapon": 0,
+      "xp": 0
+    }
+  },
+  "pilots": {
+    "bram": {
+      "1": {
+        "bank": 0.1,
+        "control": 0.03
+      },
+      "5": {
+        "bank": 0.12,
+        "control": 0.036,
+        "interest": 0.06
+      },
+      "10": {
+        "bank": 0.145,
+        "control": 0.0835,
+        "hp": 1,
+        "interest": 0.06
+      },
+      "30": {
+        "bank": 0.545,
+        "coin": 0.1,
+        "control": 0.1535,
+        "hp": 2,
+        "interest": 0.11,
+        "salvage": 0.03
+      }
+    },
+    "frida": {
+      "1": {
+        "control": 0.1,
+        "greed": -0.02,
+        "perfect": 0.14
+      },
+      "5": {
+        "control": 0.166,
+        "greed": -0.02,
+        "perfect": 0.164
+      },
+      "10": {
+        "control": 0.186,
+        "greed": -0.02,
+        "perfect": 0.294
+      },
+      "30": {
+        "bank": 0.05,
+        "cd": 0.03,
+        "control": 0.426,
+        "greed": -0.02,
+        "hp": 1,
+        "perfect": 0.674
+      }
+    },
+    "grim": {
+      "1": {
+        "coin": 0.18,
+        "control": 0.04,
+        "magnet": 0.26
+      },
+      "5": {
+        "coin": 0.2,
+        "control": 0.04,
+        "magnet": 0.384
+      },
+      "10": {
+        "coin": 0.325,
+        "control": 0.04,
+        "magnet": 0.414
+      },
+      "30": {
+        "bank": 0.05,
+        "coin": 0.685,
+        "control": 0.06,
+        "data": 0.12,
+        "magnet": 0.734
+      }
+    },
+    "ragnar": {
+      "1": {
+        "bank": -0.06,
+        "control": -0.03,
+        "greed": 0.14
+      },
+      "5": {
+        "bank": -0.06,
+        "control": -0.0252,
+        "greed": 0.164,
+        "ultcharge": 0.1
+      },
+      "10": {
+        "bank": -0.06,
+        "control": 0.0008,
+        "greed": 0.264,
+        "ultcharge": 0.1
+      },
+      "30": {
+        "bank": -0.06,
+        "control": 0.0248,
+        "greed": 0.714,
+        "hp": 1,
+        "salvage": 0.03,
+        "speed": 0.03,
+        "ultcharge": 0.1
+      }
+    },
+    "sigrid": {
+      "1": {
+        "bank": -0.05,
+        "hammer": 0.26,
+        "speed": 0.03
+      },
+      "5": {
+        "bank": -0.05,
+        "cd": 0.04,
+        "hammer": 0.288,
+        "speed": 0.0332
+      },
+      "10": {
+        "bank": -0.05,
+        "cd": 0.04,
+        "hammer": 0.443,
+        "speed": 0.0372
+      },
+      "30": {
+        "bank": -0.05,
+        "cd": 0.09,
+        "coin": 0.06,
+        "hammer": 1.023,
+        "speed": 0.0732,
+        "weapon": 0.06
+      }
+    },
+    "thorin": {
+      "1": {
+        "control": -0.06,
+        "greed": 0.22,
+        "salvage": 0.07
+      },
+      "5": {
+        "control": -0.06,
+        "greed": 0.244,
+        "salvage": 0.122
+      },
+      "10": {
+        "control": -0.06,
+        "greed": 0.344,
+        "hp": 1,
+        "salvage": 0.137
+      },
+      "30": {
+        "control": -0.06,
+        "greed": 0.654,
+        "hp": 3,
+        "salvage": 0.337,
+        "ultcharge": 0.08
+      }
+    },
+    "ulf": {
+      "1": {
+        "control": 0,
+        "greed": -0.03,
+        "hammer": 0.14,
+        "hp": 1
+      },
+      "5": {
+        "control": 0.006,
+        "greed": -0.03,
+        "hammer": 0.16,
+        "hp": 2
+      },
+      "10": {
+        "cd": 0.03,
+        "control": 0.0135,
+        "greed": -0.03,
+        "hammer": 0.285,
+        "hp": 2
+      },
+      "30": {
+        "cd": 0.03,
+        "control": 0.0635,
+        "greed": -0.03,
+        "hammer": 0.705,
+        "hp": 4,
+        "salvage": 0.08,
+        "weapon": 0.06
+      }
+    },
+    "volund": {
+      "1": {
+        "bank": 0.04,
+        "control": 0.03,
+        "hammer": 0.1,
+        "weapon": 0.16
+      },
+      "5": {
+        "bank": 0.04,
+        "control": 0.03,
+        "hammer": 0.116,
+        "weapon": 0.264
+      },
+      "10": {
+        "bank": 0.04,
+        "control": 0.06,
+        "hammer": 0.136,
+        "weapon": 0.354
+      },
+      "30": {
+        "bank": 0.09,
+        "control": 0.09,
+        "hammer": 0.326,
+        "hp": 1,
+        "weapon": 0.854
+      }
+    }
+  },
+  "raw": {
+    "CHARACTERS": {
+      "bram": {
+        "base": {
+          "bank": 0.1,
+          "control": 0.03
+        },
+        "color": "#63ff9a",
+        "growth": {
+          "bank": 0.005,
+          "control": 0.0015
+        },
+        "perks": [
+          {
+            "lvl": 5,
+            "name": "Renteøre",
+            "note": "Banket score drypper tilbage i live pot.",
+            "stats": {
+              "interest": 0.06
+            }
+          },
+          {
+            "lvl": 10,
+            "name": "Solid hånd",
+            "note": "+1 HP og mere kontrol.",
+            "stats": {
+              "control": 0.04,
+              "hp": 1
+            }
+          },
+          {
+            "lvl": 15,
+            "name": "Dobbeltbogføring",
+            "note": "Mere bank-værdi.",
+            "stats": {
+              "bank": 0.08
+            }
+          },
+          {
+            "lvl": 20,
+            "name": "Guldreserve",
+            "note": "Mere guld + lidt crash-redning.",
+            "stats": {
+              "coin": 0.1,
+              "salvage": 0.03
+            }
+          },
+          {
+            "lvl": 25,
+            "name": "Storkapital",
+            "note": "Bank + renter.",
+            "stats": {
+              "bank": 0.1,
+              "interest": 0.05
+            }
+          },
+          {
+            "lvl": 30,
+            "name": "Minekonge",
+            "note": "Komplet bankmaskine.",
+            "stats": {
+              "bank": 0.12,
+              "control": 0.04,
+              "hp": 1
+            }
+          }
+        ],
+        "role": "Bankér",
+        "ultDesc": "Banker straks 55% af live pot til dobbelt værdi og udløser 4s guldregn + bank-boost.",
+        "ultName": "Guldregn",
+        "ultShort": "GULDREGN"
+      },
+      "frida": {
+        "base": {
+          "control": 0.1,
+          "greed": -0.02,
+          "perfect": 0.14
+        },
+        "color": "#41e8ff",
+        "growth": {
+          "control": 0.004,
+          "perfect": 0.006
+        },
+        "perks": [
+          {
+            "lvl": 5,
+            "name": "Rolig puls",
+            "note": "Mere kontrol.",
+            "stats": {
+              "control": 0.05
+            }
+          },
+          {
+            "lvl": 10,
+            "name": "Skarp linje",
+            "note": "Større perfekt-bonus.",
+            "stats": {
+              "perfect": 0.1
+            }
+          },
+          {
+            "lvl": 15,
+            "name": "Mikrojustér",
+            "note": "Kontrol + kortere evne-cd.",
+            "stats": {
+              "cd": 0.03,
+              "control": 0.05
+            }
+          },
+          {
+            "lvl": 20,
+            "name": "Diamanthånd",
+            "note": "Perfekt + bank.",
+            "stats": {
+              "bank": 0.05,
+              "perfect": 0.12
+            }
+          },
+          {
+            "lvl": 25,
+            "name": "Nulfejl",
+            "note": "+1 HP, mere styr.",
+            "stats": {
+              "control": 0.06,
+              "hp": 1
+            }
+          },
+          {
+            "lvl": 30,
+            "name": "Mesterskytte",
+            "note": "Næsten umulig at ryste.",
+            "stats": {
+              "control": 0.05,
+              "perfect": 0.14
+            }
+          }
+        ],
+        "role": "Præcision",
+        "ultDesc": "4s slowmotion + de næste 3 porte rammes automatisk perfekt.",
+        "ultName": "Nålestik",
+        "ultShort": "NÅLESTIK"
+      },
+      "grim": {
+        "base": {
+          "coin": 0.18,
+          "control": 0.04,
+          "magnet": 0.26
+        },
+        "color": "#ffd35a",
+        "growth": {
+          "coin": 0.005,
+          "magnet": 0.006
+        },
+        "perks": [
+          {
+            "lvl": 5,
+            "name": "Lang slange",
+            "note": "Længere sug.",
+            "stats": {
+              "magnet": 0.1
+            }
+          },
+          {
+            "lvl": 10,
+            "name": "Guldnæse",
+            "note": "Mere guld.",
+            "stats": {
+              "coin": 0.1
+            }
+          },
+          {
+            "lvl": 15,
+            "name": "Bredt felt",
+            "note": "Bredere sug.",
+            "stats": {
+              "control": 0.02,
+              "magnet": 0.08
+            }
+          },
+          {
+            "lvl": 20,
+            "name": "Kapitalist",
+            "note": "Guld + bank.",
+            "stats": {
+              "bank": 0.05,
+              "coin": 0.1
+            }
+          },
+          {
+            "lvl": 25,
+            "name": "Datasnu",
+            "note": "Mere forskningsdata.",
+            "stats": {
+              "coin": 0.06,
+              "data": 0.12
+            }
+          },
+          {
+            "lvl": 30,
+            "name": "Mammut-sug",
+            "note": "Alting suges ind.",
+            "stats": {
+              "coin": 0.1,
+              "magnet": 0.12
+            }
+          }
+        ],
+        "role": "Guldgrav",
+        "ultDesc": "Suger alle mønter og kasser på skærmen ind til dig + guldregn.",
+        "ultName": "Støvsuger-storm",
+        "ultShort": "STØV-STORM"
+      },
+      "ragnar": {
+        "base": {
+          "bank": -0.06,
+          "control": -0.03,
+          "greed": 0.14
+        },
+        "color": "#ff3df2",
+        "growth": {
+          "control": 0.0012,
+          "greed": 0.006
+        },
+        "perks": [
+          {
+            "lvl": 5,
+            "name": "Adrenalin",
+            "note": "Ultimativ lader hurtigere.",
+            "stats": {
+              "ultcharge": 0.1
+            }
+          },
+          {
+            "lvl": 10,
+            "name": "Tunnelsyn",
+            "note": "Mere greed, en smule styr.",
+            "stats": {
+              "control": 0.02,
+              "greed": 0.07
+            }
+          },
+          {
+            "lvl": 15,
+            "name": "Vægkysser",
+            "note": "Greed + crash-redning.",
+            "stats": {
+              "greed": 0.06,
+              "salvage": 0.03
+            }
+          },
+          {
+            "lvl": 20,
+            "name": "Overmod",
+            "note": "Endnu hurtigere multiplier.",
+            "stats": {
+              "greed": 0.09
+            }
+          },
+          {
+            "lvl": 25,
+            "name": "Dødsforagt",
+            "note": "+1 HP til de vilde linjer.",
+            "stats": {
+              "greed": 0.06,
+              "hp": 1
+            }
+          },
+          {
+            "lvl": 30,
+            "name": "Berserker-konge",
+            "note": "Maks fart, maks grådighed.",
+            "stats": {
+              "greed": 0.12,
+              "speed": 0.03
+            }
+          }
+        ],
+        "role": "Risikorytter",
+        "ultDesc": "×1.8 multiplier nu + 3.5s usårlig fartrus. Belønner mod, straffer fejhed.",
+        "ultName": "Blodrus",
+        "ultShort": "BLODRUS"
+      },
+      "sigrid": {
+        "base": {
+          "bank": -0.05,
+          "hammer": 0.26,
+          "speed": 0.03
+        },
+        "color": "#ff496c",
+        "growth": {
+          "hammer": 0.007,
+          "speed": 0.0008
+        },
+        "perks": [
+          {
+            "lvl": 5,
+            "name": "Kort lunte",
+            "note": "Kortere evne-cooldown.",
+            "stats": {
+              "cd": 0.04
+            }
+          },
+          {
+            "lvl": 10,
+            "name": "Brisant",
+            "note": "Stærkere smash.",
+            "stats": {
+              "hammer": 0.12
+            }
+          },
+          {
+            "lvl": 15,
+            "name": "Splintbombe",
+            "note": "Smash + våbenskade.",
+            "stats": {
+              "hammer": 0.08,
+              "weapon": 0.06
+            }
+          },
+          {
+            "lvl": 20,
+            "name": "Detonator",
+            "note": "Mere smash og fart.",
+            "stats": {
+              "hammer": 0.12,
+              "speed": 0.02
+            }
+          },
+          {
+            "lvl": 25,
+            "name": "Sortkrudt",
+            "note": "Smash + guld fra vrag.",
+            "stats": {
+              "coin": 0.06,
+              "hammer": 0.1
+            }
+          },
+          {
+            "lvl": 30,
+            "name": "Sprængmester",
+            "note": "Konstant ødelæggelse.",
+            "stats": {
+              "cd": 0.05,
+              "hammer": 0.14
+            }
+          }
+        ],
+        "role": "Sprængstof",
+        "ultDesc": "Enorm eksplosion langt foran dig: massiv smash-score og skrot.",
+        "ultName": "Krudttønde",
+        "ultShort": "KRUDTTØNDE"
+      },
+      "thorin": {
+        "base": {
+          "control": -0.06,
+          "greed": 0.22,
+          "salvage": 0.07
+        },
+        "color": "#8d63ff",
+        "growth": {
+          "greed": 0.006,
+          "salvage": 0.003
+        },
+        "perks": [
+          {
+            "lvl": 5,
+            "name": "Sejt sind",
+            "note": "Mere crash-redning.",
+            "stats": {
+              "salvage": 0.04
+            }
+          },
+          {
+            "lvl": 10,
+            "name": "Andet vejr",
+            "note": "+1 HP, mere greed.",
+            "stats": {
+              "greed": 0.07,
+              "hp": 1
+            }
+          },
+          {
+            "lvl": 15,
+            "name": "Genrejsning",
+            "note": "Redning + hurtig ult.",
+            "stats": {
+              "salvage": 0.05,
+              "ultcharge": 0.08
+            }
+          },
+          {
+            "lvl": 20,
+            "name": "Trodsig",
+            "note": "Hurtigere multiplier.",
+            "stats": {
+              "greed": 0.09
+            }
+          },
+          {
+            "lvl": 25,
+            "name": "Sidste mand",
+            "note": "+1 HP.",
+            "stats": {
+              "hp": 1,
+              "salvage": 0.04
+            }
+          },
+          {
+            "lvl": 30,
+            "name": "Udødelig idiot",
+            "note": "Lever af dårlige idéer.",
+            "stats": {
+              "greed": 0.1,
+              "hp": 1,
+              "salvage": 0.05
+            }
+          }
+        ],
+        "role": "Comeback",
+        "ultDesc": "Fuld HP-genopladning, overladning af multiplier og alle farer ryddet. Panikknap.",
+        "ultName": "Sidste Ord",
+        "ultShort": "SIDSTE ORD"
+      },
+      "ulf": {
+        "base": {
+          "greed": -0.03,
+          "hammer": 0.14,
+          "hp": 1
+        },
+        "color": "#ff9d3d",
+        "growth": {
+          "control": 0.0015,
+          "hammer": 0.005
+        },
+        "perks": [
+          {
+            "lvl": 5,
+            "name": "Tykt kranie",
+            "note": "+1 HP.",
+            "stats": {
+              "hp": 1
+            }
+          },
+          {
+            "lvl": 10,
+            "name": "Tung hammer",
+            "note": "Stærkere smash, kortere cd.",
+            "stats": {
+              "cd": 0.03,
+              "hammer": 0.1
+            }
+          },
+          {
+            "lvl": 15,
+            "name": "Stenhud",
+            "note": "Crash-redning.",
+            "stats": {
+              "control": 0.02,
+              "salvage": 0.04
+            }
+          },
+          {
+            "lvl": 20,
+            "name": "Murbryder",
+            "note": "Smash + våbenskade.",
+            "stats": {
+              "hammer": 0.12,
+              "weapon": 0.06
+            }
+          },
+          {
+            "lvl": 25,
+            "name": "Bjergtrold",
+            "note": "+1 HP.",
+            "stats": {
+              "hammer": 0.08,
+              "hp": 1
+            }
+          },
+          {
+            "lvl": 30,
+            "name": "Klippeblok",
+            "note": "Næsten udødelig arbejdshest.",
+            "stats": {
+              "hammer": 0.12,
+              "hp": 1,
+              "salvage": 0.04
+            }
+          }
+        ],
+        "role": "Tank",
+        "ultDesc": "Smadrer alle farer på skærmen, +2 HP og stor smash-score.",
+        "ultName": "Jordskælv",
+        "ultShort": "JORDSKÆLV"
+      },
+      "volund": {
+        "base": {
+          "bank": 0.04,
+          "control": 0.03,
+          "hammer": 0.1,
+          "weapon": 0.16
+        },
+        "color": "#7CF6E3",
+        "growth": {
+          "hammer": 0.004,
+          "weapon": 0.006
+        },
+        "perks": [
+          {
+            "lvl": 5,
+            "name": "Hærdet stål",
+            "note": "Mere våbenskade.",
+            "stats": {
+              "weapon": 0.08
+            }
+          },
+          {
+            "lvl": 10,
+            "name": "Præcis æg",
+            "note": "Skade + kontrol.",
+            "stats": {
+              "control": 0.03,
+              "weapon": 0.06
+            }
+          },
+          {
+            "lvl": 15,
+            "name": "Runeindgravering",
+            "note": "Skade + smash.",
+            "stats": {
+              "hammer": 0.05,
+              "weapon": 0.08
+            }
+          },
+          {
+            "lvl": 20,
+            "name": "Mestersmed",
+            "note": "Skade + bank.",
+            "stats": {
+              "bank": 0.05,
+              "weapon": 0.1
+            }
+          },
+          {
+            "lvl": 25,
+            "name": "Stjernemetal",
+            "note": "+1 HP.",
+            "stats": {
+              "hp": 1,
+              "weapon": 0.08
+            }
+          },
+          {
+            "lvl": 30,
+            "name": "Gudesmed",
+            "note": "Våbnene bliver mytiske.",
+            "stats": {
+              "control": 0.03,
+              "hammer": 0.06,
+              "weapon": 0.12
+            }
+          }
+        ],
+        "research": true,
+        "role": "Runesmed",
+        "ultDesc": "6s tredobbelt våbenild + ekstra gennemtrængning og et multiplier-løft.",
+        "ultName": "Rune-overladning",
+        "ultShort": "OVERLADN."
+      }
+    },
+    "DATA": {
+      "abilities": {
+        "chrono": {
+          "cost": 1450,
+          "desc": "Sænker farten kortvarigt. Til folk med overlevelsesinstinkt.",
+          "name": "Tidssprække",
+          "stats": {
+            "cd": 0.12,
+            "control": 0.04
+          }
+        },
+        "dash": {
+          "cost": 750,
+          "desc": "Kort boost gennem farer. Sværere at styre.",
+          "name": "Bersærk-dash",
+          "stats": {
+            "control": -0.04,
+            "dash": 1
+          }
+        },
+        "drill": {
+          "cost": 1200,
+          "desc": "Rydder et længere felt foran dig og giver smash-score.",
+          "name": "Tunnelbor",
+          "stats": {
+            "cd": -0.05,
+            "hammer": 0.45
+          }
+        },
+        "hammer": {
+          "cost": 0,
+          "desc": "Smadr sten og bats foran dig.",
+          "name": "Hammer-smash",
+          "stats": {
+            "hammer": 0
+          }
+        },
+        "magnet": {
+          "cost": 550,
+          "desc": "Gør front-sugeren længere og kraftigere.",
+          "name": "Turbo-støvsuger",
+          "stats": {
+            "magnet": 0.9
+          }
+        },
+        "overcharge": {
+          "cost": 1700,
+          "desc": "Pumper multiplier nu. Gør næste sekunder mere farlige.",
+          "name": "Overladning",
+          "stats": {
+            "greed": 0.08,
+            "speed": 0.03
+          }
+        },
+        "shield": {
+          "cost": 600,
+          "desc": "Ekstra fejlmargin.",
+          "name": "Skjoldbrøl",
+          "stats": {
+            "cd": 0.2,
+            "hp": 1
+          }
+        }
+      },
+      "chips": {
+        "deep": {
+          "cost": 500,
+          "desc": "Banker mere, men multiplier vokser langsommere.",
+          "name": "Dybbank",
+          "stats": {
+            "bank": 0.24,
+            "greed": -0.08
+          }
+        },
+        "interest": {
+          "cost": 1150,
+          "desc": "Banket score giver langsom bonus til live pot.",
+          "name": "Rentes-rune",
+          "stats": {
+            "bank": 0.05,
+            "interest": 0.22
+          }
+        },
+        "perfect": {
+          "cost": 750,
+          "desc": "Stor bonus på perfekte gates.",
+          "name": "Perfekt-chip",
+          "stats": {
+            "control": -0.03,
+            "perfect": 0.35
+          }
+        },
+        "risk": {
+          "cost": 1550,
+          "desc": "Højere top-score, dårligere sikkerhed.",
+          "name": "Risikokontrakt",
+          "stats": {
+            "bank": -0.12,
+            "greed": 0.22,
+            "salvage": -0.04
+          }
+        },
+        "splitter": {
+          "cost": 600,
+          "desc": "Splitbank er stærkere.",
+          "name": "Splitgrådig",
+          "stats": {
+            "bank": -0.04,
+            "split": 0.25
+          }
+        },
+        "tin": {
+          "cost": 0,
+          "desc": "Ingen dikkedarer.",
+          "name": "Tin-chip",
+          "stats": {}
+        },
+        "vampire": {
+          "cost": 1350,
+          "desc": "Får lidt live pot tilbage efter bank. Grådig økonomi, naturligvis.",
+          "name": "Vampyr-bank",
+          "stats": {
+            "greed": 0.04,
+            "refund": 0.18
+          }
+        }
+      },
+      "cores": {
+        "anvil": {
+          "cost": 700,
+          "desc": "Tung, stabil, høj bank.",
+          "name": "Ambolt-bælte",
+          "stats": {
+            "bank": 0.16,
+            "control": 0.08,
+            "speed": -0.08
+          }
+        },
+        "coil": {
+          "cost": 1050,
+          "desc": "Hurtig acceleration og vild multiplier. Kræver hænder, ikke håb.",
+          "name": "Stormspole",
+          "stats": {
+            "control": -0.07,
+            "greed": 0.1,
+            "speed": 0.13
+          }
+        },
+        "drillcore": {
+          "cost": 1250,
+          "desc": "Smash bliver stærkere og farer foran dig bliver mindre træls.",
+          "name": "Bor-kerne",
+          "stats": {
+            "control": 0.03,
+            "hammer": 0.32
+          }
+        },
+        "gyro": {
+          "cost": 650,
+          "desc": "Mere præcis styring.",
+          "name": "Gyro-støvler",
+          "stats": {
+            "control": 0.16,
+            "greed": -0.03,
+            "lift": 0.02
+          }
+        },
+        "oak": {
+          "cost": 0,
+          "desc": "Balanceret start-core.",
+          "name": "Egetræs-katapult",
+          "stats": {
+            "control": 0.04,
+            "lift": 0,
+            "speed": 0
+          }
+        },
+        "phoenix": {
+          "cost": 1600,
+          "desc": "Lidt salvage fra live pot ved crash. Fejlen gør stadig ondt.",
+          "name": "Føniks-sele",
+          "stats": {
+            "bank": -0.04,
+            "salvage": 0.18
+          }
+        },
+        "rocket": {
+          "cost": 500,
+          "desc": "Mere fart og score, mindre kontrol.",
+          "name": "Raketrøv Mk.I",
+          "stats": {
+            "control": -0.08,
+            "greed": 0.08,
+            "lift": 0.1,
+            "speed": 0.1
+          }
+        }
+      },
+      "pilots": {
+        "bram": {
+          "cost": 0,
+          "desc": "+bank, stabil. Kedelig men effektiv.",
+          "name": "Bram Jernskæg",
+          "stats": {
+            "bank": 0.14,
+            "control": 0.04,
+            "greed": -0.04
+          }
+        },
+        "frida": {
+          "cost": 650,
+          "desc": "+kontrol og perfect gates.",
+          "name": "Frida Finmotorik",
+          "stats": {
+            "control": 0.12,
+            "greed": -0.03,
+            "perfect": 0.18
+          }
+        },
+        "grim": {
+          "cost": 1400,
+          "desc": "+støvsuger, guld og kontrol. En kapitalist med hjelm.",
+          "name": "Grim Guldnæse",
+          "stats": {
+            "coin": 0.22,
+            "control": 0.05,
+            "magnet": 0.32
+          }
+        },
+        "ragnar": {
+          "cost": 450,
+          "desc": "+multiplier ved skip. Crasher ofte ind i væggen.",
+          "name": "Ragnar Rågrådig",
+          "stats": {
+            "bank": -0.1,
+            "control": -0.05,
+            "greed": 0.18
+          }
+        },
+        "sigrid": {
+          "cost": 1200,
+          "desc": "+smash og eksplosiv frontkontrol. Dårlig bankdisciplin.",
+          "name": "Sigrid Sortkrudt",
+          "stats": {
+            "bank": -0.06,
+            "hammer": 0.35,
+            "speed": 0.04
+          }
+        },
+        "thorin": {
+          "cost": 1800,
+          "desc": "+greed og comeback. Belønner høj puls og dårlige idéer.",
+          "name": "Thorin Overmod",
+          "stats": {
+            "control": -0.07,
+            "greed": 0.28,
+            "salvage": 0.08
+          }
+        },
+        "ulf": {
+          "cost": 850,
+          "desc": "+HP og hammer. Ikke elegant. Det er en dværg.",
+          "name": "Ulf Stenhoved",
+          "stats": {
+            "greed": -0.04,
+            "hammer": 0.18,
+            "hp": 1
+          }
+        },
+        "volund": {
+          "cost": 0,
+          "desc": "🔒 Forskningslås. Smeden der gør alle våben dødelige. Vækkes i Laboratoriet.",
+          "name": "Vølund Runesmed",
+          "research": "volund",
+          "stats": {}
+        }
+      }
+    }
+  }
+}
