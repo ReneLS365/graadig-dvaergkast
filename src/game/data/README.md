@@ -8,5 +8,6 @@ Current extracted slices:
 - `weapon-metadata.js` contains the unchanged weapon display order and weapon drop-pool arrays previously declared inline in `src/game/parts/03-data-save.js`.
 - `campaign-levels.js` contains the unchanged campaign level definitions previously declared inline in `src/game/parts/03-data-save.js`.
 - `skills.js` contains the unchanged skill upgrade metadata previously declared inline in `src/game/parts/03-data-save.js`.
+- `weapons.js` contains the unchanged weapon definitions previously declared inline in `src/game/parts/03-data-save.js`.
 
-Future candidates include DATA, WEAPONS, CHARACTERS and RESEARCH, but they should move in small safe PRs only.
+Future candidates include DATA, CHARACTERS and RESEARCH, but they should move in small safe PRs only.
