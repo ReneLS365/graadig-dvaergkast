@@ -118,5 +118,4 @@ Planned work:
 ## Technical next step
 
 Den aktuelle status og næste opgave vedligeholdes i `codex/CODEX_START_HERE.md`.
-Tasks 00, 01, 03 og 04 er færdige; næste er 02 (data-module extraction), derefter
-05 (browser smoke test). v14 forbliver refactor/stabilitet — content starter i v15.
+v14 forbliver refactor/stabilitet — content starter i v15.

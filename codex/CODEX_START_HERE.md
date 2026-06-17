@@ -36,7 +36,7 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 |---|---|---|
 | 00 – Design direction lock | ✅ færdig (PR #3) | docs-only |
 | 01 – GameState extraction | ✅ kerne færdig (PR #4–#9) | run-scoring flyttet; bredere global state mangler stadig |
-| 02 – Data module extraction | 🟡 i gang (PR #11) | kun `FAIR_STATS` flyttet — fortsæt med resten |
+| 02 – Data module extraction | 🟡 i gang (PR #11, #13, #14, #15) | `FAIR_STATS`, weapon-metadata, `CAMPAIGN_LEVELS`, `SKILLS` flyttet; mangler `DATA`, `WEAPONS`, `CHARACTERS`, `RESEARCH` |
 | 03 – Save system hardening | ✅ færdig (PR #10) | save:check kører i CI |
 | 04 – Headless sim runner | ✅ færdig | `npm run simulate`, kører i CI |
 | 05 – Browser smoke test | ⬜ ikke startet | |
