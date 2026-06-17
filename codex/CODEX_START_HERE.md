@@ -47,7 +47,8 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 **Data-module extraction (auto-genereret fra kildekoden):**
 
 - Flyttet til `src/game/data/`: `CAMPAIGN_LEVELS`, `FAIR_STATS`, `SKILLS`, `WEAPONS`, `WEAPON_DROP_POOL`, `WEAPON_ORDER`
-- Mangler stadig inline i `src/game/parts/`: `CHARACTERS`, `DATA`, `RESEARCH`
+- Mangler stadig inline i `src/game/parts/` (planlagte mål): `CHARACTERS`, `DATA`, `RESEARCH`
+- Utracket inline data i `src/game/parts/` (kun synlighed, ikke planlagt mål): `ACH`, `CHAR_ORDER`, `GATE_COLOR`, `GATE_TIP`, `RESEARCH_ORDER`
 <!-- STATUS:DATA-SLICES AUTO END -->
 
 Kør `npm run status` efter en slice-flytning. `npm run check` fejler hvis blokken

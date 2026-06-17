@@ -24,6 +24,10 @@ const BUNDLER = 'tools/build-game-bundle.mjs';
 // out of "remaining" automatically because they are no longer inline in parts.
 const SLICE_CANDIDATES = ['DATA', 'CAMPAIGN_LEVELS', 'SKILLS', 'WEAPONS', 'CHARACTERS', 'RESEARCH', 'FAIR_STATS'];
 
+// Inline UPPER_SNAKE objects/arrays that are infrastructure, not static data
+// slices, so they are not surfaced as extraction candidates.
+const NON_DATA_INLINE = new Set(['DEFAULT_SAVE', 'STABILITY']);
+
 // Files whose AUTO block should be kept in sync. Each must contain the marker pair.
 const TARGETS = ['codex/CODEX_START_HERE.md', 'src/game/data/README.md'];
 
@@ -51,14 +55,29 @@ function extractedNames() {
   return names;
 }
 
-function remainingInline() {
-  if (!fs.existsSync(PARTS_DIR)) return [];
-  const parts = fs.readdirSync(PARTS_DIR)
+function partsSource() {
+  if (!fs.existsSync(PARTS_DIR)) return '';
+  return fs.readdirSync(PARTS_DIR)
     .filter((f) => f.endsWith('.js'))
     .map((f) => fs.readFileSync(path.join(PARTS_DIR, f), 'utf8'))
     .join('\n');
+}
+
+function remainingInline() {
+  const parts = partsSource();
   return SLICE_CANDIDATES
     .filter((name) => new RegExp(`^\\s*(?:const|let|var)\\s+${name}\\s*=`, 'm').test(parts))
+    .sort();
+}
+
+// Visibility only: inline static-data tables (UPPER_SNAKE = {...} or [...]) that
+// are neither a planned target nor already extracted nor infrastructure. Not a
+// hard target — surfaced so no inline data stays invisible to the tracker.
+function untrackedInline(extracted) {
+  const found = new Set();
+  for (const m of partsSource().matchAll(/^\s*const\s+([A-Z][A-Z0-9_]*)\s*=\s*[{[]/gm)) found.add(m[1]);
+  return [...found]
+    .filter((n) => !SLICE_CANDIDATES.includes(n) && !extracted.includes(n) && !NON_DATA_INLINE.has(n))
     .sort();
 }
 
@@ -72,11 +91,12 @@ function bundlerDataFiles() {
 function model() {
   const extracted = [...extractedNames()].sort();
   const remaining = remainingInline();
+  const untracked = untrackedInline(extracted);
   const onDisk = dataModuleFiles();
   const listed = bundlerDataFiles();
   const missingFromBundler = onDisk.filter((f) => !listed.includes(f)); // exists but not bundled = silent runtime bug
   const missingOnDisk = listed.filter((f) => !onDisk.includes(f));       // listed but absent = build fails
-  return { extracted, remaining, missingFromBundler, missingOnDisk };
+  return { extracted, remaining, untracked, missingFromBundler, missingOnDisk };
 }
 
 const fmtList = (xs) => (xs.length ? xs.map((x) => `\`${x}\``).join(', ') : '— ingen —');
@@ -87,7 +107,8 @@ function renderBlock(m) {
     '**Data-module extraction (auto-genereret fra kildekoden):**',
     '',
     `- Flyttet til \`${DATA_DIR}/\`: ${fmtList(m.extracted)}`,
-    `- Mangler stadig inline i \`${PARTS_DIR}/\`: ${fmtList(m.remaining)}`,
+    `- Mangler stadig inline i \`${PARTS_DIR}/\` (planlagte mål): ${fmtList(m.remaining)}`,
+    `- Utracket inline data i \`${PARTS_DIR}/\` (kun synlighed, ikke planlagt mål): ${fmtList(m.untracked)}`,
     MARK_END
   ].join('\n');
 }
