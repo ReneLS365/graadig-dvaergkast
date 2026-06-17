@@ -5,8 +5,7 @@ Runtime: `src/game/parts/*` -> `dist/app.bundle.js`
 ## Where we are / what's next
 
 Status og næste opgave vedligeholdes ét sted: `codex/CODEX_START_HERE.md`.
-Tasks 00, 01, 03 og 04 er færdige; 02 (data-modules) er i gang og er næste skridt,
-derefter 05 (browser smoke test). Start altid med at læse `CODEX_START_HERE.md`.
+Start altid med at læse den.
 
 ## Locked design direction
 

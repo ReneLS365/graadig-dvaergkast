@@ -11,7 +11,7 @@
 
 ## New direction guardrails
 
-GRÅDIG is moving toward a Mine Core wave survival roguelite with in-run choices and long-term progression. This PR does not change any balance values, but future balance work must protect these rules:
+GRÅDIG is moving toward a Mine Core wave survival roguelite with in-run choices and long-term progression. The direction lock did not change any balance values, but future balance work must protect these rules:
 
 - Skill remains more important than owned progression.
 - Temporary in-run upgrades should create run variety, not permanent account inflation.

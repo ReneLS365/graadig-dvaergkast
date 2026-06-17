@@ -1,13 +1,13 @@
 # Data modules
 
-`src/game/data/` is the gradual v14 home for static game data that is currently inline in `src/game/parts/`.
+`src/game/data/` is the gradual v14 home for static game data that is currently inline in `src/game/parts/`. Each module keeps its provenance in its own header comment; the list below is generated from the source tree.
 
-Current extracted slices:
+<!-- STATUS:DATA-SLICES AUTO START — genereret af tools/status.mjs (npm run status). Rediger ikke i hånden. -->
+**Data-module extraction (auto-genereret fra kildekoden):**
 
-- `fair-stats.js` contains the unchanged readonly fair-mode baseline stats previously declared inline in `src/game/parts/03-data-save.js`.
-- `weapon-metadata.js` contains the unchanged weapon display order and weapon drop-pool arrays previously declared inline in `src/game/parts/03-data-save.js`.
-- `campaign-levels.js` contains the unchanged campaign level definitions previously declared inline in `src/game/parts/03-data-save.js`.
-- `skills.js` contains the unchanged skill upgrade metadata previously declared inline in `src/game/parts/03-data-save.js`.
-- `weapons.js` contains the unchanged weapon definitions previously declared inline in `src/game/parts/03-data-save.js`.
+- Flyttet til `src/game/data/`: `CAMPAIGN_LEVELS`, `FAIR_STATS`, `SKILLS`, `WEAPONS`, `WEAPON_DROP_POOL`, `WEAPON_ORDER`
+- Mangler stadig inline i `src/game/parts/` (planlagte mål): `CHARACTERS`, `DATA`, `RESEARCH`
+- Utracket inline data i `src/game/parts/` (kun synlighed, ikke planlagt mål): `ACH`, `CHAR_ORDER`, `GATE_COLOR`, `GATE_TIP`, `RESEARCH_ORDER`
+<!-- STATUS:DATA-SLICES AUTO END -->
 
-Future candidates include DATA, CHARACTERS and RESEARCH, but they should move in small safe PRs only.
+Move remaining slices in small safe PRs only, and run `npm run status` after each move.
