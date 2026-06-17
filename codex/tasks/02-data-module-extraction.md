@@ -8,8 +8,8 @@ Kandidater: `DATA`, `CAMPAIGN_LEVELS`, `SKILLS`, `WEAPONS`, `CHARACTERS`, `RESEA
 ## Status
 
 🟡 I gang. Flyttet til `src/game/data/`: `FAIR_STATS` (PR #11), weapon-metadata
-(PR #13), `CAMPAIGN_LEVELS` (PR #14), `SKILLS` (PR #15).
-Mangler stadig: `DATA`, `WEAPONS`, `CHARACTERS`, `RESEARCH`. Fortsæt med næste lille slice.
+(PR #13), `CAMPAIGN_LEVELS` (PR #14), `SKILLS` (PR #15), `WEAPONS` (PR #16).
+Mangler stadig: `DATA`, `CHARACTERS`, `RESEARCH`. Fortsæt med næste lille slice.
 
 ## Fremgangsmåde (pr. slice)
 
