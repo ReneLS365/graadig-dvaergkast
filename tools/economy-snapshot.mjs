@@ -22,12 +22,19 @@
    - skills (save.skills = {}) og research-bonusser (save.research.bonuses = {})
    - fair-mode (FAIR_STATS er en separat konstant, uden for DATA-slicens scope)
 
-  Brug:
-    node tools/economy-snapshot.mjs --write   skriv/opdatér golden bevidst (tools/economy-golden.json)
-    node tools/economy-snapshot.mjs --check    fejl hvis aktuelt output afviger fra golden
+  Værktøjet læser `dist/app.bundle.js`, så bundlen SKAL være frisk. Derfor bygger
+  npm-scriptsene `economy:check`/`economy:snapshot` `build:game` først — ellers
+  ville en redigering i src/ kunne snapshotte/checke en stale bundle og lydløst
+  underminere den dokumenterede "bevidst økonomi-ændring"-workflow.
 
-  --check kører i `npm run check` (og dermed CI). Når DATA senere extraheres
-  uændret, skal --check forblive grøn; ændres et tal bevidst, kør --write og
+  Brug (foretræk npm-scriptsene, der bygger først):
+    npm run economy:snapshot                   skriv/opdatér golden bevidst (tools/economy-golden.json)
+    npm run economy:check                      fejl hvis aktuelt output afviger fra golden
+    node tools/economy-snapshot.mjs --write    rå (antager dist/ er frisk)
+    node tools/economy-snapshot.mjs --check     rå (antager dist/ er frisk)
+
+  economy:check kører i `npm run check` (og dermed CI). Når DATA senere extraheres
+  uændret, skal det forblive grønt; ændres et tal bevidst, kør economy:snapshot og
   commit diffen sammen med ændringen.
 */
 import fs from 'node:fs';
