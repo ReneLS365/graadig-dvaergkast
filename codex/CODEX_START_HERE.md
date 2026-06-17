@@ -36,10 +36,22 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 |---|---|---|
 | 00 – Design direction lock | ✅ færdig (PR #3) | docs-only |
 | 01 – GameState extraction | ✅ kerne færdig (PR #4–#9) | run-scoring flyttet; bredere global state mangler stadig |
-| 02 – Data module extraction | 🟡 i gang (PR #11, #13, #14, #15, #16) | `FAIR_STATS`, weapon-metadata, `CAMPAIGN_LEVELS`, `SKILLS`, `WEAPONS` flyttet; mangler `DATA`, `CHARACTERS`, `RESEARCH` |
+| 02 – Data module extraction | 🟡 i gang | slice-status auto-genereret nedenfor |
 | 03 – Save system hardening | ✅ færdig (PR #10) | save:check kører i CI |
 | 04 – Headless sim runner | ✅ færdig | `npm run simulate`, kører i CI |
 | 05 – Browser smoke test | ⬜ ikke startet | |
+
+### Data-slices (auto)
+
+<!-- STATUS:DATA-SLICES AUTO START — genereret af tools/status.mjs (npm run status). Rediger ikke i hånden. -->
+**Data-module extraction (auto-genereret fra kildekoden):**
+
+- Flyttet til `src/game/data/`: `CAMPAIGN_LEVELS`, `FAIR_STATS`, `SKILLS`, `WEAPONS`, `WEAPON_DROP_POOL`, `WEAPON_ORDER`
+- Mangler stadig inline i `src/game/parts/`: `CHARACTERS`, `DATA`, `RESEARCH`
+<!-- STATUS:DATA-SLICES AUTO END -->
+
+Kør `npm run status` efter en slice-flytning. `npm run check` fejler hvis blokken
+er forældet, eller hvis en fil i `src/game/data/` mangler i `dataFiles`.
 
 ## Næste opgave
 
