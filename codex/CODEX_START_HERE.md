@@ -39,7 +39,7 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 | 02 – Data module extraction | 🟡 i gang | slice-status auto-genereret nedenfor |
 | 03 – Save system hardening | ✅ færdig (PR #10) | save:check kører i CI |
 | 04 – Headless sim runner | ✅ færdig | `npm run simulate`, kører i CI |
-| 05 – Browser smoke test | ⬜ ikke startet | |
+| 05 – Browser smoke test | ✅ færdig | `npm run smoke:browser` kører browser-like VM smoke i CI |
 
 ### Data-slices (auto)
 
