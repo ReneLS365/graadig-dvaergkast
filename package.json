@@ -11,6 +11,7 @@
     "status:check": "node tools/status.mjs --check",
     "refs:check": "node tools/check-doc-refs.mjs",
     "smoke": "node tools/smoke-check.mjs",
+    "smoke:browser": "node tools/browser-smoke.mjs",
     "balance:check": "node tools/balance-check.mjs",
     "economy:check": "npm run build:game && node tools/economy-snapshot.mjs --check",
     "economy:snapshot": "npm run build:game && node tools/economy-snapshot.mjs --write",
