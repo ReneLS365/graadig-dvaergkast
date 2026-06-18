@@ -26,7 +26,8 @@ const dataFiles = [
   'src/game/data/campaign-levels.js',
   'src/game/data/skills.js',
   'src/game/data/weapons.js',
-  'src/game/data/characters.js'
+  'src/game/data/characters.js',
+  'src/game/data/research.js'
 ];
 let source = "'use strict';\n";
 for (const coreFile of coreFiles) {
