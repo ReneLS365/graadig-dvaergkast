@@ -69,8 +69,9 @@ function makeCtx() {
 }
 function makeElement(tagName = 'div', id = '') {
   const listeners = new Map();
+  let elementId = '';
   const el = {
-    tagName: tagName.toUpperCase(), id, dataset: {}, style: makeStyle(), children: [], parentNode: null,
+    tagName: tagName.toUpperCase(), dataset: {}, style: makeStyle(), children: [], parentNode: null,
     textContent: '', innerHTML: '', value: '', checked: false, disabled: false, files: [], width: VIEW_W, height: VIEW_H,
     classList: null,
     addEventListener(type, fn) { if (!listeners.has(type)) listeners.set(type, []); listeners.get(type).push(fn); },
@@ -81,7 +82,7 @@ function makeElement(tagName = 'div', id = '') {
     removeChild(child) { el.children = el.children.filter((x) => x !== child); child.parentNode = null; return child; },
     insertBefore(child) { return el.appendChild(child); },
     remove() { if (el.parentNode) el.parentNode.removeChild(el); },
-    setAttribute(name, value) { if (name === 'id') elements.set(String(value), el); el[name] = String(value); },
+    setAttribute(name, value) { el[name] = String(value); },
     getAttribute(name) { return el[name] ?? null; },
     getContext: () => makeCtx(),
     getBoundingClientRect: () => ({ width: VIEW_W, height: VIEW_H, left: 0, top: 0, right: VIEW_W, bottom: VIEW_H }),
@@ -89,6 +90,18 @@ function makeElement(tagName = 'div', id = '') {
     querySelector: (sel) => document.querySelector(sel),
     querySelectorAll: (sel) => document.querySelectorAll(sel)
   };
+  Object.defineProperty(el, 'id', {
+    get() { return elementId; },
+    set(value) {
+      const next = String(value);
+      if (elementId && elements.get(elementId) === el) elements.delete(elementId);
+      elementId = next;
+      if (elementId) elements.set(elementId, el);
+    },
+    enumerable: true,
+    configurable: true
+  });
+  el.id = id;
   el.classList = makeClassList(el);
   return el;
 }
