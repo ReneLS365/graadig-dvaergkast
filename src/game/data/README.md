@@ -5,8 +5,8 @@
 <!-- STATUS:DATA-SLICES AUTO START — genereret af tools/status.mjs (npm run status). Rediger ikke i hånden. -->
 **Data-module extraction (auto-genereret fra kildekoden):**
 
-- Flyttet til `src/game/data/`: `CAMPAIGN_LEVELS`, `CHARACTERS`, `CHAR_MAX`, `CHAR_ORDER`, `FAIR_STATS`, `MIN`, `RESEARCH`, `RESEARCH_ORDER`, `SKILLS`, `WEAPONS`, `WEAPON_DROP_POOL`, `WEAPON_ORDER`
-- Mangler stadig inline i `src/game/parts/` (planlagte mål): `DATA`
+- Flyttet til `src/game/data/`: `CAMPAIGN_LEVELS`, `CHARACTERS`, `CHAR_MAX`, `CHAR_ORDER`, `DATA`, `FAIR_STATS`, `MIN`, `RESEARCH`, `RESEARCH_ORDER`, `SKILLS`, `WEAPONS`, `WEAPON_DROP_POOL`, `WEAPON_ORDER`
+- Mangler stadig inline i `src/game/parts/` (planlagte mål): — ingen —
 - Utracket inline data i `src/game/parts/` (kun synlighed, ikke planlagt mål): `ACH`, `GATE_COLOR`, `GATE_TIP`
 <!-- STATUS:DATA-SLICES AUTO END -->
 
