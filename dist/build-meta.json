@@ -1,6 +1,6 @@
 {
   "version": "v14-core-refactor",
-  "hash": "a31a4349d957",
+  "hash": "df248d12947a",
   "core": [
     "src/game/core/game-state.js",
     "src/game/core/math.js",
@@ -13,7 +13,8 @@
     "src/game/data/skills.js",
     "src/game/data/weapons.js",
     "src/game/data/characters.js",
-    "src/game/data/research.js"
+    "src/game/data/research.js",
+    "src/game/data/data.js"
   ],
   "parts": [
     "01-bootstrap.js",
@@ -41,5 +42,5 @@
     "23-tegning.js",
     "24-boot.js"
   ],
-  "builtAt": "2026-06-17T16:09:34.852Z"
+  "builtAt": "2026-06-18T04:26:12.154Z"
 }
