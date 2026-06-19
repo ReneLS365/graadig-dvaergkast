@@ -60,6 +60,8 @@ See `docs/TOWER_INSPIRED_DIRECTION.md` and `docs/GAME_DESIGN.md` before starting
 
 v14 remains a refactor and stability phase. Do not implement cards, labs, workshop systems, Mine Core combat, new bosses, new weapons, or balance changes unless a specific future task requests it.
 
+Generated `dist/` artifacts must only change through build scripts. Do not commit `dist/build-meta.json` timestamp-only churn when a build only updates `builtAt`.
+
 Required checks before PR:
 
 ```bash
@@ -69,4 +71,5 @@ npm run smoke
 npm run smoke:browser
 npm run simulate   # eneste check der faktisk kører spillet — kør det altid
 npm run build
+git diff --check
 ```

@@ -33,8 +33,10 @@ npm run build:single
 npm run check
 npm run balance:check
 npm run smoke
-npm run build
+npm run smoke:browser
 npm run simulate
+npm run build
+git diff --check
 npm run clean
 ```
 
@@ -58,5 +60,5 @@ codex/tasks/         # Codex-opgaver
 .github/workflows/   # CI
 docs/                # handoff/acceptance/design
 tools/               # build/check/smoke scripts
-dist/                # generated bundle/single
+dist/                # generated bundle/single (build scripts only; do not commit timestamp-only build-meta churn)
 ```

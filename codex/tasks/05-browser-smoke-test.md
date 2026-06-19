@@ -26,9 +26,13 @@ overlever i en browser.
 - Ingen gameplay-, balance- eller UI-ændringer — kun test/tooling.
 - Hvis du tilføjer en dependency: hold den i `devDependencies` og begrund det i PR'en.
 
-## Accept
+## Status
 
-- [ ] Et browser/headless-DOM smoke-tjek starter Survival og kører nogle frames
-- [ ] Asserter at ingen fatal error-overlay opstår
-- [ ] Wired ind i CI
-- [ ] Øvrige checks (`check`, `balance:check`, `smoke`, `simulate`, `build`) passerer
+✅ Færdig. `npm run smoke:browser` starter Survival i en browser-like VM smoke og er wired i CI.
+
+## Accept (opfyldt)
+
+- [x] Et browser/headless-DOM smoke-tjek starter Survival og kører nogle frames
+- [x] Asserter at ingen fatal error-overlay opstår
+- [x] Wired ind i CI
+- [x] Øvrige checks (`check`, `balance:check`, `smoke`, `smoke:browser`, `simulate`, `build`, `git diff --check`) passerer før PR

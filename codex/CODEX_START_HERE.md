@@ -16,6 +16,7 @@ npm run smoke          # bygger bundle + single HTML
 npm run smoke:browser  # starter Survival i browser-like VM smoke
 npm run simulate       # KØRER spillet headless over 100 seeds (determinisme + ingen NaN)
 npm run build          # fuld build (regenererer dist/)
+git diff --check       # whitespace/patch hygiene
 ```
 
 `simulate` er det eneste check der faktisk eksekverer gameplay. Syntaks- og
@@ -26,7 +27,7 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 
 - Lav små, sikre PR'er. Bevar gameplay, balance, økonomi, save-nøgler og UI-flow,
   medmindre en specifik opgave beder om andet.
-- Rebuild altid `dist/` via build-scripts (rediger aldrig genereret output manuelt).
+- Rebuild altid `dist/` via build-scripts (rediger aldrig genereret output manuelt). Commit ikke `dist/build-meta.json` timestamp-only churn, hvis kun `builtAt` ændrer sig.
 - Tilføjer du en ny `src/game/core/`-fil, så husk at tilføje den til `coreFiles` i
   `tools/build-game-bundle.mjs`, ellers kommer den ikke med i bundlen.
 - Læs `docs/CODEX_HANDOFF.md` + `docs/TOWER_INSPIRED_DIRECTION.md` før gameplay-arbejde.

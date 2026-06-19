@@ -1,8 +1,8 @@
 # Stability Notes
 
-## v13 mål
+## v14 mål
 
-v13 er ikke en feature-version. Det er en stabilitetsversion.
+v14 er i final cleanup / release-readiness. Det er ikke en feature-version; resterende arbejde skal være små stabilitets-, verifikations-, dokumentations- eller release-prep ændringer.
 
 ## Runtime error overlay
 
@@ -30,7 +30,7 @@ Derfor:
 
 ## Source hash
 
-`dist/build-meta.json` indeholder hash over source-parts. Det gør det nemmere at se om bundle faktisk matcher kildekoden.
+`dist/build-meta.json` indeholder hash over source-parts. Det gør det nemmere at se om bundle faktisk matcher kildekoden. Filen er genereret; commit ikke timestamp-only churn, hvor kun `builtAt` ændrer sig.
 
 ## Vigtigt: checks der kun læser tekst er ikke nok
 
@@ -69,9 +69,10 @@ værdi-identisk.
 
 ## Næste stabilitetsopgaver
 
-- browser/headless-DOM smoke test (Task 05) — fang fejl i render-/UI-laget
-- replay validation senere med server
-- auto-save migration versionering
+- Hold v14-arbejde småt: docs, release-prep, verificering og stabilitetsopfølgning.
+- Task 05 browser smoke er færdig; `npm run smoke:browser` er nu et påkrævet pre-PR check.
+- Start ikke v15 content, cards, workshop, labs, bosses, leaderboards eller PWA-arbejde i v14 cleanup.
+- Replay validation hører til senere online/server-planlægning, ikke v14 release-readiness.
 
 ## v14 save migration hardening
 
