@@ -5,5 +5,7 @@
 - [ ] npm run check
 - [ ] npm run balance:check
 - [ ] npm run smoke
-- [ ] npm run build
+- [ ] npm run smoke:browser
 - [ ] npm run simulate
+- [ ] npm run build
+- [ ] git diff --check
