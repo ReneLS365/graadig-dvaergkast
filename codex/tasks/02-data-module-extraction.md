@@ -7,11 +7,20 @@ Kandidater: `DATA`, `CAMPAIGN_LEVELS`, `SKILLS`, `WEAPONS`, `CHARACTERS`, `RESEA
 
 ## Status
 
-🟡 I gang. Flyttet til `src/game/data/`: `FAIR_STATS` (PR #11), weapon-metadata
-(PR #13), `CAMPAIGN_LEVELS` (PR #14), `SKILLS` (PR #15), `WEAPONS` (PR #16).
-Mangler stadig: `DATA`, `CHARACTERS`, `RESEARCH`. Fortsæt med næste lille slice.
+✅ Færdig for de planlagte v14 data-slices.
 
-## Fremgangsmåde (pr. slice)
+Auto-status i `codex/CODEX_START_HERE.md` viser ingen planlagte inline mål tilbage:
+`DATA`, `CAMPAIGN_LEVELS`, `SKILLS`, `WEAPONS`, `CHARACTERS` og `RESEARCH` er flyttet
+til `src/game/data/` sammen med de øvrige nødvendige data-symboler. De utracked inline
+symboler `ACH`, `GATE_COLOR` og `GATE_TIP` er kun synlighed i statusrapporten og er ikke
+planlagte Task 02-mål, medmindre en senere opgave eksplicit beslutter det.
+
+Åbn ikke mere Task 02 slice-arbejde fra denne fil. Næste autoritative opgave findes i
+`codex/CODEX_START_HERE.md` og er v14 final cleanup / stability / release-prep.
+
+## Historisk fremgangsmåde (pr. slice)
+
+Denne sektion bevares kun som arkiv for, hvordan Task 02-slices blev udført.
 
 1. Opret `src/game/data/<navn>.js` med den **identiske** konstant (samme værdier).
 2. Fjern den inline-deklaration fra den relevante part.
@@ -21,15 +30,16 @@ Mangler stadig: `DATA`, `CHARACTERS`, `RESEARCH`. Fortsæt med næste lille slic
 ## Guardrails
 
 - Ingen ændring af tal, balance, økonomi, save-nøgler, UI-flow eller gameplay.
-- Flyt ikke flere slices i samme PR — hold dem små og reviewbare.
+- Start ikke nye data-slice flytninger uden en ny eksplicit opgave.
 - Rediger aldrig `dist/` manuelt.
 
-## Accept
+## Accept (opfyldt)
 
-- [ ] Mindst ét nyt data-slice flyttet uændret til `src/game/data/`
-- [ ] Tilføjet til `dataFiles` i bundleren
-- [ ] `npm run check` passerer
-- [ ] `npm run balance:check` passerer
-- [ ] `npm run smoke` passerer
-- [ ] `npm run simulate` passerer (samme outcome-hash som før = ingen gameplayændring)
-- [ ] `npm run build` regenererer `dist/`
+- [x] Planlagte data-slices flyttet uændret til `src/game/data/`
+- [x] Flyttede datafiler tilføjet til `dataFiles` i bundleren
+- [x] `npm run check` passerer
+- [x] `npm run balance:check` passerer
+- [x] `npm run smoke` passerer
+- [x] `npm run smoke:browser` passerer
+- [x] `npm run simulate` passerer
+- [x] `npm run build` regenererer `dist/`
