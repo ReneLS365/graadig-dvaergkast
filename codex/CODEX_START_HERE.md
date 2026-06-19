@@ -13,8 +13,9 @@ Browseren loader: `dist/app.bundle.js` (genereret — rediger den aldrig i hånd
 npm run check          # filer, 24 parts, bygger bundle, node --check, symboler
 npm run balance:check  # systemerne findes
 npm run smoke          # bygger bundle + single HTML
-npm run build          # fuld build (regenererer dist/)
+npm run smoke:browser  # starter Survival i browser-like VM smoke
 npm run simulate       # KØRER spillet headless over 100 seeds (determinisme + ingen NaN)
+npm run build          # fuld build (regenererer dist/)
 ```
 
 `simulate` er det eneste check der faktisk eksekverer gameplay. Syntaks- og

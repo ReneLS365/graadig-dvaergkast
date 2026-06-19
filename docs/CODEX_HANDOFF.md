@@ -67,6 +67,6 @@ npm run check
 npm run balance:check
 npm run smoke
 npm run smoke:browser
-npm run build
 npm run simulate   # eneste check der faktisk kører spillet — kør det altid
+npm run build
 ```
