@@ -13,8 +13,9 @@ Browseren loader: `dist/app.bundle.js` (genereret — rediger den aldrig i hånd
 npm run check          # filer, 24 parts, bygger bundle, node --check, symboler
 npm run balance:check  # systemerne findes
 npm run smoke          # bygger bundle + single HTML
-npm run build          # fuld build (regenererer dist/)
+npm run smoke:browser  # starter Survival i browser-like VM smoke
 npm run simulate       # KØRER spillet headless over 100 seeds (determinisme + ingen NaN)
+npm run build          # fuld build (regenererer dist/)
 ```
 
 `simulate` er det eneste check der faktisk eksekverer gameplay. Syntaks- og
@@ -36,7 +37,7 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 |---|---|---|
 | 00 – Design direction lock | ✅ færdig (PR #3) | docs-only |
 | 01 – GameState extraction | ✅ kerne færdig (PR #4–#9) | run-scoring flyttet; bredere global state mangler stadig |
-| 02 – Data module extraction | 🟡 i gang | slice-status auto-genereret nedenfor |
+| 02 – Data module extraction | ✅ færdig | planlagte slices flyttet; auto-status viser ingen planlagte inline mål |
 | 03 – Save system hardening | ✅ færdig (PR #10) | save:check kører i CI |
 | 04 – Headless sim runner | ✅ færdig | `npm run simulate`, kører i CI |
 | 05 – Browser smoke test | ✅ færdig | `npm run smoke:browser` kører browser-like VM smoke i CI |
@@ -57,11 +58,15 @@ er forældet, eller hvis en fil i `src/game/data/` mangler i `dataFiles`.
 ## Næste opgave
 
 ```txt
-codex/tasks/02-data-module-extraction.md   (fortsæt — flyt næste lille data-slice)
+v14 final cleanup / stability / release-prep
 ```
 
-Derefter:
+Task 02 er færdig for de planlagte data-slices: auto-status viser ingen planlagte
+inline mål tilbage. De utracked inline data-symboler `ACH`, `GATE_COLOR` og
+`GATE_TIP` er kun synlighed i statusrapporten og er ikke planlagte Task 02-mål,
+medmindre en senere opgave eksplicit beslutter det.
 
-```txt
-codex/tasks/05-browser-smoke-test.md
-```
+Task 05 er også færdig: `npm run smoke:browser` kører browser-like VM smoke og er
+wired i CI. Næste sikre v14-skridt er derfor en lille final cleanup/release-readiness
+pass: verificér docs/checks, ryd stale status og forbered release uden gameplay-,
+balance-, økonomi-, save-, data- eller v15-content ændringer.

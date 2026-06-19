@@ -8,6 +8,10 @@ Do not clone. Do not copy names, UI text, exact layouts, progression, icons, art
 
 ## v14: Core refactor and stability foundation
 
+Status: final cleanup / release-readiness. Planned data module extraction and the
+browser smoke test are complete; remaining v14 work should be small stability,
+documentation and release-prep tasks only.
+
 Goal: gøre kodebasen stabil nok til fremtidig modulær udvikling uden at ødelægge den playable build.
 
 ### Allowed work
