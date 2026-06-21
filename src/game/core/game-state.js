@@ -11,7 +11,8 @@ export function createInitialRunState() {
     distance: 0,
     survived: false,
     peak: 1,
-    skips: 0
+    skips: 0,
+    core: { active: false, hp: 0, maxHp: 0, breachX: 0, depth: 0 }
   };
 }
 

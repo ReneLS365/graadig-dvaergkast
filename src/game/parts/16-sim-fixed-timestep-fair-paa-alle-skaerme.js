@@ -181,6 +181,9 @@ function stepSim(){
   run.peak=Math.max(run.peak,run.multiplier);
   run.livePot += dt*95*run.multiplier*(1+(st.greed||0));
   if(st.interest && run.banked>0) run.livePot += dt * Math.min(80, run.banked/900) * st.interest;
+  if(modeMods.survival && gameState.run.core.active){
+    gameState.run.core.depth = Math.max(gameState.run.core.depth, run.distance);
+  }
   if(modeMods.survival){
     survivalWave=Math.max(1, Math.floor(run.distance/900)+1);
     if(survivalWave!==lastWave){
@@ -198,7 +201,8 @@ function stepSim(){
     }
     run.multiplier += dt*0.012*survivalWave;
     run.livePot += dt*survivalWave*18;
-    $('subInfo').textContent='Wave '+survivalWave+' · kills '+survivalKills+' · '+WEAPONS[currentWeaponKey()].name;
+    const core=gameState.run.core;
+    $('subInfo').textContent='Wave '+survivalWave+' · Core '+core.hp+'/'+core.maxHp+' · '+WEAPONS[currentWeaponKey()].name;
   }
   autoFireWeapon(dt, wx);
   run.score=run.banked+run.livePot;
@@ -323,6 +327,11 @@ function stepSim(){
     if(h.dead) continue;
     const sh=sampleTrack(h.x);
     const hy=hazardY(h,sh);
+    if(coreShouldBreach(h)){
+      damageSurvivalCore(h, hy);
+      if(state!=='play') return;
+      continue;
+    }
     const d=Math.hypot(h.x-wx,hy-dwarf.y);
     const rr=dwarf.hitR+h.hitR;
     if(d<rr){
@@ -358,6 +367,21 @@ function stepSim(){
   }
 
   hudDirty=true;
+}
+
+function coreShouldBreach(h){
+  return modeMods.survival && gameState.run.core.active && h.type!=='crystal' && h.x < survivalCoreWorldX();
+}
+function damageSurvivalCore(h, hy){
+  const core=gameState.run.core;
+  h.dead=true;
+  core.hp=Math.max(0, core.hp-1);
+  addParticle(h.x,hy,'#ff496c',18,1.2);
+  floatText(h.x,hy,'CORE -1','#ff496c');
+  flashScreen('#ff496c',.24); shake(12); sfx.hit();
+  if(core.hp<=0){
+    endRun(false,'Mine Core breached at '+fmt(core.depth/12)+' m.');
+  }
 }
 
 function damageOrEnd(reason){

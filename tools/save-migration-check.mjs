@@ -7,6 +7,7 @@ const defaultSave = {
   level: 1,
   best: 0,
   bestDist: 0,
+  bestCoreDepth: 0,
   runs: 0,
   wins: 0,
   duelWins: 0,
@@ -38,6 +39,7 @@ function checkMigratedSave(save) {
   assert.equal(save.research.slots, 1);
   assert.deepEqual(save.research.queue, {});
   assert.equal(save.characters.roster.bram.level, 1);
+  assert.equal(typeof save.bestCoreDepth, 'number');
 }
 
 const v1Save = {

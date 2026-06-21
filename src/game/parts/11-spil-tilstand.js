@@ -14,6 +14,7 @@ let grazeT=0, grazeTick=0, grazeTotal=0;
 let recordHit=false, bestAtStart=0;
 let simTick=0, acc=0, last=0, inputLevel=0;
 let hammerCd=0, shieldHp=1, runStatsCache=null, weaponCd=0, survivalWave=1, lastWave=1, survivalKills=0;
+const SURVIVAL_CORE_MAX_HP=10, SURVIVAL_CORE_BREACH_OFFSET=54;
 let ultCharge=0, bankBoostT=0, autoPerfectN=0, weaponBoostT=0, runChar='bram', ultFlashT=0, runData=0;
 let freezeT=0, dieT=0, deathReason='', shakeMag=0, flashA=0, flashCol='#fff';
 let lastFinal=0, lastSurvived=false, lastDuelWon=false;
@@ -125,6 +126,7 @@ function startGame(mode,seed){
   dwarf={ sx:clamp(W*0.24,90,170), y:H*0.5, py:H*0.5, vy:0, r:18, hitR:10.5, rot:0, inv:1.0, shield:0, magnet:0, dash:0, slow:0, over:0 };
   camX=0; pCamX=0;
   resetRunState(gameState);
+  setupSurvivalCore();
   perfects=0; collectedGold=0; smashed=0; nearCount=0;
   coinCombo=0; lastCoinT=-9;
   grazeT=0; grazeTick=0; grazeTotal=0;
@@ -136,7 +138,7 @@ function startGame(mode,seed){
   freezeT=0; dieT=0; shakeMag=0; flashA=0;
   runGhost=[]; ghost=loadGhost(currentSeed);
   $('modeBadge').textContent=modeMods.label;
-  if(mode==='survival'){ $('subInfo').textContent='Wave 1 · loot jagt'; }
+  if(mode==='survival'){ $('subInfo').textContent='Wave 1 · Core '+gameState.run.core.hp+'/'+gameState.run.core.maxHp; }
   else if(mode==='campaign' && activeCampaignLevel){ $('subInfo').textContent=activeCampaignLevel.name; }
   else if(mode==='daily'){ ensureDailyRun(); $('subInfo').textContent='forsøg '+(save.dailyRun.tries+1)+'/3'; }
   else if(mode==='duel' && duelTarget){ $('subInfo').textContent='mål '+fmt(duelTarget.score); }
@@ -157,4 +159,16 @@ function startGame(mode,seed){
   hudDirty=true;
   last=now();
   requestAnimationFrame(loop);
+}
+
+function setupSurvivalCore(){
+  const core=gameState.run.core;
+  core.active = currentMode==='survival';
+  core.maxHp = core.active ? SURVIVAL_CORE_MAX_HP : 0;
+  core.hp = core.maxHp;
+  core.breachX = core.active ? SURVIVAL_CORE_BREACH_OFFSET : 0;
+  core.depth = 0;
+}
+function survivalCoreWorldX(){
+  return camX + SURVIVAL_CORE_BREACH_OFFSET;
 }
