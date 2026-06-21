@@ -2,7 +2,7 @@
 
 ## v14 mål
 
-v14 er i final cleanup / release-readiness. Det er ikke en feature-version; resterende arbejde skal være små stabilitets-, verifikations-, dokumentations- eller release-prep ændringer.
+v14 is stable after release-prep verification. It is not a feature release; follow-up work should preserve the stable foundation unless a later scoped task explicitly changes it.
 
 ## Runtime error overlay
 
@@ -67,12 +67,13 @@ og commit diffen sammen med ændringen. `economy:check` kører i `npm run check`
 dermed CI). Formålet er at en data-slice-extraktion (fx `DATA`) kan bevises
 værdi-identisk.
 
-## Næste stabilitetsopgaver
+## Next stability boundary
 
-- Hold v14-arbejde småt: docs, release-prep, verificering og stabilitetsopfølgning.
-- Task 05 browser smoke er færdig; `npm run smoke:browser` er nu et påkrævet pre-PR check.
-- Start ikke v15 content, cards, workshop, labs, bosses, leaderboards eller PWA-arbejde i v14 cleanup.
-- Replay validation hører til senere online/server-planlægning, ikke v14 release-readiness.
+- v14 is stable; keep follow-up v14 changes limited to docs, verification, or blocker fixes unless a later scoped task explicitly changes the milestone.
+- Task 05 browser smoke is complete; `npm run smoke:browser` is a required pre-PR check.
+- Next recommended task: `v15 planning: Mine Core survival loop design`, docs-only.
+- v15 may begin only with a planning/design PR first; do not implement v15 content, cards, workshop, labs, bosses, leaderboards, PWA work, runtime changes, balance/economy changes, save/data changes, or new survival content in that planning PR.
+- Replay validation belongs to later online/server planning, not v14 stable follow-up work.
 
 ## v14 save migration hardening
 

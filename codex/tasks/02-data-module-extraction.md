@@ -16,7 +16,7 @@ symboler `ACH`, `GATE_COLOR` og `GATE_TIP` er kun synlighed i statusrapporten og
 planlagte Task 02-mål, medmindre en senere opgave eksplicit beslutter det.
 
 Åbn ikke mere Task 02 slice-arbejde fra denne fil. Næste autoritative opgave findes i
-`codex/CODEX_START_HERE.md` og er v14 final cleanup / stability / release-prep.
+`codex/CODEX_START_HERE.md` og er `v15 planning: Mine Core survival loop design`, docs-only.
 
 ## Historisk fremgangsmåde (pr. slice)
 

@@ -10,13 +10,13 @@
 - [x] browser-like smoke test (`npm run smoke:browser`, starter Survival og kører frames uden fatal overlay, i CI)
 - [x] modulær bundle kan faktisk køre (canvas/render-bootstrap + math/rng bundlet)
 
-Status og resterende v14-opgaver: se `codex/CODEX_START_HERE.md`.
+Status: v14 stable. Next task: `v15 planning: Mine Core survival loop design`, docs-only; see `codex/CODEX_START_HERE.md`.
 
-## v14 Release-readiness checklist
+## v14 Stable checklist
 
-- [x] v14 status is final cleanup / release-readiness, not active feature or content development.
+- [x] v14 status is stable, not active feature or content development.
 - [x] Task 02 planned data extraction is complete; no planned inline data-slice targets remain.
 - [x] Task 05 browser smoke is complete and `npm run smoke:browser` is required before PR.
 - [x] Required pre-PR checks are consistent: `npm run check`, `npm run balance:check`, `npm run smoke`, `npm run smoke:browser`, `npm run simulate`, `npm run build`, and `git diff --check`.
 - [x] Generated `dist/` files are build artifacts only; they must only change through build scripts. Do not commit `dist/build-meta.json` timestamp-only churn.
-- [x] Next work must stay small and conservative: docs, stability, verification, or release-prep only. Do not start v15 cards, workshop, lab, bosses, leaderboards, PWA, or new survival content yet.
+- [x] Next work is `v15 planning: Mine Core survival loop design`, docs-only. v15 may begin only with a planning/design PR first; do not implement Mine Core gameplay, cards, workshop, lab, bosses, leaderboards, PWA, runtime changes, balance/economy changes, save/data changes, or new survival content in that planning PR.

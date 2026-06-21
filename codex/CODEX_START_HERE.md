@@ -1,6 +1,6 @@
 # Codex Start Here
 
-Du arbejder i GRÅDIG: Dværgkast Survival+ v14. **Dette dokument er den autoritative
+Du arbejder i GRÅDIG: Dværgkast Survival+ v14 stable. **Dette dokument er den autoritative
 kilde til "hvor langt er vi" og "hvad er næste opgave".** Opdater statustabellen når
 du afslutter en opgave.
 
@@ -59,7 +59,7 @@ er forældet, eller hvis en fil i `src/game/data/` mangler i `dataFiles`.
 ## Næste opgave
 
 ```txt
-v14 final cleanup / stability / release-prep
+v15 planning: Mine Core survival loop design
 ```
 
 Task 02 er færdig for de planlagte data-slices: auto-status viser ingen planlagte
@@ -68,6 +68,9 @@ inline mål tilbage. De utracked inline data-symboler `ACH`, `GATE_COLOR` og
 medmindre en senere opgave eksplicit beslutter det.
 
 Task 05 er også færdig: `npm run smoke:browser` kører browser-like VM smoke og er
-wired i CI. Næste sikre v14-skridt er derfor en lille final cleanup/release-readiness
-pass: verificér docs/checks, ryd stale status og forbered release uden gameplay-,
-balance-, økonomi-, save-, data- eller v15-content ændringer.
+wired i CI. v14 is stable after release-prep verification. The next safe step is a docs-only
+v15 planning/design PR for the Mine Core survival loop. That PR may define scope,
+boundaries, terminology, risks and acceptance criteria, but must not implement
+Mine Core gameplay, cards, workshop, labs, bosses, leaderboards, PWA, new survival
+content, runtime behavior, balance, economy, save/data changes, or generated
+`dist/` changes.
