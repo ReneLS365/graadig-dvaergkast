@@ -1,6 +1,6 @@
 /* ================= LABORATORIE (tidsbaseret forskning) ================= */
 const DEFAULT_SAVE = {
-  gold:0,xp:0,level:1,best:0,bestDist:0,runs:0,wins:0,duelWins:0,
+  gold:0,xp:0,level:1,best:0,bestDist:0,bestCoreDepth:0,runs:0,wins:0,duelWins:0,
   name:'', sound:true, seenIntro:false,
   seenGates:{},
   owned:{pilots:['bram'],cores:['oak'],chips:['tin'],abilities:['hammer']},

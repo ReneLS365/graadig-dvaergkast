@@ -9,6 +9,7 @@ function draw(alpha){
   ctx.save();
   ctx.translate(shx, shy);
   drawTrack(cam);
+  drawSurvivalCore(cam);
   drawFlags(cam);
   drawGhost(cam);
   if(state==='play') drawVacuum(dy);
@@ -102,6 +103,33 @@ function strokeWall(cam,start,end,which,color){
   }
   ctx.globalAlpha=1;
 }
+function drawSurvivalCore(cam){
+  const core=gameState.run.core;
+  if(!core.active) return;
+  const x=survivalCoreWorldX();
+  const sxx=x-cam;
+  if(sxx<-80||sxx>W+80) return;
+  const s=sampleTrack(x);
+  const y=s.mid;
+  ctx.save();
+  ctx.globalAlpha=0.88;
+  ctx.strokeStyle='#ff496c';
+  ctx.lineWidth=2;
+  ctx.setLineDash([8,8]);
+  ctx.beginPath(); ctx.moveTo(sxx,s.top+10); ctx.lineTo(sxx,s.bot-10); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#111124';
+  ctx.strokeStyle=core.hp<=3?'#ff496c':'#63ff9a';
+  ctx.lineWidth=3;
+  ctx.beginPath(); ctx.arc(sxx,y,18,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle=ctx.strokeStyle;
+  ctx.font='900 11px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('CORE',sxx,y-28);
+  ctx.fillText(core.hp+'/'+core.maxHp,sxx,y+34);
+  ctx.restore();
+}
+
 function drawFlags(cam){
   if(save.bestDist>800 && save.bestDist<trackEndX-200) drawFlag(cam, save.bestDist, '#ffd35a', 'REKORD');
   drawFlag(cam, trackEndX-40, '#63ff9a', 'MÅL');

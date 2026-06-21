@@ -67,6 +67,7 @@ function endRun(survived,reason){
   save.gold += Math.max(0, goldGain);
   save.runs++;
   if(final>save.best){ save.best=final; save.bestDist=Math.floor(run.distance); }
+  if(currentMode==='survival'){ save.bestCoreDepth=Math.max(save.bestCoreDepth||0, Math.floor(run.core.depth||run.distance)); }
   // Meta-fremgang er afkoblet fra den eksploderende score: dæmpet (sqrt) + hårdt loft per run.
   // Score må gerne være kæmpestor (flex) — men XP/data tjener du langsomt og jævnt.
   const xpStat=st.xp||0;
