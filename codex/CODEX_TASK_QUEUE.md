@@ -46,7 +46,7 @@ the order, the status, and the standing rules.
 
 | # | Task ID | Goal (one line) | Type | Status |
 |---|---|---|---|---|
-| 0 | V15-PLAN | This planning doc set (genre lock, plan, acceptance, economy, queue) | docs-only | TODO |
+| 0 | V15-PLAN | This planning doc set (genre lock, plan, acceptance, economy, queue) | docs-only | DONE (this PR) |
 | 1 | V15-01 | Mine Core entity + breach line + lose-on-Core-0 (Survival) | impl (small) | TODO |
 | 2 | V15-02 | Core HP + wave HUD readability | impl (render) | TODO |
 | 3 | V15-03 | Wave director (deterministic, telegraphed waves) | design + impl | TODO |
