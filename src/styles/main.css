@@ -53,6 +53,67 @@ canvas{
 .logo{font-size:16px; font-weight:1000; letter-spacing:.03em;}
 .sub{font-size:10px; color:var(--muted); margin-top:2px; font-weight:800;}
 #modeBadge{color:var(--cyan);}
+.survivalHud{
+  display:none;
+  margin-top:7px;
+  min-width:min(260px,70vw);
+  padding:7px 8px 8px;
+  border:1px solid #63ff9a55;
+  border-radius:14px;
+  background:linear-gradient(180deg,#061d19e8,#090916e8);
+  box-shadow:inset 0 0 22px #63ff9a16,0 0 18px #41e8ff16;
+}
+.survivalHud.active{display:block;}
+.survivalHudTop,.coreHpRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:7px;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+#survivalWaveVal{color:#fff;text-shadow:0 0 12px #41e8ff88;}
+#survivalNextVal{color:var(--cyan);}
+.coreHpRow{margin-top:5px;color:var(--green);}
+.coreHpRow span{color:#cfffe0;}
+.coreHpRow b{min-width:38px;text-align:right;color:#fff;font-size:11px;}
+.coreHpTrack,.waveTrack{
+  position:relative;
+  overflow:hidden;
+  height:9px;
+  border-radius:999px;
+  background:#0009;
+  border:1px solid #ffffff18;
+}
+.coreHpTrack{flex:1;height:10px;}
+#coreHpFill,#waveFill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  transition:width .12s linear, background .12s linear;
+}
+#coreHpFill{background:linear-gradient(90deg,var(--red),var(--orange),var(--green));box-shadow:0 0 14px #63ff9a77;}
+.waveTrack{margin-top:6px;}
+#waveFill{background:linear-gradient(90deg,var(--purple),var(--cyan));box-shadow:0 0 12px #41e8ff66;}
+.breachWarn{
+  margin-top:5px;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#0006;
+  color:#9dffc0;
+  font-size:9px;
+  font-weight:1000;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.breachWarn.danger{
+  color:#fff;
+  background:#ff496c33;
+  border:1px solid #ff496c88;
+  text-shadow:0 0 12px #ff496c;
+}
 .hudBtns{display:flex; gap:6px; justify-content:center; margin-top:6px;}
 .hudBtns button{
   pointer-events:auto;
@@ -254,6 +315,19 @@ canvas{
 kbd{font-family:inherit; background:#ffffff12; border:1px solid #ffffff20; padding:2px 6px; border-radius:6px;}
 @media (prefers-reduced-motion: reduce){
   #intro div{animation:none;}
+  #coreHpFill,#waveFill{transition:none;}
+}
+
+@media(max-width:620px){
+  #hud{padding:7px 7px 0;}
+  .topGrid{gap:5px;}
+  .card{padding:8px 8px;border-radius:15px;}
+  .centerTitle{min-width:142px;}
+  .survivalHud{min-width:min(236px,78vw);padding:7px;}
+  .statRow{gap:6px;}
+  .stat{min-width:44px;}
+  .value{font-size:15px;}
+  .value.big{font-size:22px;}
 }
 
 .campaignGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}

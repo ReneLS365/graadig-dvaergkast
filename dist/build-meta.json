@@ -1,6 +1,6 @@
 {
   "version": "v14-core-refactor",
-  "hash": "e7d3376fe60f",
+  "hash": "eb08b7d8af14",
   "core": [
     "src/game/core/game-state.js",
     "src/game/core/math.js",
@@ -42,5 +42,5 @@
     "23-tegning.js",
     "24-boot.js"
   ],
-  "builtAt": "2026-06-21T13:22:21.537Z"
+  "builtAt": "2026-06-21T15:47:20.092Z"
 }

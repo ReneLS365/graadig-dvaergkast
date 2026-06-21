@@ -52,7 +52,7 @@ the order, the status, and the standing rules.
 |---|---|---|---|---|
 | 0 | V15-PLAN | This planning doc set (genre lock, plan, acceptance, economy, queue) | docs-only | DONE (PR #28) |
 | 1 | V15-01 | Mine Core entity + breach line + lose-on-Core-0 (Survival) | impl (small) | DONE (PR #30) |
-| 2 | V15-02 | Core HP + wave HUD readability | impl (render) | TODO |
+| 2 | V15-02 | Core HP + wave HUD readability | impl (render) | DONE |
 | 3 | V15-03 | Wave director (deterministic, telegraphed waves) | design + impl | TODO |
 | 4 | V15-04 | In-run upgrade drafts (run-only, 3-choice) | design + impl | TODO |
 | 5 | V15-05 | Elite waves (telegraphed variants) | impl | TODO |
