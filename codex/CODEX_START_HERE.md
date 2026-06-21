@@ -1,8 +1,8 @@
 # Codex Start Here
 
-Du arbejder i GRÅDIG: Dværgkast Survival+ v14 stable. **Dette dokument er den autoritative
-kilde til "hvor langt er vi" og "hvad er næste opgave".** Opdater statustabellen når
-du afslutter en opgave.
+Du arbejder i GRÅDIG: Dværgkast Survival+ — v14 stable, v15 i gang (implementering
+fra den strikte kø). **Dette dokument er den autoritative kilde til "hvor langt er
+vi" og "hvad er næste opgave".** Opdater statustabellen når du afslutter en opgave.
 
 Source of truth: `src/game/core/*` + `src/game/data/*` + `src/game/parts/*`
 Browseren loader: `dist/app.bundle.js` (genereret — rediger den aldrig i hånden).
@@ -42,6 +42,7 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 | 03 – Save system hardening | ✅ færdig (PR #10) | save:check kører i CI |
 | 04 – Headless sim runner | ✅ færdig | `npm run simulate`, kører i CI |
 | 05 – Browser smoke test | ✅ færdig | `npm run smoke:browser` kører browser-like VM smoke i CI |
+| v15 planning | ✅ færdig (PR #28) | genre låst; ordnet kø + standing rules i `codex/CODEX_TASK_QUEUE.md` |
 
 ### Data-slices (auto)
 
@@ -59,18 +60,23 @@ er forældet, eller hvis en fil i `src/game/data/` mangler i `dataFiles`.
 ## Næste opgave
 
 ```txt
-v15 planning: Mine Core survival loop design
+V15-01 — Mine Core entity + breach line + lose-on-Core-0 (Survival)
 ```
 
-Task 02 er færdig for de planlagte data-slices: auto-status viser ingen planlagte
-inline mål tilbage. De utracked inline data-symboler `ACH`, `GATE_COLOR` og
-`GATE_TIP` er kun synlighed i statusrapporten og er ikke planlagte Task 02-mål,
-medmindre en senere opgave eksplicit beslutter det.
+v15-planlægningen er **færdig og merget** (PR #28): genre låst (tower-survival på
+den eksisterende flyver — flyveren ER Mine Core-vagten), 1.0 scope-freeze, og en
+stram, rækkefølge-styret task-plan. Design-kilden er `docs/V15_PLAN.md`, exit-gaten
+er `docs/V15_ACCEPTANCE.md`, og økonomi-modellen er `docs/ECONOMY.md`.
 
-Task 05 er også færdig: `npm run smoke:browser` kører browser-like VM smoke og er
-wired i CI. v14 is stable after release-prep verification. The next safe step is a docs-only
-v15 planning/design PR for the Mine Core survival loop. That PR may define scope,
-boundaries, terminology, risks and acceptance criteria, but must not implement
-Mine Core gameplay, cards, workshop, labs, bosses, leaderboards, PWA, new survival
-content, runtime behavior, balance, economy, save/data changes, or generated
-`dist/` changes.
+v15-implementering må nu begynde — men **kun** fra den strikte kø i
+`codex/CODEX_TASK_QUEUE.md`, én task ad gangen, i fast rækkefølge. Den fil er den
+autoritative kilde til task-rækkefølge og standing rules: tag næste `TODO`-række
+(nu `V15-01`) og følg dens Allowed/Forbidden/Acceptance fra `docs/V15_PLAN.md`.
+Spring ikke, slå ikke sammen, og start ikke en senere task før den nuværende er merget.
+
+Læs før gameplay-arbejde: `docs/V15_PLAN.md`, `docs/ECONOMY.md`, `docs/GAME_DESIGN.md`
+og `docs/TOWER_INSPIRED_DIRECTION.md`.
+
+Status-noten for data-slices: Task 02 er færdig (auto-status viser ingen planlagte
+inline mål tilbage). De utracked inline-symboler `ACH`, `GATE_COLOR` og `GATE_TIP`
+er kun synlighed og er ikke planlagte mål, medmindre en senere opgave beslutter det.

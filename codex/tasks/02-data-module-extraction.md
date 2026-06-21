@@ -15,8 +15,9 @@ til `src/game/data/` sammen med de øvrige nødvendige data-symboler. De utracke
 symboler `ACH`, `GATE_COLOR` og `GATE_TIP` er kun synlighed i statusrapporten og er ikke
 planlagte Task 02-mål, medmindre en senere opgave eksplicit beslutter det.
 
-Åbn ikke mere Task 02 slice-arbejde fra denne fil. Næste autoritative opgave findes i
-`codex/CODEX_START_HERE.md` og er `v15 planning: Mine Core survival loop design`, docs-only.
+Åbn ikke mere Task 02 slice-arbejde fra denne fil. v15-planlægningen er færdig (PR #28);
+den næste autoritative opgave findes i `codex/CODEX_START_HERE.md` og den strikte kø i
+`codex/CODEX_TASK_QUEUE.md`, og er nu `V15-01`.
 
 ## Historisk fremgangsmåde (pr. slice)
 

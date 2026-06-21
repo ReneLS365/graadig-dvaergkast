@@ -71,8 +71,8 @@ værdi-identisk.
 
 - v14 is stable; keep follow-up v14 changes limited to docs, verification, or blocker fixes unless a later scoped task explicitly changes the milestone.
 - Task 05 browser smoke is complete; `npm run smoke:browser` is a required pre-PR check.
-- Next recommended task: `v15 planning: Mine Core survival loop design`, docs-only.
-- v15 may begin only with a planning/design PR first; do not implement v15 content, cards, workshop, labs, bosses, leaderboards, PWA work, runtime changes, balance/economy changes, save/data changes, or new survival content in that planning PR.
+- v15 planning is complete (PR #28); next task is `V15-01` from the strict ordered queue in `codex/CODEX_TASK_QUEUE.md`.
+- v15 implementation proceeds one task at a time in fixed order; each task follows its Allowed/Forbidden/Acceptance in `docs/V15_PLAN.md`. Determinism and Daily/Duel fairness stay green across every task.
 - Replay validation belongs to later online/server planning, not v14 stable follow-up work.
 
 ## v14 save migration hardening

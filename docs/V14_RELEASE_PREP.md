@@ -44,4 +44,4 @@ v14 is stable after release-prep verification. The milestone is a completed stab
 
 ## v15 Planning Boundary
 
-v15 may begin only with a planning/design PR first. The next recommended task is `v15 planning: Mine Core survival loop design`, docs-only. That planning PR may describe the Mine Core survival loop, scope, risks, acceptance criteria, and rollout sequencing, but must not implement Mine Core gameplay, cards, workshop, lab/research expansion, bosses, leaderboards, PWA work, new survival systems, new economy progression, balance changes, save/data changes, runtime changes, or generated `dist/` changes.
+v15 planning is complete (PR #28): genre locked, 1.0 scope freeze, and a strict ordered task queue. v15 implementation now proceeds one task at a time from `codex/CODEX_TASK_QUEUE.md`, starting with `V15-01`; each task follows its Allowed/Forbidden/Acceptance in `docs/V15_PLAN.md`. Daily/Duel stay fair and determinism stays green across every task.
