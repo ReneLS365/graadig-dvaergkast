@@ -1,4 +1,4 @@
-# Codex Handoff: v14 Core Refactor
+# Codex Handoff: v14 Stable
 
 Runtime: `src/game/parts/*` -> `dist/app.bundle.js`
 
@@ -7,7 +7,7 @@ Runtime: `src/game/parts/*` -> `dist/app.bundle.js`
 Status og næste opgave vedligeholdes ét sted: `codex/CODEX_START_HERE.md`.
 Start altid med at læse den.
 
-Current v14 status:
+Current status:
 
 - Task 02 planned data module extraction is complete: the auto-generated status block
   reports no planned inline data-slice targets remaining. The visible untracked
@@ -18,8 +18,7 @@ Current v14 status:
 - CI runs on Node 24 actions and includes `check`, `balance:check`, `smoke`,
   `smoke:browser`, `build`, and `simulate`.
 
-Recommended next work: v14 final cleanup / release-readiness only. Do not continue
-data extraction or start v15 gameplay/content unless a new task explicitly scopes it.
+v14 is stable after release-prep verification. Recommended next work: `v15 planning: Mine Core survival loop design`, docs-only. v15 may begin only with a planning/design PR first; do not implement v15 gameplay/content, runtime changes, balance/economy changes, save/data changes, or generated `dist/` changes in that PR.
 
 ## Locked design direction
 
@@ -56,9 +55,9 @@ Preserve GRÅDIG identity:
 
 See `docs/TOWER_INSPIRED_DIRECTION.md` and `docs/GAME_DESIGN.md` before starting new gameplay work.
 
-## v14 implementation boundary
+## v14 stable boundary
 
-v14 remains a refactor and stability phase. Do not implement cards, labs, workshop systems, Mine Core combat, new bosses, new weapons, or balance changes unless a specific future task requests it.
+v14 is complete as a refactor and stability foundation. Do not implement cards, labs, workshop systems, Mine Core combat, new bosses, new weapons, runtime changes, save/data changes, or balance changes in the v14 stable documentation PR. The first v15 step must be a docs-only planning/design PR.
 
 Generated `dist/` artifacts must only change through build scripts. Do not commit `dist/build-meta.json` timestamp-only churn when a build only updates `builtAt`.
 

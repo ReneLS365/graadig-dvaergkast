@@ -8,9 +8,7 @@ Do not clone. Do not copy names, UI text, exact layouts, progression, icons, art
 
 ## v14: Core refactor and stability foundation
 
-Status: final cleanup / release-readiness. Planned data module extraction and the
-browser smoke test are complete; remaining v14 work should be small stability,
-documentation and release-prep tasks only.
+Status: stable. Planned data module extraction, save hardening, deterministic simulation, browser smoke coverage, and release-prep verification are complete.
 
 Goal: gøre kodebasen stabil nok til fremtidig modulær udvikling uden at ødelægge den playable build.
 
@@ -122,4 +120,4 @@ Planned work:
 ## Technical next step
 
 Den aktuelle status og næste opgave vedligeholdes i `codex/CODEX_START_HERE.md`.
-v14 forbliver refactor/stabilitet — content starter i v15.
+v14 is stable. Next recommended task: `v15 planning: Mine Core survival loop design`, docs-only. v15 implementation remains forbidden until after that planning/design boundary is reviewed.

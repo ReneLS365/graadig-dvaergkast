@@ -1,6 +1,6 @@
-# GRÅDIG: Dværgkast Survival+ v14 Core Refactor
+# GRÅDIG: Dværgkast Survival+ v14 Stable
 
-GitHub/Codex-klar repo-version.
+GitHub/Codex-klar repo-version. v14 is stable after release-prep verification; the next recommended task is `v15 planning: Mine Core survival loop design`, docs-only.
 
 ## Hurtig start
 
