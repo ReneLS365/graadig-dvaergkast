@@ -17,7 +17,7 @@ planlagte Task 02-mål, medmindre en senere opgave eksplicit beslutter det.
 
 Åbn ikke mere Task 02 slice-arbejde fra denne fil. v15-planlægningen er færdig (PR #28);
 den næste autoritative opgave findes i `codex/CODEX_START_HERE.md` og den strikte kø i
-`codex/CODEX_TASK_QUEUE.md`, og er nu `V15-01`.
+`codex/CODEX_TASK_QUEUE.md`; følg altid den aktuelle næste TODO der.
 
 ## Historisk fremgangsmåde (pr. slice)
 

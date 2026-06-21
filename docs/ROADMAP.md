@@ -60,7 +60,7 @@ Refactor + stability complete and verified. See `docs/V14_RELEASE_PREP.md` and
 
 Goal: make Survival the main game and realize the tower-upgrade loop.
 Plan and ordered tasks: `docs/V15_PLAN.md`. Exit gate: `docs/V15_ACCEPTANCE.md`.
-Execution order is fixed; tasks are pulled one at a time from `codex/CODEX_TASK_QUEUE.md`.
+Execution order is fixed; tasks are pulled one at a time from `codex/CODEX_TASK_QUEUE.md`. Current next task: `V15-02 — Core HP + wave HUD readability`.
 
 Phases (strict order):
 - A: Core loop foundation (Core HP, wave director, lose condition).
@@ -90,5 +90,5 @@ Starts only after v16 acceptance and the 1.0 scope freeze are met.
 ## Technical next step
 
 Status and the next task are maintained in `codex/CODEX_START_HERE.md` and the strict
-ordered queue in `codex/CODEX_TASK_QUEUE.md`. v15 implementation may begin only after this
-planning PR is merged.
+ordered queue in `codex/CODEX_TASK_QUEUE.md`. V15-01 is complete (PR #30); the next
+actionable task is `V15-02 — Core HP + wave HUD readability`.
