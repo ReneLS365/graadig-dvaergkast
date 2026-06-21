@@ -44,7 +44,7 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 | 05 – Browser smoke test | ✅ færdig | `npm run smoke:browser` kører browser-like VM smoke i CI |
 | v15 planning | ✅ færdig (PR #28) | genre låst; ordnet kø + standing rules i `codex/CODEX_TASK_QUEUE.md` |
 | V15-01 – Mine Core entity + breach line + lose-on-Core-0 | ✅ færdig (PR #30) | Survival Core HP, breach line og Core-0 lose condition er landet |
-| V15-02 – Core HP + wave HUD readability | ✅ færdig | Survival-only Core HP bar, breach readability, current wave og existing distance-derived next-wave progress |
+| V15-02 – Core HP + wave HUD readability | ✅ færdig (PR #32) | Survival-only Core HP bar, breach readability, current wave og existing distance-derived next-wave progress |
 
 ### Data-slices (auto)
 
