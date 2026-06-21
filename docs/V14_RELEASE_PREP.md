@@ -1,4 +1,4 @@
-# v14 Release Prep and Final Verification
+# v14 Stable Release Verification
 
 ## Scope
 
@@ -18,7 +18,7 @@ v14 remains a conservative stabilization milestone. It does not include new surv
 
 ## Required Verification Checks
 
-Run these checks before marking v14 stable:
+These checks were the required gate for marking v14 stable and remain required for follow-up PRs:
 
 ```bash
 npm run check
@@ -38,10 +38,10 @@ git diff --check
 - Task 02 intentionally leaves `ACH`, `GATE_COLOR`, and `GATE_TIP` as visible untracked inline symbols, not active v14 extraction blockers.
 - v14 prepares folders and boundaries for later work, but does not implement v15 gameplay systems.
 
-## v15 Hold Rule
+## v14 Stable Status
 
-Do not start v15 content until v14 stable is explicitly confirmed after final local verification and CI verification. This includes no cards, workshop, lab/research expansion, bosses, leaderboards, PWA work, new survival systems, new economy progression, or balance changes under the v14 release-prep scope.
+v14 is stable after release-prep verification. The milestone is a completed stability foundation, not a content expansion release. Keep the required verification checks listed above unchanged for any final tag or follow-up documentation PR.
 
-## Release and Tag Recommendation
+## v15 Planning Boundary
 
-Recommend tagging v14 stable only after the final local verification checks pass and CI repeats the required release gate successfully. If either local verification or CI fails, keep v14 in release-prep status and fix the smallest documented blocker before tagging.
+v15 may begin only with a planning/design PR first. The next recommended task is `v15 planning: Mine Core survival loop design`, docs-only. That planning PR may describe the Mine Core survival loop, scope, risks, acceptance criteria, and rollout sequencing, but must not implement Mine Core gameplay, cards, workshop, lab/research expansion, bosses, leaderboards, PWA work, new survival systems, new economy progression, balance changes, save/data changes, runtime changes, or generated `dist/` changes.
