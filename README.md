@@ -1,6 +1,6 @@
 # GRÅDIG: Dværgkast Survival+ v14 Stable
 
-GitHub/Codex-klar repo-version. v14 is stable after release-prep verification; the next recommended task is `v15 planning: Mine Core survival loop design`, docs-only.
+GitHub/Codex-klar repo-version. v14 is stable after release-prep verification; v15 planning is complete (PR #28). Implementation now proceeds one task at a time from the strict ordered queue in `codex/CODEX_TASK_QUEUE.md`, starting with `V15-01`.
 
 ## Hurtig start
 

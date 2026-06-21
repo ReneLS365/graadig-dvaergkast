@@ -18,7 +18,7 @@ Current status:
 - CI runs on Node 24 actions and includes `check`, `balance:check`, `smoke`,
   `smoke:browser`, `build`, and `simulate`.
 
-v14 is stable after release-prep verification. Recommended next work: `v15 planning: Mine Core survival loop design`, docs-only. v15 may begin only with a planning/design PR first; do not implement v15 gameplay/content, runtime changes, balance/economy changes, save/data changes, or generated `dist/` changes in that PR.
+v14 is stable after release-prep verification, and v15 planning is complete (PR #28). Recommended next work: `V15-01` — implementation proceeds one task at a time from the strict ordered queue in `codex/CODEX_TASK_QUEUE.md`, each task following its Allowed/Forbidden/Acceptance in `docs/V15_PLAN.md`.
 
 ## Locked design direction
 
@@ -57,7 +57,7 @@ See `docs/TOWER_INSPIRED_DIRECTION.md` and `docs/GAME_DESIGN.md` before starting
 
 ## v14 stable boundary
 
-v14 is complete as a refactor and stability foundation. Do not implement cards, labs, workshop systems, Mine Core combat, new bosses, new weapons, runtime changes, save/data changes, or balance changes in the v14 stable documentation PR. The first v15 step must be a docs-only planning/design PR.
+v14 is complete as a refactor and stability foundation, and v15 planning is locked (PR #28). v15 implementation proceeds only from the strict ordered queue in `codex/CODEX_TASK_QUEUE.md`, one task at a time, starting with `V15-01`. Stay inside each task's Allowed list in `docs/V15_PLAN.md`; do not batch, reorder, or start a later task before the current one is merged.
 
 Generated `dist/` artifacts must only change through build scripts. Do not commit `dist/build-meta.json` timestamp-only churn when a build only updates `builtAt`.
 
