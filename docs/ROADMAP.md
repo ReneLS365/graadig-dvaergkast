@@ -1,125 +1,94 @@
 # Roadmap
 
-## Current direction
+## Current direction (LOCKED)
 
-GRÅDIG skal udvikle sig mod en original neon dwarf/mine wave survival roguelite med Dwarf Core / Mine Core som central fantasy. Retningen er dokumenteret i `docs/TOWER_INSPIRED_DIRECTION.md` og må kun bruge højniveau strukturel inspiration fra tower-survival progression games.
+GRÅDIG is a single-objective **tower-survival progression roguelite**: you pilot the
+mobile **Mine Core guardian** and defend the **Dwarf Core / Mine Core** against escalating
+waves while making greedy build choices. The genre is the "tower upgrade / wave survival"
+family: defend a central objective, survive escalating waves, draft temporary in-run
+upgrades, and grow through bounded permanent progression (workshop, cards, labs, milestones,
+difficulty tiers).
 
-Do not clone. Do not copy names, UI text, exact layouts, progression, icons, art, or protected identity.
+This direction is binding. See `docs/TOWER_INSPIRED_DIRECTION.md` and `docs/GAME_DESIGN.md`.
 
-## v14: Core refactor and stability foundation
+**Genre decision (resolves the open v15 risk):** GRÅDIG does **not** become a new
+top-down arena. The existing one-thumb flyer **is** the guardian. The Mine Core is a
+persistent run objective with HP; waves advance toward it; you intercept. This reuses the
+existing deterministic engine (flight, auto-fire weapons, hazards, gates, seeded sim) and
+adds the tower-upgrade meta on top. Lowest risk, ships incrementally.
 
-Status: final cleanup / release-readiness. Planned data module extraction and the
-browser smoke test are complete; remaining v14 work should be small stability,
-documentation and release-prep tasks only.
+Do not clone. Do not copy names, UI text, exact layouts, progression, icons, art, or
+protected identity from any specific game. Only high-level structure is allowed.
 
-Goal: gøre kodebasen stabil nok til fremtidig modulær udvikling uden at ødelægge den playable build.
+## Definition of "finished" (1.0 scope freeze)
 
-### Allowed work
+1.0 is shippable when **all** of the following exist, are stable, and pass the verification
+gate. Anything not on this list is **out of scope for 1.0** and may only be considered
+post-1.0.
 
-- documentation-only design direction PR
-- gradually move runtime state into GameState
-- save schema and migration robustness
-- build/check/smoke tooling improvements
-- prepare data/system/render folders
-- preserve existing gameplay
-- preserve current dist build behavior
-- preserve Termux/browser compatibility
+1.0 REQUIRES:
 
-### Out of scope unless explicitly requested
+- Survival = the Mine Core tower-survival loop (Core HP, wave director, breach/lose).
+- In-run upgrade drafts (temporary, run-only).
+- Elite waves and boss waves with telegraphed patterns.
+- Workshop (bounded permanent upgrades, scrap sink).
+- Cards (collectible modifiers, limited active slots).
+- Lab/research slots (data sink, slot pressure).
+- Milestones and difficulty tiers.
+- Campaign as teaching/onboarding (not the main grind).
+- Daily Mine + Duel stay fair (standard build).
+- Mobile-first polish + PWA (installable, offline, version-update behavior).
+- Economy model met and **automatically regression-tested** (see `docs/ECONOMY.md`).
 
-- new weapons
-- new heroes
-- new bosses
-- card implementation
-- lab implementation
-- workshop implementation
-- online features
-- leaderboards
-- auth/backend
-- major UI redesign
-- dependency upgrades
-- balance changes
+1.0 EXPLICITLY EXCLUDES (post-1.0, may be cut entirely):
 
-## v15: Survival content expansion
+- Online leaderboards / duels / accounts / backend (v17). 1.0 ships fully local-first.
+- Any system not listed under "1.0 REQUIRES".
 
-Goal: make survival mode feel like the main game.
+## Versions and gates
 
-Planned content directions:
+Each version starts only after the previous version's acceptance doc passes. No version
+begins implementation without a design/planning PR first. Every PR runs the full
+verification gate (see `docs/V14_RELEASE_PREP.md` or `docs/CODEX_HANDOFF.md`).
 
-- central arena / Mine Core battle loop
-- elite waves
-- boss waves
-- treasure rooms
-- cursed relics
-- mid-run upgrade choices
-- weapon evolution choices
-- workshop permanent upgrades
-- card collection and active card slots
-- lab/research slots
-- milestones
-- difficulty tiers
+### v14 — Core refactor and stability foundation — STABLE
 
-Rules:
+Refactor + stability complete and verified. See `docs/V14_RELEASE_PREP.md` and
+`docs/V14_ACCEPTANCE.md`. No further v14 work.
 
-- add content in small isolated PRs
-- protect campaign/daily/duel modes
-- keep daily/duel fair
-- update design and balance docs before changing values
+### v15 — Survival becomes the Mine Core tower-survival game
 
-## v16: Polish, mobile UX and PWA
+Goal: make Survival the main game and realize the tower-upgrade loop.
+Plan and ordered tasks: `docs/V15_PLAN.md`. Exit gate: `docs/V15_ACCEPTANCE.md`.
+Execution order is fixed; tasks are pulled one at a time from `codex/CODEX_TASK_QUEUE.md`.
 
-Goal: make the game feel finished on mobile.
+Phases (strict order):
+- A: Core loop foundation (Core HP, wave director, lose condition).
+- B: In-run depth (upgrade drafts, elites, bosses).
+- C: Meta progression (workshop, cards, labs, milestones, difficulty tiers).
+- D: Economy lock + acceptance.
 
-Planned work:
+### v16 — Polish, mobile UX and PWA
 
-- mobile layout improvements
-- touch control improvements
-- tutorial/onboarding
-- HUD clarity
-- feedback effects
-- game over/reward screen
-- PWA manifest/icons/offline/version update behavior
-- mobile-first neon UI polish
+Goal: make the game feel finished on mobile. Layout, touch, onboarding, HUD clarity,
+feedback, game-over/reward screen, PWA manifest/icons/offline/version-update.
+Starts only after `docs/V15_ACCEPTANCE.md` passes. Needs a v16 planning doc first
+(proposed: `docs/V16_PLAN.md`).
 
-## v17: Online leaderboard/duel foundation
+### v17 — Online foundation (POST-1.0, optional, may be cut)
 
-Goal: prepare online leaderboard/duel systems safely.
+Goal: prepare online leaderboard/duel safely **without blocking 1.0**. Server-authoritative
+validation, never trust client scores, replay validation design. Implementation requires
+explicit approval and a threat-model doc. 1.0 does not depend on this.
 
-Supabase planning targets:
+### v18 — 1.0 release preparation
 
-```txt
-players
-runs
-leaderboards
-duels
-ghost_replays
-inventory_snapshots
-```
-
-Rules:
-
-- do not implement backend without explicit approval
-- never trust client-submitted scores
-- use replay validation design before public leaderboards
-- keep offline/local play working
-
-## v18: Beta release preparation
-
-Goal: prepare a stable beta.
-
-Planned work:
-
-- versioning
-- changelog
-- release checklist
-- bug triage
-- performance pass
-- save migration checks
-- final balance pass
-- GitHub release preparation
-- known issues document
+Goal: ship 1.0. Versioning, changelog, release checklist, bug triage, performance pass,
+save-migration checks, final balance pass, known-issues doc, GitHub release.
+Starts only after v16 acceptance and the 1.0 scope freeze are met.
 
 ## Technical next step
 
-Den aktuelle status og næste opgave vedligeholdes i `codex/CODEX_START_HERE.md`.
-v14 forbliver refactor/stabilitet — content starter i v15.
+Status and the next task are maintained in `codex/CODEX_START_HERE.md` and the strict
+ordered queue in `codex/CODEX_TASK_QUEUE.md`. v15 implementation may begin only after this
+planning PR is merged.
