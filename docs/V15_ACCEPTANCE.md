@@ -4,6 +4,12 @@ v15 is done only when every item below is true and the full verification gate pa
 and in CI. Until then v15 stays in progress and the smallest documented blocker is fixed
 before tagging. This mirrors the v14 acceptance discipline.
 
+
+## Current progress
+
+- V15-01 is complete in PR #30: the Mine Core entity, breach line, and Survival lose-on-Core-0 foundation have landed.
+- The next required queue item is `V15-02 — Core HP + wave HUD readability`; the combined Functional checkbox for the full Core loop stays open until V15-02 also lands.
+
 ## Functional
 
 - [ ] Survival runs on the Mine Core loop: persistent Core HP, breach line, and a run can end

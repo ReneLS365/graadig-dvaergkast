@@ -18,7 +18,7 @@ Current status:
 - CI runs on Node 24 actions and includes `check`, `balance:check`, `smoke`,
   `smoke:browser`, `build`, and `simulate`.
 
-v14 is stable after release-prep verification, and v15 planning is complete (PR #28). Recommended next work: `V15-01` — implementation proceeds one task at a time from the strict ordered queue in `codex/CODEX_TASK_QUEUE.md`, each task following its Allowed/Forbidden/Acceptance in `docs/V15_PLAN.md`.
+v14 is stable after release-prep verification, v15 planning is complete (PR #28), and V15-01 is complete (PR #30). Recommended next work: `V15-02 — Core HP + wave HUD readability` — implementation proceeds one task at a time from the strict ordered queue in `codex/CODEX_TASK_QUEUE.md`, each task following its Allowed/Forbidden/Acceptance in `docs/V15_PLAN.md`.
 
 ## Locked design direction
 
@@ -57,7 +57,7 @@ See `docs/TOWER_INSPIRED_DIRECTION.md` and `docs/GAME_DESIGN.md` before starting
 
 ## v14 stable boundary
 
-v14 is complete as a refactor and stability foundation, and v15 planning is locked (PR #28). v15 implementation proceeds only from the strict ordered queue in `codex/CODEX_TASK_QUEUE.md`, one task at a time, starting with `V15-01`. Stay inside each task's Allowed list in `docs/V15_PLAN.md`; do not batch, reorder, or start a later task before the current one is merged.
+v14 is complete as a refactor and stability foundation, v15 planning is locked (PR #28), and V15-01 is complete (PR #30). v15 implementation proceeds only from the strict ordered queue in `codex/CODEX_TASK_QUEUE.md`, one task at a time, with `V15-02 — Core HP + wave HUD readability` as the next TODO. Stay inside each task's Allowed list in `docs/V15_PLAN.md`; do not batch, reorder, or start a later task before the current one is merged.
 
 Generated `dist/` artifacts must only change through build scripts. Do not commit `dist/build-meta.json` timestamp-only churn when a build only updates `builtAt`.
 

@@ -43,6 +43,7 @@ mange "grønne" PR'er. Kører din ændring spillet i stykker, fanger `simulate` 
 | 04 – Headless sim runner | ✅ færdig | `npm run simulate`, kører i CI |
 | 05 – Browser smoke test | ✅ færdig | `npm run smoke:browser` kører browser-like VM smoke i CI |
 | v15 planning | ✅ færdig (PR #28) | genre låst; ordnet kø + standing rules i `codex/CODEX_TASK_QUEUE.md` |
+| V15-01 – Mine Core entity + breach line + lose-on-Core-0 | ✅ færdig (PR #30) | Survival Core HP, breach line og Core-0 lose condition er landet; næste task er HUD-readability |
 
 ### Data-slices (auto)
 
@@ -60,7 +61,7 @@ er forældet, eller hvis en fil i `src/game/data/` mangler i `dataFiles`.
 ## Næste opgave
 
 ```txt
-V15-01 — Mine Core entity + breach line + lose-on-Core-0 (Survival)
+V15-02 — Core HP + wave HUD readability
 ```
 
 v15-planlægningen er **færdig og merget** (PR #28): genre låst (tower-survival på
@@ -68,10 +69,10 @@ den eksisterende flyver — flyveren ER Mine Core-vagten), 1.0 scope-freeze, og 
 stram, rækkefølge-styret task-plan. Design-kilden er `docs/V15_PLAN.md`, exit-gaten
 er `docs/V15_ACCEPTANCE.md`, og økonomi-modellen er `docs/ECONOMY.md`.
 
-v15-implementering må nu begynde — men **kun** fra den strikte kø i
+v15-implementering fortsætter **kun** fra den strikte kø i
 `codex/CODEX_TASK_QUEUE.md`, én task ad gangen, i fast rækkefølge. Den fil er den
 autoritative kilde til task-rækkefølge og standing rules: tag næste `TODO`-række
-(nu `V15-01`) og følg dens Allowed/Forbidden/Acceptance fra `docs/V15_PLAN.md`.
+(nu `V15-02`) og følg dens Allowed/Forbidden/Acceptance fra `docs/V15_PLAN.md`.
 Spring ikke, slå ikke sammen, og start ikke en senere task før den nuværende er merget.
 
 Læs før gameplay-arbejde: `docs/V15_PLAN.md`, `docs/ECONOMY.md`, `docs/GAME_DESIGN.md`

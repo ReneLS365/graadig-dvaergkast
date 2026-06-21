@@ -31,14 +31,18 @@ the order, the status, and the standing rules.
 7. Determinism must stay green: same seed = same run.
 8. Stay inside the task's Allowed list. If the task seems to require something Forbidden, STOP
    and report instead of expanding scope.
-9. PR description must list: changed files, risk, checks run (with results), and the next
+9. Every implementation PR must update the status/docs/queue in the same PR so stale
+   follow-up cleanup PRs are not needed. At minimum, update the completed task status, the
+   next task pointer, relevant acceptance/status docs when the task changes them, and the PR
+   description's next recommended task.
+10. PR description must list: changed files, risk, checks run (with results), and the next
    recommended task.
-10. Read `docs/V15_PLAN.md`, `docs/ECONOMY.md`, `docs/GAME_DESIGN.md`, and
+11. Read `docs/V15_PLAN.md`, `docs/ECONOMY.md`, `docs/GAME_DESIGN.md`, and
     `docs/TOWER_INSPIRED_DIRECTION.md` before any gameplay task.
 
 ## Gate rule
 
-- v15 implementation may begin only after the v15 planning PR (this docs set) is merged.
+- v15 implementation may proceed only from the next `TODO` row after the previous row is merged.
 - v16 may begin only after `docs/V15_ACCEPTANCE.md` passes.
 - v17 (online) is post-1.0 and requires explicit approval + a threat-model doc.
 
@@ -47,7 +51,7 @@ the order, the status, and the standing rules.
 | # | Task ID | Goal (one line) | Type | Status |
 |---|---|---|---|---|
 | 0 | V15-PLAN | This planning doc set (genre lock, plan, acceptance, economy, queue) | docs-only | DONE (this PR) |
-| 1 | V15-01 | Mine Core entity + breach line + lose-on-Core-0 (Survival) | impl (small) | TODO |
+| 1 | V15-01 | Mine Core entity + breach line + lose-on-Core-0 (Survival) | impl (small) | DONE (PR #30) |
 | 2 | V15-02 | Core HP + wave HUD readability | impl (render) | TODO |
 | 3 | V15-03 | Wave director (deterministic, telegraphed waves) | design + impl | TODO |
 | 4 | V15-04 | In-run upgrade drafts (run-only, 3-choice) | design + impl | TODO |
@@ -88,6 +92,12 @@ Survival only unless the task says otherwise. Daily/Duel stay fair. Determinism 
 Save changes additive + migrated. dist/ only via build scripts.
 
 Acceptance: <paste Acceptance from V15_PLAN>
+
+Also update status/docs/queue in this same PR:
+- mark <ID> complete when the implementation is complete;
+- move the next-task pointer to the next strict queue item;
+- update relevant acceptance/status docs when the task changes them;
+- include the next recommended task in the PR description.
 
 Run and report (paste results):
   npm run check
