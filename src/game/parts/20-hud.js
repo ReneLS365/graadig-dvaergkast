@@ -61,4 +61,38 @@ function hudTick(dt){
   } else if(currentMode==='campaign' && activeCampaignLevel && state==='play'){
     $('duelFill').style.width=(campaignProgress()*100).toFixed(1)+'%';
   }
+  survivalHudTick();
+}
+
+function survivalHudTick(){
+  const panel=$('survivalHud');
+  if(!panel) return;
+  const active=currentMode==='survival' && gameState.run.core && gameState.run.core.active && state==='play';
+  panel.classList.toggle('active', active);
+  if(!active) return;
+  const core=gameState.run.core;
+  const hpPct=core.maxHp>0 ? clamp(core.hp/core.maxHp,0,1) : 0;
+  const waveProgress=clamp((gameState.run.distance%900)/900,0,1);
+  const breach=survivalBreachHudState();
+  $('survivalWaveVal').textContent='Wave '+survivalWave;
+  $('survivalNextVal').textContent='Next '+Math.floor(waveProgress*100)+'%';
+  $('coreHpVal').textContent=core.hp+'/'+core.maxHp;
+  $('coreHpFill').style.width=(hpPct*100).toFixed(1)+'%';
+  $('waveFill').style.width=(waveProgress*100).toFixed(1)+'%';
+  $('breachWarn').textContent=breach.text;
+  $('breachWarn').classList.toggle('danger', breach.danger);
+}
+
+function survivalBreachHudState(){
+  const breachX=survivalCoreWorldX();
+  let nearest=Infinity;
+  for(let i=hi;i<hazards.length;i++){
+    const h=hazards[i];
+    if(!h || h.dead || h.type==='crystal') continue;
+    if(h.x>=breachX) nearest=Math.min(nearest,h.x-breachX);
+    if(h.x>breachX+260) break;
+  }
+  if(nearest<=95) return {danger:true,text:'Breach danger'};
+  if(nearest<=180) return {danger:true,text:'Threat near Core'};
+  return {danger:false,text:'Breach line clear'};
 }

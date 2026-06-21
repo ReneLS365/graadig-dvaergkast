@@ -28,6 +28,19 @@
         <div class="card centerTitle">
           <div class="logo">DVÆRGKAST</div>
           <div class="sub"><span id="modeBadge">Daily</span> · <span id="subInfo">seed 0</span></div>
+          <div id="survivalHud" class="survivalHud" aria-live="polite">
+            <div class="survivalHudTop">
+              <span id="survivalWaveVal">Wave 1</span>
+              <span id="survivalNextVal">Next 0%</span>
+            </div>
+            <div class="coreHpRow">
+              <span>Core</span>
+              <div class="coreHpTrack"><div id="coreHpFill"></div></div>
+              <b id="coreHpVal">0/0</b>
+            </div>
+            <div class="waveTrack"><div id="waveFill"></div></div>
+            <div id="breachWarn" class="breachWarn">Breach line clear</div>
+          </div>
           <div class="hudBtns">
             <button id="pauseBtn" aria-label="Pause">⏸</button>
             <button id="soundBtn" aria-label="Lyd">🔊</button>
