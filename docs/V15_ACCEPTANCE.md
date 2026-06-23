@@ -9,7 +9,8 @@ before tagging. This mirrors the v14 acceptance discipline.
 
 - V15-01 is complete in PR #30: the Mine Core entity, breach line, and Survival lose-on-Core-0 foundation have landed.
 - V15-02 is complete: Survival now has readable Core HP, breach state, current wave, and existing distance-derived next-wave progress HUD.
-- The next required queue item is `V15-03 — Wave director`.
+- V15-03 design is complete: `docs/V15_WAVE_DIRECTOR.md` defines the Survival-only wave director implementation spec.
+- The next required queue item is `V15-03-impl — Wave director implementation`.
 
 ## Functional
 

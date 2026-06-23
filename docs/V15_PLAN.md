@@ -68,10 +68,12 @@ verification gate.
 **V15-03 — Wave director**
 - Goal: explicit wave structure (telegraph → spawn → peak → lull) with a readable wave
   counter, replacing ad-hoc survival spawning. Deterministic from seed.
+- Design: `docs/V15_WAVE_DIRECTOR.md` is the required implementation spec.
 - Allowed: Survival spawn scheduling; wave model; design sub-PR for wave shape.
 - Forbidden: new enemy types; new rewards; difficulty tiers; balance value tuning beyond
   documented wave cadence.
 - Acceptance: waves are deterministic and readable; `simulate` green; pacing documented.
+  The implementation PR must satisfy the acceptance criteria in `docs/V15_WAVE_DIRECTOR.md`.
 
 ### Phase B — In-run depth
 
